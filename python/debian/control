@@ -13,5 +13,5 @@ Depends: ${python:Depends}, ${misc:Depends}, python-h5py, python-numpy
 Description: Python version of the Channel Data Exchange (CDX) library (Python 2)
  CDX is a library to store and read channel impulse response data.
  .
- This package installs the library for Python
+ This package contains the Python version of the CDX library.
 

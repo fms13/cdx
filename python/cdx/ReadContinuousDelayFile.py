@@ -29,6 +29,9 @@
 
 import numpy as np
 import h5py
+import warnings
+
+warnings.filterwarnings('error')
 
 cir_dtype = np.dtype([('delays', np.float64), ('real', np.float64), ('imag', np.float64)])
 
@@ -219,20 +222,23 @@ class ReadContinuousDelayFile:
         for cir_n in np.arange(len(reference_delays)):
             types, delays, amplitudes, reference = self.get_cir(link_name, cir_n)
 
-            delays = delays - reference_delays[cir_n]
-
-            powers = 20 * np.log10(np.abs(amplitudes))  # TODO
+            #delays = delays - reference_delays[cir_n]
+            try:
+                powers = 20 * np.log10(np.abs(amplitudes))  # TODO
+            except RuntimeWarning:
+                print 'amplitudes:', amplitudes, ' abs amplitudes:', np.abs(amplitudes)
+                sys.os.exit(1)
 
             # for all components:
             for k, val in enumerate(delays):
                 # compute component delay:
-                del_bin = round(delays[k] / del_step)
+                del_bin = int(round(delays[k] / del_step))
                 if del_bin < 0:
                     raise SystemError('del_bin < 0. delays[k]: {0}, reference_delays[k]: {1}'.format(delays[k], reference_delays[k]))
-                pwr_bin = round(powers[k] / -pwr_step)
+                pwr_bin = int(round(powers[k] / -pwr_step))
                 # only bin this component if it is inside power/delay axes:
                 if del_bin <= (nof_del_bins - 1) and pwr_bin <= (nof_pwr_bins - 1) and pwr_bin >= 0:
-    #                      print "powers[k]: ", powers[k], ", pwr_bin" , pwr_bin, ", del_bin: ", del_bin
+                    # print "powers[k]: ", powers[k], ", pwr_bin" , pwr_bin, ", del_bin: ", del_bin
                     pdp[pwr_bin, del_bin] = pdp[pwr_bin, del_bin] + 1
 
         return pdp / sum(sum(pdp)), del_ax, pwr_ax

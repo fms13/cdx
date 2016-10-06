@@ -137,7 +137,11 @@ class FiguresGenerator:
 #         for idx in np.arange(len(delays)):
 
         # adjust y axis for power
-        amplitudes_dB = 10 * np.log10(np.abs(amplitudes))
+        try:
+            amplitudes_dB = 10 * np.log10(np.abs(amplitudes))
+        except RuntimeWarning:
+            print 'amplitudes:', amplitudes
+
         min_amplitude_dB = np.min(amplitudes_dB)
         max_amplitude_dB = np.max(amplitudes_dB)
 
@@ -230,7 +234,7 @@ class FiguresGenerator:
 
         # only print nof_x_points cirs:
         for x in np.arange(nof_x_points):
-            idx_into_cirs = np.floor(float(x) / nof_x_points * nof_x)
+            idx_into_cirs = int(np.floor(float(x) / nof_x_points * nof_x))
             data[:, x] = cirs[:, idx_into_cirs]
 
         data_dB = 20 * np.log10(np.abs(data))

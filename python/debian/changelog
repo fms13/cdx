@@ -1,5 +1,6 @@
-python-cdx (1.0-1) UNRELEASED; urgency=medium
+python-cdx (1.1-1) UNRELEASED; urgency=medium
 
-  * Initial release.
+  [ Frank Schubert ]
+  * In PDP computation, reference delays are not normalized to zero anymore.
 
- -- Frank M. Schubert <fmschubert@ieee.org>  Thu, 22 Oct 2015 10:42:38 +0200
+ -- Frank Schubert <fmschubert@ieee.org>  Wed, 05 Oct 2016 17:44:06 +0200

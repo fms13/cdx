@@ -1,11 +1,18 @@
-A Debian package can be generated from this directory tree with the commands:
+The Debian package for the Python CDX library can be generated from this directory tree with these commands:
 
-  mkdir -p ~/packaging/python-cdx && \
-  cp -r ~/workspace/snacs/cdx_format/python ~/packaging/python-cdx/python-cdx_1.0 && \
+  export PY_CDX_VERSION=1.1; mkdir -p ~/packaging/python-cdx && \
+  cp -r ../python ~/packaging/python-cdx/python-cdx_$PY_CDX_VERSION && \
   cd ~/packaging/python-cdx && \
-  tar czf python-cdx_1.0.orig.tar.gz python-cdx_1.0 && \
-  cd python-cdx_1.0 && \
+  tar czf python-cdx_$PY_CDX_VERSION.orig.tar.gz python-cdx_$PY_CDX_VERSION && \
+  cd python-cdx_$PY_CDX_VERSION && \
   debuild -us -uc
+
+Updating the Debian Package
+===========================
+
+To create a new changelog entry, run in snacs/cdx_format/python/debian
+
+  export PY_CDX_VERSION=1.1; python/debian$ dch --check-dirname-level 0 -v $PY_CDX_VERSION-1
 
 Installation on Mac OS X
 ========================
