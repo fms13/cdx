@@ -1,0 +1,14 @@
+A Debian package can be generated from this directory tree with the commands:
+
+  mkdir -p ~/packaging/python-cdx && \
+  cp -r ~/workspace/snacs/cdx_format/python ~/packaging/python-cdx/python-cdx_1.0 && \
+  cd ~/packaging/python-cdx && \
+  tar czf python-cdx_1.0.orig.tar.gz python-cdx_1.0 && \
+  cd python-cdx_1.0 && \
+  debuild -us -uc
+
+Installation on Mac OS X
+========================
+
+In snacs/cdx_format/python run
+  sudo /opt/local/bin/python2 setup.py install

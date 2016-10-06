@@ -1,0 +1,13 @@
+Maybe the hdf5 library that ships with a distribution does not include the C++ interfaces as default.
+
+In such a case you have to download, configure, and compile the hdf5 libraries yourself with
+
+cd /usr/src
+apt-get source libhdf5-serial-dev
+cd hdf5-1.8.4-patch1
+./configure --prefix=/usr/local --enable-cxx 
+nice make -j3
+nice make check
+make install
+
+

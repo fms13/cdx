@@ -1,0 +1,133 @@
+#!/usr/bin/env python
+##
+# \file cdx-compute-multipath-spread-and-energy.py
+# \date Oct 14, 2014
+# \author Frank Schubert
+#
+#	CDX Library
+#
+#	As part of
+#
+#   SNACS - The Satellite Navigation Radio Channel Simulator
+#
+#   Program to compute the multipath spread and the
+# 	channel responses total energy over time for a
+#   continuous-delay CDX channel file as input.
+#
+#   Copyright (C) 2012-2013  F. M. Schubert
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Command line parameters:
+# -i <file_name>: 	input continuous-delay CDX file
+# -f				File format of the plot file to be stored. Either png or pdf.
+#					If not present, plot is not saved to disk
+# -s				Start time in file when processing should begin in s.
+# -l				Length to be processed in seconds.
+
+# initialization
+from numpy import *
+import matplotlib.pyplot as plt
+import h5py
+import argparse
+import os
+import sys
+
+import cdx.ReadContinuousDelayFile
+
+# set matplotlib font size:
+font = {'size'   : 8}
+plt.rc('font', **font)
+
+# parse command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--input", help="input CDX file", action="store")
+parser.add_argument("-f", "--format", help="output file format", action="store")
+parser.add_argument("-s", "--start", help="start time s", action="store")
+parser.add_argument("-l", "--length", help="length in s", action="store")
+args = parser.parse_args()
+
+store_figure = True
+if args.format == None:
+	store_figure = False # do not store plot if -f is not given
+
+if args.input == None:
+	raise SystemExit("Error: no input file given (command line parameter -i).")
+else:
+	file_name = args.input
+	print "plotting CDX file", file_name, "..."
+
+# check if we are limited to certain time span:
+if args.start == None:
+	# this indicates, that the whole file is to be processes:
+	start_time = 0.0
+	length = 0.0
+else:
+	start_time = float(args.start)
+	length = float(args.length)
+
+# open CDX file for reading:
+cdx_file = cdx.ReadContinuousDelayFile.ReadContinuousDelayFile(file_name)
+
+fig = plt.figure()
+fig.canvas.set_window_title('Power and Multipath Spread of CDX file ' + file_name)
+plt.subplots_adjust(hspace=.4)
+
+act_plot = 1
+total_nof_plots = cdx_file.get_nof_links()
+for link in cdx_file.get_link_names():
+
+	times, channel_power = cdx_file.compute_power(link, start_time, length)
+	times, mp_spread = cdx_file.compute_multipath_spread(link, start_time, length)
+
+	ax = fig.add_subplot(2, total_nof_plots, act_plot)
+	act_plot = act_plot + 1
+
+	ax.set_title('Multipath Delay Spread, Link {}'.format(link))
+
+	ax.plot(times, mp_spread / 1e-9)
+	ax.set_xlim((times[0], times[-1]))
+	ax.set_xlabel('Time [s]')
+	ax.set_ylabel('Delay Spread [ns]')
+	ax.grid()
+
+	ax = fig.add_subplot(2, total_nof_plots, act_plot)
+	act_plot = act_plot + 1
+
+	ax.set_title('Channel Response Power, Link {}'.format(link))
+
+	ax.plot(times, 20 * log10(abs(channel_power)))
+	ax.set_xlim((times[0], times[-1]))
+	ax.set_xlabel('Time [s]')
+	ax.set_ylabel('Power [dB]')
+	ax.grid()
+
+if store_figure == True:
+	# save file:
+	if args.format == "png":
+		extension = ".png"
+	elif args.format == "pdf":
+		extension = ".pdf"
+	else:
+		raise "Unknown file format (parameter -f)"
+
+	file_prefix, tail = os.path.splitext(file_name)
+	out_file_name = file_prefix + "_pdp" + extension
+	print "saving to", out_file_name
+	fig.set_size_inches(5.5, 4 * nof_links)
+	fig.savefig(out_file_name, dpi=300)  # , bbox_inches='tight'
+else:
+	plt.show()
+
+print "all done."

@@ -1,0 +1,338 @@
+#!/usr/bin/env python
+##
+# \file cdx-display.py
+# \date April 4, 2012
+# \author Frank Schubert
+#
+#   CDX Library
+#
+#   As part of
+#
+#   SNACS - The Satellite Navigation Radio Channel Simulator
+#
+#   Class to read continuous-delay CDX files.
+#
+#   Copyright (C) 2012-2013  F. M. Schubert
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Command line parameters:
+# -f <file_name>: input CDX file
+
+# initialization
+import numpy as np
+import h5py
+import argparse
+import os
+import sys
+
+from PySide import QtCore, QtGui
+import matplotlib
+import matplotlib.backend_bases
+#from h5py._hl.base import ValueView
+
+matplotlib.use('Qt4Agg')
+matplotlib.rcParams['backend.qt4']='PySide'
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt4agg import (
+     FigureCanvasQTAgg as FigureCanvas,
+     NavigationToolbar2QT as NavigationToolbar)
+
+from multiprocessing import Process
+
+#from cdx import CDXFiguresGenerator
+
+import cdx.FiguresGenerator
+
+# set matplotlib font size:
+# global matplotlib settings (see http://matplotlib.org/users/customizing.html)
+# set global matplotlib parameters:
+params = {'legend.fontsize': 7,
+          'font.size'   : 7,
+          'font.family': 'sans-serif',
+          'xtick.labelsize': 7,
+          'ytick.labelsize': 7,
+          'axes.labelsize': 7,
+          'lines.linewidth': 1.0,
+          'axes.linewidth': 0.5
+#           'legend.linewidth': 0.5
+        }
+plt.rcParams.update(params)
+
+##
+# \brief Class to display a Window with a number of plots per link in a CDX file. A
+# slider can be used to set the time for which the plots are supposed to be displayed.
+#
+# Data such as the channel impulse response for a specific time, the power and delay spreads
+# over time, as well as the power-delay profile is displayed for each link in a CDX
+# file.
+#
+class CDXDisplayWindows(QtGui.QMainWindow):
+     def __init__(self, cdx_figures, enable_pdp, parent=None):
+         QtGui.QMainWindow.__init__(self, parent)
+
+         # read CDX file:
+         self.cdx_figures = cdx_figures
+         self.link_names = self.cdx_figures.cdx_file.get_link_names()
+         self.nof_cirs = self.cdx_figures.cdx_file.get_nof_cirs()
+         self.cir_rate = self.cdx_figures.cdx_file.get_cir_rate()
+
+         self.canvases = []
+
+         # setup widgets:
+         self.main_frame = QtGui.QWidget()
+
+         self.vbox = QtGui.QVBoxLayout()
+         self.main_frame.setLayout(self.vbox)
+         self.setCentralWidget(self.main_frame)
+
+         # label for the slider:
+         self.t_label = QtGui.QLabel('t = ')
+         self.vbox.addWidget(self.t_label)
+
+         # the slider for the CIR number and time:
+         self.sld = QtGui.QSlider(QtCore.Qt.Horizontal, self)
+         self.sld.setMinimum(0)
+         self.sld.setMaximum(self.nof_cirs - 1)
+         self.sld.setFocusPolicy(QtCore.Qt.NoFocus)
+         self.sld.setGeometry(30, 40, 100, 30)
+         self.sld.valueChanged[int].connect(self.on_slider_change)
+         self.vbox.addWidget(self.sld)
+
+         # make a hboxlayout for each link:
+         self.hboxes = []
+         for link_name in self.link_names:
+             self.hboxes.append(QtGui.QHBoxLayout())
+             self.vbox.addLayout(self.hboxes[-1])
+
+         self.on_draw()
+
+         # if visualization is enabled, prepare list that holds QPixmap objects:
+         if self.cdx_figures.visualization_enabled == True:
+             self.scenery_labels = []
+
+         # prepare figures for channel impulse response (CIR) plots:
+         self.cir_figures = []
+         self.cir_axes = []
+
+         # if we have discrete-delay data, we also display it:
+         if  self.cdx_figures.cdd_enabled == True:
+             self.cir_discr_figures = []
+             self.cir_discr_axes = []
+             self.cir_discr_vlines = []
+
+             self.dds_figures = []
+             self.dds_axes = []
+
+             # set span to 1 s or to length of file if it is smaller:
+             self.cdd_span_s = self.cdx_figures.cdd_file.get_length_s()
+             #if self.cdd_span_s > 1.0:
+             #    self.cdd_span_s = 1.0
+
+             self.cdd_length_s = self.cdx_figures.cdd_file.get_length_s()
+
+         self.power_figures = []
+         self.power_axes = []
+         self.power_vlines = []
+
+         self.delay_spread_figures = []
+         self.delay_spread_axes = []
+         self.delay_spread_vlines = []
+
+         self.pdp_figures = []
+         self.pdp_axes = []
+
+         for idx, link_name in enumerate(self.link_names):
+             # create QPixmap object if we have images of the scenery, i.e. visualization is enabled:
+             if self.cdx_figures.visualization_enabled == True:
+                self.scenery_labels.append(QtGui.QLabel())
+                self.hboxes[idx].addWidget(self.scenery_labels[-1])
+
+             # create figure object for CIR figure:
+             self.cir_figures.append(plt.figure(dpi=100))
+             self.cir_axes.append(self.cir_figures[-1].add_subplot(1, 1, 1))
+             self.add_link_to_layout(idx, self.cir_figures[-1])
+
+             if cdx_figures.cdd_enabled == True:
+                 self.cir_discr_figures.append(plt.figure(dpi=100))
+                 self.cir_discr_axes.append(self.cir_discr_figures[-1].add_subplot(1, 1, 1))
+                 self.cir_discr_vlines.append(self.cir_discr_axes[-1].axvline(x=0, color='r'))
+                 self.add_link_to_layout(idx, self.cir_discr_figures[-1])
+
+                 self.dds_figures.append(plt.figure(dpi=100))
+                 self.dds_axes.append(self.dds_figures[-1].add_subplot(1, 1, 1))
+                 self.add_link_to_layout(idx, self.dds_figures[-1])
+
+             # create figure object for power figure:
+             self.power_figures.append(plt.figure(dpi=100))
+             self.power_axes.append(self.power_figures[-1].add_subplot(1, 1, 1))
+             self.power_vlines.append(self.power_axes[-1].axvline(x=0, color='r'))
+             self.add_link_to_layout(idx, self.power_figures[-1])
+
+             # create figure object for delay spread figure:
+             self.delay_spread_figures.append(plt.figure(dpi=100))
+             self.delay_spread_axes.append(self.delay_spread_figures[-1].add_subplot(1, 1, 1))
+             self.delay_spread_vlines.append(self.delay_spread_axes[-1].axvline(x=0, color='r'))
+             self.add_link_to_layout(idx, self.delay_spread_figures[-1])
+
+             if enable_pdp == True:
+                 # create figure for power delay profile:
+                 self.pdp_figures.append(plt.figure(dpi=100))
+                 self.pdp_axes.append(self.pdp_figures[-1].add_subplot(1, 1, 1))
+                 self.add_link_to_layout(idx, self.pdp_figures[-1])
+
+             # add all figures to the row for the current link:
+#              self.add_link_to_layout(idx, self.cir_figures[-1], self.power_figures[-1], self.delay_spread_figures[-1], self.pdp_figures[-1])
+
+         # start computation of these plots in parallel:
+         processes = []
+         for idx, link_name in enumerate(self.link_names):
+             # add first scenery image:
+             if self.cdx_figures.visualization_enabled == True:
+                 print 'displaying scenery image ', self.cdx_figures.get_scenery_image_for_time(link_name, 0)
+                 self.scenery_labels[idx].setPixmap(QtGui.QPixmap(self.cdx_figures.get_scenery_image_for_time(link_name, 0)).scaled(300, 300, QtCore.Qt.KeepAspectRatio))
+
+             # add first CIR plot:
+             processes.append(Process(target=cdx_figures.make_cir_axes(self.cir_axes[idx], link_name, 0)))
+             processes[-1].start()
+
+             if self.cdx_figures.cdd_enabled == True:
+                 start_time = 0
+                 length = self.cdd_span_s
+                 self.cir_discr_figures = self.cdx_figures.make_discr_cir_axes(self.cir_discr_axes[idx], link_name, start_time, length)
+                 self.dds_figures = self.cdx_figures.make_delay_doppler_spectrum(self.dds_axes[idx], link_name, start_time, length)
+
+
+             # add first power plot:
+             processes.append(Process(target=cdx_figures.make_power_axes(self.power_axes[idx], link_name)))
+             processes[-1].start()
+
+             # add delay spread plot:
+             processes.append(Process(target=cdx_figures.make_delay_spread_axes(self.delay_spread_axes[idx], link_name)))
+             processes[-1].start()
+
+         if enable_pdp == True:
+             # compute power-delay profiles:
+             for idx, link_name in enumerate(self.link_names):
+                 im = cdx_figures.make_pdp_axes(self.pdp_axes[idx], link_name)
+                 self.pdp_axes[idx].xaxis.set_ticks_position('bottom')
+                 self.pdp_figures[idx].colorbar(im)
+
+         for process in processes:
+             process.join()
+
+     def on_slider_change(self, value):
+         time = value / self.cir_rate
+         self.t_label.setText('CIR number: {}, t = {} s'.format(value, time))
+
+         for idx, link_name in enumerate(self.link_names):
+             # update CIR plots:
+             self.cir_axes[idx].clear()
+             self.cdx_figures.make_cir_axes(self.cir_axes[idx], link_name, value)
+
+             # update scenery image:
+             if self.cdx_figures.visualization_enabled == True:
+                 print 'displaying scenery image ', self.cdx_figures.get_scenery_image_for_time(link_name, time)
+                 self.scenery_labels[idx].setPixmap(QtGui.QPixmap(self.cdx_figures.get_scenery_image_for_time(link_name, time)).scaled(300, 300, QtCore.Qt.KeepAspectRatio))
+
+         # update discrete-delay CIR plots:
+         if self.cdx_figures.cdd_enabled == True:
+             for idx, link_name in enumerate(self.link_names):
+                 start_time = time - self.cdd_span_s / 2.0
+                 # limit start time and length to file length:
+                 if start_time < 0:
+                     start_time = 0
+                 length = self.cdd_span_s
+                 if start_time + length > self.cdd_length_s:
+                     length = self.cdd_length_s - start_time #- 1.0 / self.cir_rate
+                 self.cdx_figures.make_discr_cir_axes(self.cir_discr_axes[idx], link_name, start_time, length)
+                 self.cir_discr_vlines[idx].set_xdata(time)
+
+                 self.cdx_figures.make_delay_doppler_spectrum(self.dds_axes[idx], link_name, start_time, length)
+
+
+         # update vertical line in power plots:
+         for power_vline in self.power_vlines:
+             power_vline.set_xdata(time)
+
+         # update vertical line in delay spread plots:
+         for delay_spread_vline in self.delay_spread_vlines:
+             delay_spread_vline.set_xdata(time)
+
+         for canvas in self.canvases:
+            canvas.draw()
+
+     def add_link_to_layout(self, idx, fig):
+
+         # add canvas for CIR to Layout:
+         self.canvases.append(FigureCanvas(fig))
+         self.canvases[-1].setParent(self.main_frame)
+         self.canvases[-1].setFocusPolicy(QtCore.Qt.StrongFocus)
+         self.canvases[-1].setFocus()
+#          self.mpl_toolbar = NavigationToolbar(self.canvases, self.main_frame)
+#          self.canvases.mpl_connect('key_press_event', self.on_key_press)
+         self.hboxes[idx].addWidget(self.canvases[-1])
+#          self.hboxes[idx].addWidget(self.mpl_toolbar)
+
+     def on_draw(self):
+         #self.canvases.draw()
+         pass
+
+     def on_key_press(self, event):
+         print('you pressed', event.key)
+         # implement the default mpl key press events described at
+         # http://matplotlib.org/users/navigation_toolbar.html#navigation-keyboard-shortcuts
+         key_press_handler(event, self.canvases, self.mpl_toolbar)
+
+
+def main():
+     # parse command line arguments
+     parser = argparse.ArgumentParser()
+     parser.add_argument("-i", "--input", help="input CDX file", action="store")
+     parser.add_argument("-p", "--no-pdp", help="disable power delay profile", action="store_true")
+     args = parser.parse_args()
+
+     if args.input == None:
+         raise SystemExit("Error: no input file given (command line parameter -i is missing).")
+     else:
+         file_name = args.input
+
+#      cir_figures = plt.Figure((5.0, 4.0), dpi=100)
+#      axes = cir_figures.add_subplot(111)
+#      data = np.arange(20).reshape([4, 5]).copy()
+#      axes.imshow(data, interpolation='nearest')
+
+     if args.no_pdp == True:
+         enable_pdp = False
+     else:
+         enable_pdp = True
+
+     cdx_figures = cdx.FiguresGenerator.FiguresGenerator(args.input)
+
+     app = QtGui.QApplication(sys.argv)
+     form = CDXDisplayWindows(cdx_figures, enable_pdp)
+     form.setWindowTitle('Channel Data Exchange (CDX): Display File')
+     form.show()
+
+#      cir_figures = cdx_figures.make_figure('satellite01', 0)
+
+#      form.add_link_to_layout(cir_figures)
+#      form.add_link_to_layout(cir_figures)
+     app.exec_()
+
+if __name__ == "__main__":
+     main()
+
+
+print 'all done.'

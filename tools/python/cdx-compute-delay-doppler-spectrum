@@ -1,0 +1,152 @@
+#!/usr/bin/env python
+#
+# \file cdx-compute-delay-doppler-spectrum.py
+# \date Apr 16, 2012
+# \author Frank Schubert
+
+#
+#	CDX Library
+#
+#	As part of
+#
+#   SNACS - The Satellite Navigation Radio Channel Simulator
+#
+#   \brief Program to compute the delay-Doppler spectrum of a
+# 	discrete-delay CDX channel file as input.
+#
+#   Copyright (C) 2014  F. M. Schubert
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Command line parameters:
+# -f <file_name>: 	input discrete-delay CDX file
+# -n 				Number of points to be plotting on horizontal axis (frequency).
+#					This can be set to reduce the plots resolution. Must be greater than 0.
+# -f				File format of the plot file to be stored. Either png or pdf.
+#					If not present, plot is not saved to disk
+# -s				Start time in file when processing should begin in s.
+# -l				Length to be processed in seconds.
+# -t <percentage>	Limit delay axis (vertical axis) to <percentage> * (max_delay - min_delay)
+#
+
+# initialization
+from numpy import *
+import matplotlib.pyplot as plt
+import h5py
+import argparse
+import os
+
+import cdx.ReadDiscreteDelayFile
+import cdx.FiguresGenerator
+
+figure_width_cm = 9
+figure_height_cm = 7
+figure_dpi = 300
+
+# set matplotlib font size:
+# global matplotlib settings (see http://matplotlib.org/users/customizing.html)
+# set global matplotlib parameters:
+params = {'legend.fontsize': 7,
+          'font.size'   : 7,
+          'font.family': 'sans-serif',
+          'xtick.labelsize': 7,
+          'ytick.labelsize': 7,
+          'axes.labelsize': 7,
+          'lines.linewidth': 1.0,
+          'axes.linewidth': 0.5
+#           'legend.linewidth': 0.5
+        }
+plt.rcParams.update(params)
+
+# parse command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--input", help="input CDX file", action="store")
+parser.add_argument("-o", "--output", help="output graphics file", action="store")
+parser.add_argument("-n", "--nof_xpoints", help="max number of samples to be plotted", action="store")
+parser.add_argument("-f", "--format", help="output file format", action="store")
+parser.add_argument("-s", "--start", help="start time s", action="store")
+parser.add_argument("-l", "--length", help="length in s", action="store")
+parser.add_argument("-b", "--margin_before_min_ref_delay", help="margin before minimal reference delay, sets the minimum of the delay axis", action="store")
+parser.add_argument("-a", "--margin_after_max_ref_delay", help="margin after maximum reference delay, sets the maximum of the delay axis", action="store")
+
+args = parser.parse_args()
+
+store_figure = True
+if args.format == None:
+	store_figure = False  # do not store plot if -f is not given
+
+if args.input == None:
+	raise SystemExit("Error: no input file given (command line parameter -i).")
+else:
+	file_name = args.input
+	print "plotting CDX file", file_name, "..."
+
+if args.nof_xpoints == None:
+	nof_x_points = 0
+else:
+	# set x-resolution of plot, i.e. number of points on x-axis (time):
+	nof_x_points = int(args.nof_xpoints)
+	if (nof_x_points <= 0):
+		raise SystemExit("Error: nof_x_points (parameter -n) must be greater than 0.")
+
+if args.start == None:
+	# this indicates, that the whole file is to be processes:
+	start_time = 0.0
+	length = 0.0
+else:
+	start_time = float(args.start)
+	length = float(args.length)
+
+# open CDX file for reading:
+cdx_file = cdx.ReadDiscreteDelayFile.ReadDiscreteDelayFile(args.input)
+cdx_figures = cdx.FiguresGenerator.FiguresGenerator(args.input)
+
+# count links in file:
+nof_links = cdx_file.get_nof_links()
+
+fig = plt.figure(figsize=(figure_width_cm / 2.54, figure_height_cm / 2.54), dpi=figure_dpi)
+fig.canvas.set_window_title('CDX file ' + file_name)
+
+act_plot = 1
+for link_name in cdx_file.get_link_names():
+    ax = fig.add_subplot(nof_links, 1, act_plot)
+    im = cdx_figures.make_delay_doppler_spectrum(ax, link_name)
+    cbar = fig.colorbar(im)
+
+    act_plot = act_plot + 1
+
+fig.tight_layout()
+
+if store_figure == True:
+	# save file:
+	head, file_prefix = os.path.split(file_name)
+	file_prefix, extension = os.path.splitext(file_prefix)
+
+	if args.format == "png":
+		extension = "_dds.png"
+	elif args.format == "pdf":
+		extension = "_dds.pdf"
+	else:
+		raise "Unknown file format (parameter -f)"
+
+	if args.output == None:
+		out_file_name = file_prefix + extension
+	else:
+		out_file_name = args.output
+
+	print "saving to", out_file_name
+	fig.savefig(out_file_name, bbox_inches='tight', dpi=300)  #
+else:
+	plt.show()
+

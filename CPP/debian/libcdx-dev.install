@@ -1,0 +1,8 @@
+usr/include/cdx/File.h
+usr/include/cdx/ReadFile.h
+usr/include/cdx/ReadContinuousDelayFile.h
+usr/include/cdx/WriteFile.h
+usr/include/cdx/WriteContinuousDelayFile.h
+usr/include/cdx/WriteDiscreteDelayFile.h
+usr/lib/*/libcdx.a
+usr/lib/*/libcdx.so

@@ -1,0 +1,124 @@
+#!/usr/bin/env python
+##
+# \file cdx-compute-power-delay-profile.py
+# \date April 4, 2012
+# \author Frank Schubert
+
+#   SNACS - The Satellite Navigation Radio Channel Simulator
+#
+#   Program to compute a power delay profile (PDP) with a
+#     continuous-delay CDX channel file as input.
+#
+#   Copyright (C) 2012-2013  F. M. Schubert
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Command line parameters:
+# -f <file_name>: input CDX file
+#
+# PDP is plotted for each link in file and saved to PNG graphic.
+
+# initialization
+from numpy import *
+import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
+import h5py
+import argparse
+import os
+import sys
+import cdx.ReadContinuousDelayFile
+import cdx.FiguresGenerator
+
+figure_width_cm = 12
+figure_height_cm = 12
+figure_dpi = 100
+
+# set matplotlib font size:
+# global matplotlib settings (see http://matplotlib.org/users/customizing.html)
+# set global matplotlib parameters:
+params = {'legend.fontsize': 7,
+          'font.size'   : 7,
+          'font.family': 'sans-serif',
+          'xtick.labelsize': 7,
+          'ytick.labelsize': 7,
+          'axes.labelsize': 7,
+          'lines.linewidth': 1.0,
+          'axes.linewidth': 0.5
+#           'legend.linewidth': 0.5
+        }
+plt.rcParams.update(params)
+
+# parse command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--input", help="input CDX file", action="store")
+parser.add_argument("-f", "--format", help="output file format", action="store")
+parser.add_argument("-u", "--upper_prob", help="upper probability limit to plot, default = 10", default=10e0, action="store")
+parser.add_argument("-l", "--lower_prob", help="lower probability limit to plot, default = -35", default=10e-7, action="store")
+args = parser.parse_args()
+
+store_figure = True
+if args.format == None:
+    store_figure = False # do not store plot if -f is not given
+
+if args.input == None:
+    raise SystemExit("Error: no input file given (command line parameter -i).")
+else:
+    file_name = args.input
+    print "plotting CDX file", file_name, "..."
+
+cdx_file = cdx.ReadContinuousDelayFile.ReadContinuousDelayFile(args.input)
+cdx_figures = cdx.FiguresGenerator.FiguresGenerator(args.input)
+
+cir_rate = cdx_file.get_cir_rate()
+
+# count links in file:
+nof_links = cdx_file.get_nof_links()
+
+fig = plt.figure(figsize=(figure_width_cm / 2.54, figure_height_cm / 2.54), dpi=figure_dpi)
+
+# fig.suptitle('Power Delay Profile of CDX file ' + file_name)
+# plt.subplots_adjust(hspace=.4)
+
+act_plot = 1
+for link_name in cdx_file.get_link_names():
+    ax = fig.add_subplot(nof_links, 1, act_plot)
+
+    im = cdx_figures.make_pdp_axes(ax, link_name)
+    ax.xaxis.set_ticks_position('bottom')
+    cbar = fig.colorbar(im)
+
+    act_plot = act_plot + 1
+
+fig.tight_layout()
+
+if store_figure == True:
+    head, file_prefix = os.path.split(file_name)
+    file_prefix, extension = os.path.splitext(file_prefix)
+
+    # save file:
+    if args.format == "png":
+        extension = "_pdp.png"
+    elif args.format == "pdf":
+        extension = "_pdp.pdf"
+    else:
+        raise "Unknown file format (parameter -f)"
+
+    out_file_name = file_prefix + extension
+    print "saving to", out_file_name
+    fig.set_size_inches(5.5, 4 * nof_links)
+    fig.savefig(out_file_name, bbox_inches='tight', dpi=300)  #
+else:
+    plt.show()
+
+print "all done."

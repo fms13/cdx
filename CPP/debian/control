@@ -1,0 +1,26 @@
+Source: libcdx
+Priority: optional
+Maintainer: Frank M. Schubert <fmschubert@ieee.org>
+Build-Depends: debhelper (>= 9), build-essential, dh-autoreconf, libhdf5-dev
+Standards-Version: 3.9.5
+Homepage: http://snacs.sourceforge.net
+Section: libs
+
+Package: libcdx0
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Multi-Arch: same
+Description: Library for reading and writing Channel Data Exchange (CDX) files, C++ version.
+ Library for reading and writing Channel Data Exchange (CDX) files, C++ version.
+
+Package: libcdx-dev
+Section: libdevel
+Architecture: any
+Depends: libcdx0 (= ${binary:Version}), ${misc:Depends}
+Multi-Arch: same
+Description: Library for reading and writing Channel Data Exchange (CDX) files, C++ version.
+ Library for reading and writing Channel Data Exchange (CDX) files, C++ version.
+ .
+ This package contains the files needed in order to use libcdx in
+ your own programs.
+

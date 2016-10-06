@@ -1,0 +1,12 @@
+Source: cdx-tools
+Maintainer: Frank M. Schubert <fmschubert@ieee.org>
+Section: science
+Priority: optional
+Standards-Version: 3.9.6
+Build-Depends: dh-python, debhelper (>= 9), python-all (>= 2.6.6-3~), libcdx-dev
+
+Package: cdx-tools
+Architecture: any
+Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, python-cdx, python-matplotlib, python-matplotlib-data, python-argparse, python-h5py, python-pyside, libcdx0
+Description: Tools to process and display CDX files.
+ Programs to display and compute measures from CDX files.

@@ -1,0 +1,26 @@
+#!/usr/bin/make -f
+##
+# \file rules
+#
+# \date Oct 21, 2015
+# \author Frank Schubert
+#
+# \brief Controls the generation of a Debian package for python-cdx
+#
+# Based on https://wiki.debian.org/Python/Pybuild
+# and https://wiki.debian.org/Python/LibraryStyleGuide
+# and http://ghantoos.org/2008/10/19/creating-a-deb-package-from-a-python-setuppy/#setuppy
+
+#export DH_VERBOSE=1
+
+# generate package python-cdx:
+export PYBUILD_NAME=cdx
+
+# could not detect the right build system: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=746440
+export PYBUILD_SYSTEM=distutils
+
+#export PYBUILD_DESTDIR_python2=debian/python-cdx/
+#export PYBUILD_DESTDIR_python2-dbg=debian/python-cdx-dbg/
+
+%:
+	dh $@ --with python2 --buildsystem=pybuild

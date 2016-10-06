@@ -1,0 +1,194 @@
+#!/usr/bin/env python
+##
+# \file cdx-plot-discrete-delay-file.py
+# \date April 4, 2012
+# \author Frank Schubert
+
+#   SNACS - The Satellite Navigation Radio Channel Simulator
+#
+#   Program to plot discrete-delay CDX channel files.
+#
+#   Copyright (C) 2012-2013  F. M. Schubert
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Command line parameters:
+# -f <file_name>: 	input discrete-delay CDX file
+# -n 				Number of points to be plotting on horizontal axis (frequency).
+#					This can be set to reduce the plots resolution. Must be greater than 0.
+# -f				File format of the plot file to be stored. Either png or pdf.
+#					If not present, plot is not saved to disk
+# -s				Start time in file when processing should begin in s.
+# -l				Length to be processed in seconds.
+# -t <percentage>	Limit delay axis (vertical axis) to <percentage> * (max_delay - min_delay)
+#
+# CIR is plotted for each link in file and saved to PNG graphic.
+
+# initialization
+from numpy import *
+import matplotlib.pyplot as plt
+import h5py
+import argparse
+import os
+
+import cdx.ReadDiscreteDelayFile
+
+figure_width_cm = 18
+figure_height_cm = 4
+
+# set matplotlib font size:
+# global matplotlib settings (see http://matplotlib.org/users/customizing.html)
+# set global matplotlib parameters:
+params = {'legend.fontsize': 8,
+          'font.size'   : 8,
+          'font.family': 'sans-serif',
+          'xtick.labelsize': 8,
+          'ytick.labelsize': 8,
+          'axes.labelsize': 8,
+          'lines.linewidth': .5,
+          'axes.linewidth': 0.5
+#           'legend.linewidth': 0.5
+        }
+plt.rcParams.update(params)
+
+# parse command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--input", help="input CDX file", action="store")
+parser.add_argument("-o", "--output", help="output graphics file", action="store")
+parser.add_argument("-f", "--format", help="output file format", action="store")
+parser.add_argument("-n", "--nof_xpoints", help="max number of samples to be plotted", action="store")
+parser.add_argument("-s", "--start", help="start time s", action="store")
+parser.add_argument("-l", "--length", help="length in s", action="store")
+parser.add_argument("-b", "--margin_before_min_ref_delay", help="margin before minimal reference delay, sets the minimum of the delay axis", action="store")
+parser.add_argument("-a", "--margin_after_max_ref_delay", help="margin after maximum reference delay, sets the maximum of the delay axis", action="store")
+
+args = parser.parse_args()
+
+store_figure = True
+figure_dpi = 300
+if args.format == None:
+    figure_dpi=90
+    store_figure = False # do not plot if -f is not given
+
+if args.input == None:
+	raise SystemExit("Error: no input file given (command line parameter -i is missing).")
+else:
+	file_name = args.input
+	print "plotting CDX file", file_name, "..."
+
+if args.nof_xpoints == None:
+	nof_x_points = 0
+else:
+	# set x-resolution of plot, i.e. number of points on x-axis (time):
+	nof_x_points = int(args.nof_xpoints)
+	if (nof_x_points <= 0):
+		raise SystemExit("Error: nof_x_points (parameter -n) must be greater than 0.")
+
+if args.start == None:
+	# this indicates, that the whole file is to be processes:
+	start_time = 0.0
+	length = 0.0
+else:
+	start_time = float(args.start)
+	length = float(args.length)
+
+cdx_file = cdx.ReadDiscreteDelayFile.ReadDiscreteDelayFile(args.input)
+
+fig = plt.figure(figsize=(figure_width_cm / 2.54, cdx_file.get_nof_links() * figure_height_cm / 2.54), dpi=figure_dpi)
+# fig.suptitle('CDX file ' + file_name)
+
+act_plot = 1
+link_names = cdx_file.get_link_names()
+nof_links = cdx_file.get_nof_links()
+
+for link_name in link_names:
+
+	cirs, times, delays, ref_delays = cdx_file.get_cirs(link_name, start_time, length)
+
+	x_axis = times
+	y_axis = delays
+
+	nof_x = cirs.shape[1]
+	nof_y = cirs.shape[0]
+
+	if nof_x_points == 0:
+		# user didn't set nof_x_points, set it to maximum value:
+		nof_x_points = nof_x
+	else:
+		if nof_x < nof_x_points:
+			# we cannot print more points than are available:
+			nof_x_points = nof_x
+
+	x_step = floor(nof_x / nof_x_points)
+
+	# for 2D plot:
+	data = zeros((nof_y, nof_x_points), dtype=complex)
+
+	# only print nof_x_points cirs:
+	for x in arange(nof_x_points):
+		idx_into_cirs = floor(float(x) / nof_x_points * nof_x)
+		data[:, x] = cirs[:, idx_into_cirs]
+
+	data_dB = 20*log10(abs(data))
+
+	ax = fig.add_subplot(nof_links, 1, act_plot)
+	act_plot = act_plot + 1
+
+	ax.set_title('Link {}'.format(link_name))
+
+	# plot cir:
+	cax = ax.imshow(data_dB, interpolation='nearest', aspect='auto', origin='bottom',
+				 extent=[x_axis[0][0], x_axis[-1][0], y_axis[0][0]/1e-9, y_axis[-1][0]/1e-9],
+				 vmin=-60, vmax=0)
+
+	cbar = fig.colorbar(cax)
+	cbar.set_label('dB')
+	ax.set_xlabel('Time [s]')
+	ax.set_ylabel('Delay [ns]')
+
+	# plot reference delay:
+	pl_ref = ax.plot(x_axis, ref_delays/1e-9, 'm', linewidth=1.5, label='Reference delay')
+	ax.legend()
+	ax.set_xlim((x_axis[0][0], x_axis[-1][0]))
+
+	if args.margin_before_min_ref_delay != None:
+		before_min_delay = float(args.margin_before_min_ref_delay)
+		after_max_delay = float(args.margin_after_max_ref_delay)
+		ax.set_ylim(( (min(ref_delays) - before_min_delay) / 1e-9, (max(ref_delays) + after_max_delay) / 1e-9))
+	else:
+		ax.set_ylim((delays[0][0] / 1e-9, delays[-1][0] / 1e-9))
+
+fig.tight_layout()
+
+if store_figure == True:
+	# save file:
+	head, file_prefix = os.path.split(file_name)
+	file_prefix, extension = os.path.splitext(file_prefix)
+
+	if args.format == "png":
+		extension = ".png"
+	elif args.format == "pdf":
+		extension = ".pdf"
+	else:
+		raise "Unknown file format (parameter -f)"
+
+	if args.output == None:
+		out_file_name = file_prefix + extension
+	else:
+		out_file_name = args.output
+
+	print "saving to", out_file_name
+	fig.savefig(out_file_name, bbox_inches='tight', dpi=300)#
+else:
+	plt.show()
