@@ -112,11 +112,13 @@ cir_t ReadContinuousDelayFile::get_cir(std::string link,
 
 	result_cir.components.resize(echoes_amount);
 	for (int i = 0; i < echoes_amount; i++) {
+		result_cir.components.at(i).type = echoes[i].type;
 		result_cir.components.at(i).delay = echoes[i].delays;
 		result_cir.components.at(i).amplitude = complex<double>(echoes[i].real,
 				echoes[i].imag);
 	}
 	result_cir.ref_delay = ref_delays[link].at(cir_num);
+
 	return result_cir;
 }
 
@@ -124,6 +126,8 @@ ReadContinuousDelayFile::~ReadContinuousDelayFile() {
 	for (size_t k = 0; k < link_names.size(); k++) {
 		delete cir_groups[link_names.at(k)];
 	}
+
+	delete cp_echo;
 }
 
 } // end of namespace CDX
