@@ -1,0 +1,76 @@
+\newcommand{\When}[1]{{{#1}}}
+% for 2 when entries:
+\newcommand{\WhenB}[2]{{\hfill{#1}}\newline{\textsl{#2}}}
+\newcommand{\What}[1]{{\textbf{#1}\newline}}
+% \newcommand{\WhatA}[1]{{\textbf{#1}}} % What without Company argument
+% \newcommand{\Where}[2]{{\textsl{#1, #2}}}
+\newcommand{\Sect}[1]{#1}
+
+% \newcommand{\WhatWhere}[2]{{\textbf{#2}, #1\newline}}
+% \newcommand{\WhatWhereA}[1]{{\textbf{#1}}}
+
+% \newcommand{\WhatWhereCity}[3]{{\textbf{#2},\newline\textbf{#1}\newline #3}}
+% \newcommand{\WhatWhereCityA}[1]{{\textbf{#1}}}
+
+\newcommand{\WhenWhatWhereCity}[4]{&\\[-.5em] #1 & \textbf{#2}\newline  \color{blue}#3\color{black}, #4}
+% \newcommand{\WhenWhatWhereCity}[4]{&\\[-.5em] #1 & \textbf{#2}\newline  \color{blue}#3\color{black}\newline #4}
+% \newcommand{\WhenWhatWhereCity}[4]{&\\[-.5em] #1 & \color{blue}{#2}\color{black}\newline \textbf{#3}\color{black}\newline #4}
+\newcommand{\WhenWhatWhereCityA}[2]{\\[-.5em]#1 & {\textbf{#2}}}
+
+% ``What I Achieved`` command
+\newcommand{\Achievement}[1]{\textit{\textbf{Achievement}}                                                      & \textit{#1}\\}
+
+% ``What I Learned`` command
+\newcommand{\Learned}[1]{\textsl{What I learned}                                                   & {#1}\\}
+
+% Space before Section:
+\newlength{\SectionSkip}
+\setlength{\SectionSkip}{.1em}
+% Section with one heading:
+\newcommand{\SectA}[1]{%\midrule\noalign{\smallskip}
+&\\[\SectionSkip]
+\multicolumn{2}{l}{\scshape{\textbf{\large{#1}}}}\\\midrule}
+% Section with one heading and short note:
+\newcommand{\SectB}[2]{%\midrule\noalign{\smallskip}
+\multicolumn{2}{l}{\renewcommand{\arraystretch}{2} \scshape{\textbf{\large{#1}}\hspace{2cm}\small{\textsl{{#2}}}}}\\\midrule}
+\newcommand{\CVTitle}[1]{\scshape{\textbf{\large{Curriculum Vitae}}}}
+\newcommand{\PubTit}[1]{\textbf{#1}}
+\newlength{\WidthA}
+\setlength{\WidthA}{.22\textwidth}
+\newlength{\WidthB}
+\setlength{\WidthB}{.75\textwidth}
+\newlength{\WidthT}
+\setlength{\WidthT}{1.\textwidth}
+
+\newcommand{\BegItem}{\begin{itemize}[label=\textbullet, nolistsep,before*={\mbox{}\vspace{-1\baselineskip}}, after*={\mbox{}\vspace{-.5\baselineskip}}]}
+%[after*={\mbox{}\vspace{-.2\baselineskip}}]
+\newcommand{\EndItem}{\end{itemize}}
+
+% item list with text before
+\newcommand{\BegItemB}{\begin{itemize}[itemsep=0pt,before*={\mbox{}\vspace{-.7em}},
+after*={\mbox{}\vspace{-1.em}}]}
+\newcommand{\EndItemB}{\end{itemize}}
+
+% \newcommand{\BegItemB}{\begin{itemize}}
+% \newcommand{\EndItemB}{\end{itemize}}
+
+% % outer publication list
+% \newcommand{\BegItemC}{\begin{itemize}[after*={\mbox{}\vspace{-1.75\baselineskip}}]}
+% \newcommand{\EndItemC}{\end{itemize}}
+
+% inner list
+\newcommand{\BegItemD}{\begin{itemize}[before*={\mbox{}\vspace{-.2\baselineskip}},
+after*={\mbox{}\vspace{-1.5em}}]}
+\newcommand{\EndItemD}{\end{itemize}}
+
+% outer publication list
+\newcommand{\BegItemE}{\begin{itemize}[before*={\mbox{}\vspace{-.2\baselineskip}},
+after*={\mbox{}\vspace{0\baselineskip}}]}
+\newcommand{\EndItemE}{\end{itemize}}
+
+
+%\newcommand{\BegItem}{\begin{compactitem}\novspace}
+%\newcommand{\EndItem}{\end{compactitem}}
+\newlength{\PhotoColumnWidth}
+\addtolength{\PhotoColumnWidth}{.18\WidthB}
+%\addtolength{\PhotoColumnWidth}{1ex}

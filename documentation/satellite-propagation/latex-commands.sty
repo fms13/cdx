@@ -1,0 +1,371 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Editorials
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{color}
+\newcommand{\TODO}[1]{{[ \color{red}TODO: \color{black} #1 ]}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Abbreviations, Macros, Symbols, etc.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{bm} % for \bm bold face math symbols
+
+% References
+\newcommand{\Fig}[1]{Fig.~\ref{#1}} % to reference figures
+\newcommand{\Tab}[1]{Tab.~\ref{#1}} % to reference tables
+\newcommand{\eq}[1]{(\ref{#1})} % to reference equations
+\newcommand{\Sec}[1]{Sec.~\ref{#1}} % to reference sections
+\newcommand{\Subsec}[1]{Subsection~\ref{#1}} % to reference subsections
+
+% Math notations
+\newcommand{\bl}[1]{{\bm{#1}}} % bold face of math symbols, was \pmb{#1} before
+\newcommand{\bpm}{\begin{pmatrix}} % begin array
+\newcommand{\epm}{\end{pmatrix}} % end array
+
+% Functions, operators. Todo: re-write as math operators in ``math-operators.tex''
+\newcommand{\norm}[1]{\Arrowvert #1\Arrowvert} % norm
+\newcommand{\abs}[1]{\left\lvert #1\right\rvert} % absolute value
+\newcommand{\cross}{\bl{\times}} % vector cross product
+
+\newcommand{\ReSymbol}{\mathrm{Re}}
+\renewcommand{\Re}[1]{{\ReSymbol\left\{#1\right\}}} % real part
+\newcommand{\Eop}{{\mathbb{E}}} % expectation operator
+\newcommand{\E}[1]{{\Eop\left\{#1\right\}}} % expectation
+\newcommand{\Nop}{{\mathrm{N}}} % counting function operator
+\newcommand{\N}[1]{{\Nop\left\{#1\right\}}} % counting function
+\newcommand{\Iop}{{\mathbb{1}}} % indicator operator
+\newcommand{\I}[1]{{\Iop\left\{#1\right\}}} % indicator function
+\newcommand{\dop}{\,\mathrm{d}} % differential operator d
+
+\newcommand{\tr}[1]{\mathrm{tr}\left\{#1\right\}} % trace
+\newcommand{\tp}[1]{#1^{\mathrm{T}}} % transposed
+\newcommand{\he}[1]{#1^{\mathrm{H}}} % Hermitian
+\newcommand{\cov}{\mathrm{cov}} % covariance
+\newcommand{\UnitVector}[2]{\ensuremath{\bl{e}(#1,#2)}}
+
+% Fourier transform:
+\newcommand{\Fourier}[1]{\ensuremath{\mathcal{F}\left\{#1\right\}}} 
+% Fourier transform with a parameter:
+\newcommand{\FourierParam}[2]{\mathcal{F}_{#2}\left\{#1\right\}} 
+% invers Fourier transform with a parameter:
+\newcommand{\InvFourierParam}[2]{\mathcal{F}_{#2}^{-1}\left\{#1\right\}} 
+
+% angles for spherical coordinates
+\newcommand{\vt}{\theta} %{\beta}
+\newcommand{\vp}{\phi} %{\gamma}
+
+% Constants
+\newcommand{\fc}{{f_\mathrm{c}}} % carrier frequency
+\newcommand{\lc}{{\lambda_\mathrm{c}}} % carrier wave length
+\newcommand{\SpeedOfLight}{c_0}
+\newcommand{\Origin}{{\mathcal{O}}}
+
+% Identifiers
+\newcommand{\los}{{\mathrm{d}}} % to denote line-of-sight
+\newcommand{\scat}{{\mathrm{s}}} % to denote scattering components
+\newcommand{\MeasrSign}[1]{\check{#1}} % sign for measured quantities
+\newcommand{\NumSign}[1]{\hat{#1}} % sign for numerical quantities
+
+\newcommand{\gp}{{\bl{b}}} % general position 
+\newcommand{\pp}{{\bl{r}}} % point-process position 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Journal 01
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\FreqVec}{\bl{\bar{f}}} % frequency vector for notational convenience
+\newcommand{\CenOfGrav}{{\bl{\mu}_\gamma}} % Center of gravity
+
+\newcommand{\CanVol}{{\mathcal{V}}} % Canopy volume
+\newcommand{\CanSurf}{{S_\mathcal{V}}} % Canopy surface
+\newcommand{\CanCenter}{{\gp_\mathrm{c}}} % Canopy center
+\newcommand{\CanRadius}{\ensuremath{\zeta}} % Canopy radius
+
+\newcommand{\slo}{\pp} % scatterer location vector
+\newcommand{\tislo}{{\tilde{\slo}}} % scatterer vector from volume center
+\newcommand{\tisloc}{{\tilde{r}}} % one scatterer component vector from volume center
+\newcommand{\WeightSign}{{\alpha}}
+\newcommand{\cw}{\WeightSign(t,\slo)} % time-varying, scatterer location dependent component weight
+\newcommand{\tx}{\bl{T}} % transmitter
+\newcommand{\rx}{\bl{x}} % receiver
+\newcommand{\rxspeed}{\bl{v}} % receiver speed
+
+\newcommand{\TrajStraight}{\bl{x}_1} % straight trajectory
+\newcommand{\TrajReal}{\bl{x}_2} % real trajectory
+
+\newcommand{\DelayLOS}{\tau_\los} % delay of direct path
+\newcommand{\DistLOS}{d_\los} % distance of direct path
+\newcommand{\DelayScat}{\tau_\scat} % delay tx-scatterer-rx
+\newcommand{\DistScat}{d_\scat} % distance tx-scatterer-rx
+
+\newcommand{\di}{d_1} % d_1 = \norm{\tx-\slo}
+\newcommand{\dii}{d_2} % d_2 = \norm{\rx(t)-\slo}
+\newcommand{\DistRxCenter}{d_{\rx,\bl{\mu}}} % distance RX to canopy center
+\newcommand{\DistTxCenter}{d_{\tx,\bl{\mu}}} % distance TX to canopy center
+\newcommand{\eztn}{\UnitVector{\tx}{\CenOfGrav}} % was: e_{z_{T,0}}
+\newcommand{\exrc}{\UnitVector{\rx(t)}{\CenOfGrav}} % was: e_{z_{T,0}}
+\newcommand{\exrcp}[1]{\UnitVector{\rx(#1)}{\CenOfGrav}} % was: e_{z_{T,0}}
+\newcommand{\lu}{\norm{\bl{u}}} % length of vector u
+
+\newcommand{\httd}{{h_\los}} % h_d(t,tau) 
+\newcommand{\htts}{{h_\scat}} % h_s(t,tau) 
+\newcommand{\Htf}{{H}} % for H(t,f) 
+\newcommand{\Htfs}{{\Htf_\scat}} % H_s(t,f) 
+\newcommand{\Htfd}{{\Htf_\los}} % H_d(t,f) 
+
+\newcommand{\CorrFunc}{R} % correlation function, was: R_{H_s}
+\newcommand{\CorrFuncNum}{\NumSign{R}} % numerical correlation function
+\newcommand{\CorrFuncApprox}{\tilde{\CorrFunc}}
+
+\newcommand{\hmeasr}{{\MeasrSign{h}}} % measured h(t,\tau)
+\newcommand{\hdmeasr}{{\MeasrSign{h}_\los}} % measured h_d(t,\tau)
+\newcommand{\hsmeasr}{{\MeasrSign{h}_\scat}} % measured h_s(t,\tau)
+\newcommand{\Hmeasr}{{\MeasrSign{H}}} % measured H(t,f)
+\newcommand{\Hsmeasr}{{\MeasrSign{H}_\scat}} % measured H_s(t,f)
+
+\newcommand{\Snutau}{S} % S(\nu,\tau)
+\newcommand{\Ssnutau}{{S_\scat}} % S(\nu,\tau)
+\newcommand{\Smeasr}{\MeasrSign{S}} % measured S(\nu,\tau)
+\newcommand{\Ssmeasr}{\MeasrSign{S}_\scat} % measured S(\nu,\tau)
+
+\newcommand{\GaussStdDev}{{\eta}}
+\newcommand{\StdDevGeoVec}{{\bl{\Sigma}_\gamma}} % sigma for geometry
+\newcommand{\StdDevGeoSkalar}{{\sigma_\gamma}} % std dev for geometry, skalar
+\newcommand{\StdDevGeoSkalarPower}[1]{{\sigma^{#1}_\gamma}} % std dev for geometry, skalar
+
+\newcommand{\fCR}{{f_\mathrm{CR}}} % update rate
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Journal 02
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\CondPower}{Q} % conditional power
+\newcommand{\Intens}{\varrho} % intensity function
+\newcommand{\eApproxSum}{\bl{m}} % sum of approximate d_1 and d_2
+
+\newcommand{\TimeSmplInt}{T_t} % sampling interval in time 
+\newcommand{\DelaySmplInt}{T_\tau} % sampling interval in delay
+\newcommand{\FreqCR}{{f_\mathrm{CR}}} % CR update rate 
+
+\newcommand{\nofObj}{{M}} % nof objects 
+
+\newcommand{\trlo}{{\gp_\mathrm{t}}} % tree locations
+\newcommand{\trloP}[1]{{\gp_{\mathrm{t},#1}}} % tree locations with a parameter
+\newcommand{\trr}{{r_\mathrm{tr}}} % trunk radius
+\newcommand{\trh}{{h_\mathrm{tr}}} % trunk height
+\newcommand{\cera}{{r_a}} % ellip. canopy radius 1
+\newcommand{\cerb}{{r_b}} % ellip. canopy radius 1
+\newcommand{\ccr}{{r_c}} % conical canopy radius
+\newcommand{\cch}{{h_c}} % conical canopy height
+\newcommand{\folob}{{\slo_\mathrm{f}}} % forest location 1
+\newcommand{\foloe}{{\slo_\mathrm{f}}} % forest location 2
+\newcommand{\foa}{{\alpha_\mathrm{f}}} % forest angle
+
+\newcommand{\wed}{{\alpha_0}} % weight of direct path
+\newcommand{\Att}{{a}} % attenuation 
+\newcommand{\AttCoef}{{\eta}} % attenuation coefficient
+\newcommand{\atts}{{\eta}} % specific attenuation of object
+\newcommand{\PierceLength}{{d_\mathrm{p}}} % pierce length
+\newcommand{\PierceLengthP}[1]{{d_{\mathrm{p},#1}}} % pierce length with a parameter
+% \newcommand{\diff}{{\chi}} % total diffraction component
+\newcommand{\AntPatGain}{{g_\mathrm{a}}} % gain of antenna
+
+\newcommand{\diffk}[1]{{\chi_{#1}}} % pierce length
+
+\newcommand{\NoiseClipValue}{-50}
+\newcommand{\filt}{\mathrm{f}} % denotes filtered quantities
+\newcommand{\clip}{\mathrm{c}} % denotes quantities where samples have been clipped
+
+% reconstruction of trajectory
+% world coordinate system 
+\newcommand{\txw}{\bl{T}^\mathrm{w}} % transmitter in world coordinates
+\newcommand{\xecef}{x^\mathrm{w}}
+\newcommand{\yecef}{y^\mathrm{w}}
+\newcommand{\zecef}{z^\mathrm{w}}
+\newcommand{\recef}[1][]{\bl{r}^\mathrm{w}_{\mathrm{t}#1}}
+\newcommand{\ewxaxis}[1][]{\bl{e}_{x#1}^\mathrm{w}} % direction of x-axis, world (ecef) system.
+\newcommand{\ewyaxis}[1][]{\bl{e}_{y#1}^\mathrm{w}} % direction of y-axis, world system.
+\newcommand{\ewzaxis}[1][]{\bl{e}_{z#1}^\mathrm{w}} % direction of z-axis, world system.
+\newcommand{\ewxtmpi}{\bl{e}_{1}^\mathrm{w}} % tmp vec to calc e_?
+\newcommand{\ewxtmpii}{\bl{e}_{2}^\mathrm{w}} % tmp vec to calc e_?
+
+% local coordinate system
+\newcommand{\txl}{\bl{T}^\mathrm{l}} % transmitter
+\newcommand{\xlo}{x^\mathrm{l}}
+\newcommand{\ylo}{y^\mathrm{l}}
+\newcommand{\zlo}{z^\mathrm{l}}
+\newcommand{\rlo}[1][]{\bl{r}^\mathrm{l}_{\mathrm{t}#1}}
+\newcommand{\Ol}{\bl{O}^\mathrm{w}} % origin of local system in ecef coordinates
+\newcommand{\elxaxis}[1][]{\bl{e}_{x#1}^\mathrm{l}} % direction of x-axis, local system.
+\newcommand{\elyaxis}[1][]{\bl{e}_{y#1}^\mathrm{l}} % direction of y-axis, local system.
+\newcommand{\elzaxis}[1][]{\bl{e}_{z#1}^\mathrm{l}} % direction of z-axis, local system.
+
+% conversion matrix from world to local frame:
+\newcommand{\Minv}{\bl{\mathrm{M}}^{-1}}
+
+%% measurement processing
+\newcommand{\rcs}{\sigma} % radar/scattering cross section
+\newcommand{\rcsEst}{{\hat{\rcs}}}
+\newcommand{\EfieldScat}{E_\scat} % scattered E-field
+\newcommand{\EfieldInc}{E_\mathrm{i}} % incident E-field
+\newcommand{\EfieldScatAvg}{\overline{E}_\mathrm{s}} % incident E-field
+
+
+\newcommand{\rmin}{\slo_{\tau,\mathrm{min}}} % delay min
+\newcommand{\rmax}{\slo_{\tau,\mathrm{max}}} % delay max
+\newcommand{\dmin}{\tau_\mathrm{min}} % delay min
+\newcommand{\dmax}{\tau_\mathrm{max}} % delay max
+\newcommand{\dmaxplus}{\tau_\epsilon} % delay max
+\newcommand{\dlos}{\tau_\los} % delay los
+\newcommand{\numin}{\nu_\mathrm{min}} % Doppler min
+\newcommand{\numax}{\nu_\mathrm{max}} % Doppler max
+%\newcommand{\numaxplus}{\nu_\epsilon} % Doppler max
+\newcommand{\rnumin}{\slo_{\nu,\mathrm{min}}} % Doppler min
+\newcommand{\rnumax}{\slo_{\nu,\mathrm{max}}} % Doppler max
+\newcommand{\nulos}{\nu_\los} % Doppler los
+
+\newcommand{\GreatCircle}{C} % Great circle
+\newcommand{\GreatCirclePlane}{D}
+% normal vector of plane E_Volume:
+\newcommand{\NormVecE}{\bl{n}_\GreatCirclePlane}
+
+\newcommand{\DopplerGreatCircle}{F} % Great circle
+\newcommand{\DopplerGreatCirclePlane}{G}
+% normal vector of plane Doppler D:
+\newcommand{\NormVecD}{\bl{n}_\DopplerGreatCirclePlane}
+
+\newcommand{\ValidTimeMin}{{t_\mathrm{s,min}}} % time where extracted h_s becomes valid for
+\newcommand{\ValidTimeMax}{{t_\mathrm{s,max}}} % time until extracted h_s is valid
+
+% Energies
+\newcommand{\Engy}{\mathcal{E}}
+\newcommand{\EngyTotal}{\Engy_\mathrm{tot}}
+\newcommand{\EngyLOS}{\Engy_\los}
+\newcommand{\EngyScat}{\Engy_\mathrm{s}}
+\newcommand{\EngyScatEst}{\bar{\EngyScat}}
+\newcommand{\EngyLOSplusScat}{\Engy_{\los+\mathrm{s}}}
+
+% scenery generator
+\newcommand{\TreeBase}{\bl{b}_\mathrm{t}} % tree base point
+\newcommand{\ForwardDist}{d_\mathrm{f}} % forward distance
+\newcommand{\SidewardDist}{d_\mathrm{s}} % sideward distance
+\newcommand{\ForwardDistP}[1]{d_\mathrm{f #1}} % forward distance
+\newcommand{\SidewardDistP}[1]{d_\mathrm{s #1}} % sideward distance
+\newcommand{\DistRFP}[1]{\ensuremath{\ForwardDistP{r,#1}}} % distance right vertical
+\newcommand{\DistRSP}[1]{\ensuremath{\SidewardDistP{r,#1}}} % distance right vertical
+\newcommand{\DistOffR}{\ensuremath{\ForwardDistP{r}^{\mathrm{off}}}} % distance right vertical
+\newcommand{\DistLFP}[1]{\ensuremath{\ForwardDistP{l,#1}}} % distance right vertical
+\newcommand{\DistLSP}[1]{\ensuremath{\SidewardDistP{l,#1}}} % distance right vertical
+\newcommand{\DistOffL}{\ensuremath{\ForwardDistP{l}^{\mathrm{off}}}} % distance right vertical
+% improved. was:
+% \newcommand{\DistRV}{\ensuremath{p^{\mathrm{r,v}}}} % distance right vertical
+% \newcommand{\DistRH}{\ensuremath{q^{\mathrm{r,h}}}} % distance right vertical
+% \newcommand{\DistOffR}{\ensuremath{p^{\mathrm{r,off}}}} % distance right vertical
+% \newcommand{\DistLV}{\ensuremath{p^{\mathrm{l,v}}}} % distance right vertical
+% \newcommand{\DistLH}{\ensuremath{q^{\mathrm{l,h}}}} % distance right vertical
+% \newcommand{\DistOffL}{\ensuremath{p^{\mathrm{l,off}}}} % distance right vertical
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Journal 03:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\dc}{{\mathrm{d}}} % direct component
+\newcommand{\qc}{{\mathrm{q}}} % quadrature component
+% \newcommand{\st}{s_\mathrm{t}} % transmitted signal
+\newcommand{\sr}{s_\mathrm{r}} % received signal
+\newcommand{\Ad}{A_\dc} % Amplitude direct component
+\newcommand{\Aq}{A_\qc} % Amplitude quadr. component
+\newcommand{\cd}{c_\dc} % code direct component
+\newcommand{\cq}{c_\qc} % code quadr. component
+\newcommand{\dd}{d_\dc} % data direct component
+\newcommand{\dq}{d_\qc} % data quadr. component
+\newcommand{\nd}{n_\dc} % noise direct component
+\newcommand{\nq}{n_\qc} % noise quadr. component
+
+\newcommand{\adc}[1]{\mathrm{adc}\left(#1\right)}
+\newcommand{\ceil}{\mathrm{ceil}}
+\newcommand{\floor}[1]{\left\lfloor #1\right\rfloor}
+
+% names
+\newcommand{\vonhann}{{\textsc{Hann} }}
+
+\newcommand{\ca}{\mathrm{ca}} % Amplitude direct component
+\newcommand{\sca}{s_\ca} % Amplitude direct component
+\newcommand{\Aca}{A_\ca} % Amplitude direct component
+\newcommand{\Tca}{T_\ca} % C/A chip length
+\newcommand{\cca}{c_\ca} % code direct component
+\newcommand{\dca}{d_\ca} % data direct component
+\newcommand{\Trx}{T_\mathrm{rx}} % receiver temperature
+\newcommand{\kB}{k_\mathrm{B}} % Boltzmann's constant
+\newcommand{\CN}{\ensuremath{\nicefrac{C}{N_0}}} % C/N_0
+\newcommand{\CNtxt}{$C/N_0$} % C/N_0 within text
+\newcommand{\Src}{S_\mathrm{rc}} % S_rc
+
+\newcommand{\rsnr}{r_\mathrm{snr}} % r_snr
+\newcommand{\Beq}{B_\mathrm{eq}} % B_eq
+\newcommand{\Ti}{T_\mathrm{i}} % T_i integration time
+
+
+% backup journal 01: 
+% \newcommand{\bl}[1]{\pmb{#1}} % bold
+% \newcommand{\en}[1]{\Arrowvert #1\Arrowvert} % norm
+% \newcommand{\enabs}[1]{\left\lvert #1\right\rvert} % absolute valie
+% \newcommand{\bpm}{\begin{pmatrix}} % begin array
+% \newcommand{\epm}{\end{pmatrix}} % end array
+% \newcommand{\Eop}{{\mathrm{E}}} % expectation operator
+% \newcommand{\E}[1]{{\Eop\left\{#1\right\}}} % expectation
+\newcommand{\EE}[2]{{\Eop_{#1}\left\{#2\right\}}} % expectation
+% 
+% \newcommand{\dop}{\,\mathrm{d}} % differential operator d
+% \newcommand{\lo}{\bl{r}} % location vector
+% \newcommand{\slo}{\bl{r}} % scatterer location vector
+% \newcommand{\tislo}{{\tilde{\slo}}} % scatterer vector from volume center
+% \newcommand{\tisloc}{{\tilde{r}}} % one scatterer component vector from volume center
+% \newcommand{\cw}{\alpha(t,\slo_l)} % time-varying, scatterer location dependent component weight
+% \newcommand{\tx}{\bl{T}}
+% \newcommand{\rx}{\bl{x}}
+% \newcommand{\dc}{{\bl{d}_\mathrm{d}}} % direct component T--x(t)
+% 
+% \newcommand{\di}{d_1(\slo_l)} % d_1
+% \newcommand{\dii}[1]{d_2(#1, \slo_l)} % d_2
+% \newcommand{\dl}{d_l(t, \slo)} % d_l
+% \newcommand{\eztn}{\bl{e}_{\bl{T},0}} % z_{T,0}}
+% \newcommand{\dztn}{d_{\bl{T},0}} % d_zT,0 % z_{T,0}
+% \newcommand{\lu}{\norm{\bl{u}}} % length of vector u
+% 
+% \newcommand{\httd}{{h_\textrm{d}}}
+% \newcommand{\htts}{{h_\textrm{s}}}
+% \newcommand{\Htfs}{{H_\textrm{s}}}
+% \newcommand{\hmeasr}{{h_\textrm{measr}}}
+% 
+% % functions
+% \newcommand{\sinc}{\textrm{sinc}}
+% \newcommand{\tr}[1]{\textrm{tr}\left\{#1\right\}} % trace
+% \newcommand{\tp}[1]{#1^{\textrm{T}}} % transposed
+% \newcommand{\cov}{\textrm{cov}}
+% \newcommand{\vt}{\theta}%{\beta}
+% \newcommand{\vp}{\phi}%{\gamma}
+% 
+% % names
+% \newcommand{\vonhann}{{\textsc{Hann} }}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Macros for Conference Papers
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ION 2009
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\sigin}{s_{\textrm{i}}} % signal in
+\newcommand{\sigout}[1]{s_{\textrm{#1,o}}} % signal out
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% EUCAP 2010
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\p}[1]{\textrm{#1}} % point
+\newcommand{\drt}{d_{\p{RT}}}
+\newcommand{\dst}{d_{\p{ST}}}
+\newcommand{\drs}{d_{\p{RS}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PLANS 2010
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\te}[1]{\textrm{#1}}
