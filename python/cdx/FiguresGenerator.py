@@ -6,26 +6,6 @@
 #
 #   CDX Library
 #
-#   As part of
-#
-#   SNACS - The Satellite Navigation Radio Channel Simulator
-#
-#   Class to read continuous-delay CDX files.
-#
-#   Copyright (C) 2012-2013  F. M. Schubert
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
 import os
@@ -90,7 +70,7 @@ class FiguresGenerator:
         self.min_power_dB = -30
         self.max_power_dB = 5
 
-        types, delays, amplitudes, reference = self.cdx_file.get_cir(self.link_names[0], 0)
+        types, ids, delays, amplitudes, reference = self.cdx_file.get_cir(self.link_names[0], 0)
 
         partial_spread = (delays[0] - delays[-1]) / 10
         self.min_delay_s = delays[0] - partial_spread
@@ -131,7 +111,7 @@ class FiguresGenerator:
         print "type_names[0]:", type_names[0]
         print "type_names[1]:", type_names[1]
 
-        types, delays, amplitudes, reference_delay = self.cdx_file.get_cir(link_name, nof_cir)
+        types, ids, delays, amplitudes, reference_delay = self.cdx_file.get_cir(link_name, nof_cir)
 #         print delays, len(delays)
 #         print delays[0]
 #         for idx in np.arange(len(delays)):

@@ -1,5 +1,13 @@
 This archive provides the implementation of the Channel Data Exchange (CDX) library.
 
+Compilation
+===========
+
+To compile the library, run
+
+  autoreconf -i
+  ./configure CXXFLAGS=-I/usr/include/hdf5/serial LDFLAGS=-L/usr/lib/x86_64-linux-gnu/hdf5/serial
+
 The Debian packages devscripts and dh-autoreconf are needed to build this package.
 
 These commands generate a Debian package:

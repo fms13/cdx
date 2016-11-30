@@ -6,26 +6,6 @@
 #
 #   CDX Library
 #
-#   As part of
-#
-#   SNACS - The Satellite Navigation Radio Channel Simulator
-#
-#   Class to read continuous-delay CDX files.
-#
-#   Copyright (C) 2012-2013  F. M. Schubert
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
 import h5py
@@ -33,7 +13,8 @@ import warnings
 
 warnings.filterwarnings('error')
 
-cir_dtype = np.dtype([('delays', np.float64), ('real', np.float64), ('imag', np.float64)])
+cir_dtype = np.dtype([('type', np.uint16), ('id', np.uint64), ('delay', np.float64),
+                      ('real', np.float64), ('imag', np.float64)])
 
 ##
 # \brief Class that provides functions to read from a continuous-delay CDX file
@@ -93,14 +74,15 @@ class ReadContinuousDelayFile:
     def get_cir(self, link_name, n):
         cir_raw = self.f['/links/{}/cirs/{}'.format(link_name, n)]
         types = cir_raw['type']
-        delays = cir_raw['delays']
+        ids = cir_raw['id']
+        delays = cir_raw['delay']
         amplitudes = cir_raw['real'] + 1j * cir_raw['imag']
 #         cir = np.zeros((1, 1), dtype=cir_dtype)
 #         cir[0].delays = delays
 
         reference = self.reference_delays[link_name][n]
 
-        return types, delays, amplitudes, reference
+        return types, ids, delays, amplitudes, reference
 
     def get_cir_start_end_numbers_from_times(self, start_time, length):
         cir_start = int(start_time * self.cir_rate_Hz)
@@ -136,7 +118,7 @@ class ReadContinuousDelayFile:
         for cir_n in np.arange(nof_cirs):
             cir = g['cirs/{0}'.format(cir_start + cir_n)]
 
-            delays = cir['delays']
+            delays = cir['delay']
             if len(delays) > 1: # there must be at least two components to compute the difference:
                 comp_min_delay = min(delays)
                 comp_max_delay = max(delays)
@@ -220,7 +202,7 @@ class ReadContinuousDelayFile:
 
         # for all cirs
         for cir_n in np.arange(len(reference_delays)):
-            types, delays, amplitudes, reference = self.get_cir(link_name, cir_n)
+            types, ids, delays, amplitudes, reference = self.get_cir(link_name, cir_n)
 
             #delays = delays - reference_delays[cir_n]
             try:
