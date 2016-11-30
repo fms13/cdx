@@ -43,11 +43,11 @@ WriteContinuousDelayFile::WriteContinuousDelayFile(std::string _file_name,
 	}
 
 	cp_cmplx = new H5::CompType(sizeof(hdf5_impulse_t));
-	cp_cmplx->insertMember("types", HOFFSET(hdf5_impulse_t, type),
+	cp_cmplx->insertMember("type", HOFFSET(hdf5_impulse_t, type),
 			H5::PredType::NATIVE_INT16);
-	cp_cmplx->insertMember("ids", HOFFSET(hdf5_impulse_t, id),
+	cp_cmplx->insertMember("id", HOFFSET(hdf5_impulse_t, id),
 			H5::PredType::NATIVE_UINT64);
-	cp_cmplx->insertMember("delays", HOFFSET(hdf5_impulse_t, delay),
+	cp_cmplx->insertMember("delay", HOFFSET(hdf5_impulse_t, delay),
 			H5::PredType::NATIVE_DOUBLE);
 	cp_cmplx->insertMember("real", HOFFSET(hdf5_impulse_t, real),
 			H5::PredType::NATIVE_DOUBLE);
