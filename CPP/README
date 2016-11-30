@@ -12,12 +12,6 @@ The Debian packages devscripts and dh-autoreconf are needed to build this packag
 
 These commands generate a Debian package:
 
- mkdir -p ~/packaging/libcdx && \
- cp -r ~/workspace/cdx/trunk/CPP ~/packaging/libcdx/libcdx_1.0 && \
- cd ~/packaging/libcdx && \
- tar cfz libcdx_1.0.orig.tar.gz libcdx_1.0 && \
- cd libcdx_1.0 && \
- DEB_BUILD_OPTIONS="parallel=4" nice debuild -us -uc
 
 Installation on Mac OS X
 ========================

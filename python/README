@@ -1,16 +1,7 @@
-The Debian package for the Python CDX library can be generated from this directory tree with these commands:
-
-  export PY_CDX_VERSION=$(dpkg-parsechangelog --show-field Version | sed  's/-.*//'); mkdir -p ~/packaging/python-cdx && \
-  cp -r ../python ~/packaging/python-cdx/python-cdx_$PY_CDX_VERSION && \
-  cd ~/packaging/python-cdx && \
-  tar czf python-cdx_$PY_CDX_VERSION.orig.tar.gz python-cdx_$PY_CDX_VERSION && \
-  cd python-cdx_$PY_CDX_VERSION && \
-  debuild -us -uc
-
 Updating the Debian Package
 ===========================
 
-To create a new changelog entry, run in snacs/cdx_format/python/debian
+To create a new changelog entry, run in cdx/trunk/python/debian
 
   export PY_CDX_VERSION=1.1; python/debian$ dch --check-dirname-level 0 -v $PY_CDX_VERSION-1
 
