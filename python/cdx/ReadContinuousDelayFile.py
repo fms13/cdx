@@ -67,9 +67,18 @@ class ReadContinuousDelayFile:
         return self.link_names
 
     def get_type_names(self, link_name):
-        type_names = self.f['/links/{}/component_types'.format(link_name)]
+        type_names_dataset = self.f['/links/{}/component_types'.format(link_name)]
 
-        return type_names
+        # we transform the dataset to a dictionary now:
+        # type_name[id] -> name
+        types_to_names = {}
+        for dataset in type_names_dataset:
+            print "dataset['id']:", dataset['id'], ", dataset['name']:", dataset['name']
+            id = int(dataset['id'])
+            name = str(dataset['name'])
+            types_to_names[id] = name
+
+        return types_to_names
 
     def get_cir(self, link_name, n):
         cir_raw = self.f['/links/{}/cirs/{}'.format(link_name, n)]
