@@ -89,9 +89,10 @@ void WriteFile::write(string path, double *data, size_t num) {
 void WriteFile::write(string path, const vector<double> &data) {
 	const size_t RANK = 2;
 
-	hsize_t dimsf3[RANK]; // dataset dimensions
-	dimsf3[0] = data.size();
-	dimsf3[1] = 1;
+	// dataset dimensions: write vector as row vector:
+	hsize_t dimsf3[RANK];
+	dimsf3[0] = 1;
+	dimsf3[1] = data.size();
 	H5::DataSpace dspace3(RANK, dimsf3);
 
 	H5::DataSet dset3 = h5file.createDataSet(path.c_str(),
