@@ -101,3 +101,6 @@ draw_receiver(1, xp, xp2, zt, "to $\tx(t_0)$, $\tx(t_1)$", true);
 
 currentpicture.fit();
 shipout(format="pdf");
+// shipout(format="png");
+// converted to PNG with
+// convert -density 300 LOS-distance-change-due-to-receiver-movement_01.pdf -size 800x -flatten LOS-distance-change-due-to-receiver-movement_01.png
