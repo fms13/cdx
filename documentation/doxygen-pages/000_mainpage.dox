@@ -25,7 +25,7 @@ In order to fulfill Nyquist criterion this would required that the channel respo
 
 The following graph illustrates the computation of the range change due to the receiver movement:
 
-\image html architecture/PIPE-architecture.png "Realization of the three operational mode of the PIPE GNSS Software Receiver through the use of Correlation Values Providers (CVPs)."
+\image html satellite-propagation/LOS-distance-change-due-to-receiver-movement_01.png "Delay change due to receiver movement."
 
 
 */

@@ -1,0 +1,5 @@
+<map id="CDX::ReadFile" name="CDX::ReadFile">
+<area shape="rect" id="node3" href="$classCDX_1_1ReadContinuousDelayFile.html" title="Reads CIRs from CDX file. " alt="" coords="5,155,216,181"/>
+<area shape="rect" id="node4" href="$classCDX_1_1ReadDiscreteDelayFile.html" title="Reads CIRs from CIRs from discrete&#45;delay HDF5 file. " alt="" coords="240,155,435,181"/>
+<area shape="rect" id="node2" href="$classCDX_1_1File.html" title="Base class for the processing of Channel Data Exchange (CDX) files. " alt="" coords="184,5,264,32"/>
+</map>
