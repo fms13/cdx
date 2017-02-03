@@ -1,0 +1,42 @@
+/*!
+
+\page cdx_file_format The Channel Data Exchange (CDX) File Format
+
+\section hdf5_cdx_structure File Structure
+
+All data is stored in groups within an HDF5 file. Groups resemble (sub-)directories present in file systems. The format is as follows:
+
+Common Datasets
+
+Group \c /parameters/:
+
+HDF5 Entity                                    | Type         | Description
+-----------                                    | ----         | ----
+Group \c /parameters/                          | Group        | Contains parameters of the CDX file
+\c /parameters/creation_time                   | Float        | Creation time of the channel data
+\c /parameters/delay_type                      | String       | Either 'continuous-delay' or 'discrete-delay'
+\c /parameters/c0_m_s                          | Float        | The speed of light in m/s
+\c /parameters/cir_rate_Hz                     | Float        | The rate at which the channel impulse responses are saved in Hz
+Group \c /parameters/channel/ (optional)       | Group        | For all channel model specific parameters, e.g. scenery definitions
+<tt>/links/<link_name>/reference_ranges</tt>   | Matrix       | Reference ranges
+
+\section hdf5_cdx_structure_discrete_delay Discrete-Delay CDX files
+
+Group \c /parameters/:
+
+HDF5 Entity                                    | Type         | Description
+-----------                                    | ----         | ----
+\c /parameters/number_of_delay_samples         | Integer      | This parameter defines the (constant) number of delay samples
+
+Group \c /links/:
+
+HDF5 Entity                                    | Type         | Description
+-----------                                    | ----         | ----
+<tt>/links/<link_name></tt>                    | Group        | Contains channel response for \c <link_name1>
+<tt>/link0/<link_name>/cir_real</tt>           | Matrix       | Real part of the channel response
+<tt>/link0/<link_name>/cir_imag</tt>           | Matrix       | Imaginary part of the channel response
+
+\section hdf5_cdx_structure_continuous_delay Continuous-Delay CDX files
+
+*/
+
