@@ -17,6 +17,7 @@ classdef CDXWriteFile < handle
     properties (SetAccess = private, GetAccess = private)
         filename
         file_id
+        link_id
         nof_links
         cir_group_ids = H5ML.id;
         link_group_ids = H5ML.id;
@@ -28,10 +29,12 @@ classdef CDXWriteFile < handle
         cir_rate
         c0
         transmitter_frequency
+        frame_rate;
         compression_enabled = 0;
         delay_type;
         delay_smpl_freq;
         nof_delay_samples;
+        links_name;
     end % properties
     
     methods
@@ -92,35 +95,48 @@ classdef CDXWriteFile < handle
             
             hdf5write(obj.filename, '/parameters/creation_time', creation_time);
             hdf5write(obj.filename, '/parameters/number_of_links' , obj.nof_links, 'WriteMode', 'append');
-            hdf5write(obj.filename, '/parameters/c0' , obj.c0, 'WriteMode', 'append');
-            hdf5write(obj.filename, '/parameters/cir_rate' , obj.cir_rate, 'WriteMode', 'append');
+            hdf5write(obj.filename, '/parameters/c0_m_s' , obj.c0, 'WriteMode', 'append');
+            hdf5write(obj.filename, '/parameters/cir_rate_Hz' , obj.cir_rate, 'WriteMode', 'append');
             hdf5write(obj.filename, '/parameters/number_of_delay_samples' , obj.nof_delay_samples, 'WriteMode', 'append');
             hdf5write(obj.filename, '/parameters/delay_smpl_freq' , obj.delay_smpl_freq, 'WriteMode', 'append');
-            hdf5write(obj.filename, '/parameters/transmitter_frequency' , obj.transmitter_frequency, 'WriteMode', 'append');
+            hdf5write(obj.filename, '/parameters/transmitter_frequency_Hz' , obj.transmitter_frequency, 'WriteMode', 'append');
             
             % open file for HDF5 low level functions:
             obj.file_id = H5F.open (obj.filename, 'H5F_ACC_RDWR', 'H5P_DEFAULT');
-
+           
+            obj.frame_rate = parameters.frame_rate;
+            
+            %if visualization is enabled
+            if(obj.frame_rate  > 10^(-10))
+                hdf5write(obj.filename, '/visualization/frame_rate_Hz' , obj.frame_rate, 'WriteMode', 'append');
+                vizualization_id = H5G.open(obj.file_id, '/visualization') ;
+            end
+                        
             % write delay_type string:
             param_group_id = H5G.open(obj.file_id, '/parameters') ;
             write_string(obj, param_group_id, 'delay_type', obj.delay_type);
             H5G.close(param_group_id);
-            
+            fprintf('parameters.nof_links %i \n', parameters.nof_links);
+            obj.link_id = H5G.create(obj.file_id, '/links', 16) ;
+            obj.links_name = parameters.links_name;
             % create groups for the links:
             for i = 0:parameters.nof_links-1
                 % create group for link
-                obj.link_group_ids(i+1) = H5G.create(obj.file_id, sprintf('/link%i', i), 16) ;
-
+                obj.link_group_ids(i+1) = H5G.create(obj.file_id, obj.links_name{i+1} , 16) ;
+                 %if visualization is enabled
+                if(obj.frame_rate  > 10^(-10))
+                    vizualization_link_id(i+1) = H5G.create(obj.file_id, sprintf('/visualization/link%i', i), 16) ;
+                end
                 % create group for cirs, only for continuous-delay:
                 if strcmp(parameters.delay_type, 'continuous-delay')
-                    obj.cir_group_ids(i+1) = H5G.create(obj.file_id, sprintf('/link%i/cirs', i), 16) ;
+                    obj.cir_group_ids(i+1) = H5G.create(obj.file_id, [obj.links_name{i+1},'/cirs'], 16) ;
                     
                     % Create dataspace with unlimited dimensions for reference_delays
-                    dims = [ 1 0 ];
-                    chunk = [ 1 1 ];
+                    dims = 0;
+                    chunk = 1;
                     H5S_UNLIMITED = H5ML.get_constant_value('H5S_UNLIMITED');
-                    maxdims = [H5S_UNLIMITED H5S_UNLIMITED];
-                    space = H5S.create_simple(2, fliplr(dims), fliplr(maxdims));
+                    maxdims = H5S_UNLIMITED;
+                    space = H5S.create_simple(1, fliplr(dims), fliplr(maxdims));
                     
                     % Create the dataset creation property list, and set the chunk
                     % size.
@@ -133,22 +149,37 @@ classdef CDXWriteFile < handle
                     % Write the data to the dataset.
                     wdata = [];
                     H5D.write(dset,'H5T_NATIVE_DOUBLE','H5S_ALL','H5S_ALL','H5P_DEFAULT', wdata);
+                    
+                    wdata1 = {'Geometrical LOS'; 'Diffracted LOS'; 'Multipath Component'};
+                    
+                    % Add the component_types
+                    hdf5write(obj.filename, [obj.links_name{i+1}, '/component_types'], wdata1, 'WriteMode', 'append');
                 end
+            end
+            
+            %if visualization is enabled
+            if(obj.frame_rate  > 10^(-10))
+                for k = 1:obj.nof_links
+                    H5G.close(vizualization_link_id(k));
+                end
+                H5G.close(vizualization_id);
             end
             
             obj.nof_cirs = 0;
 
             % define memory type and filetype for continuous delay data
             % type:
-            obj.memtype = H5T.create('H5T_COMPOUND', 3 * 8);
-            H5T.insert(obj.memtype, 'delays', 0, 'H5T_NATIVE_DOUBLE');
-            H5T.insert(obj.memtype, 'real', 8,'H5T_NATIVE_DOUBLE');
-            H5T.insert(obj.memtype, 'imag', 8 + 8, 'H5T_NATIVE_DOUBLE');
+            obj.memtype = H5T.create('H5T_COMPOUND',  4 * 8);
+            H5T.insert(obj.memtype, 'type', 0, 'H5T_NATIVE_DOUBLE');
+            H5T.insert(obj.memtype, 'delays', 8, 'H5T_NATIVE_DOUBLE');
+            H5T.insert(obj.memtype, 'real', 8 + 8,'H5T_NATIVE_DOUBLE');
+            H5T.insert(obj.memtype, 'imag', 16 + 8, 'H5T_NATIVE_DOUBLE');
 
-            obj.filetype = H5T.create('H5T_COMPOUND', 8 + 8 + 8);
-            H5T.insert(obj.filetype, 'delays', 0, 'H5T_IEEE_F64BE');
-            H5T.insert(obj.filetype, 'real', 8 ,'H5T_IEEE_F64BE');
-            H5T.insert(obj.filetype, 'imag', 8 + 8,'H5T_IEEE_F64BE');
+            obj.filetype = H5T.create('H5T_COMPOUND', 8 + 8 + 8 + 8);
+            H5T.insert(obj.filetype, 'type', 0, 'H5T_NATIVE_DOUBLE');
+            H5T.insert(obj.filetype, 'delays', 8, 'H5T_IEEE_F64BE');
+            H5T.insert(obj.filetype, 'real', 8 + 8,'H5T_IEEE_F64BE');
+            H5T.insert(obj.filetype, 'imag', 16 + 8,'H5T_IEEE_F64BE');
 
             % define memory type and filetype for discrete delay data
             % type:
@@ -181,11 +212,11 @@ classdef CDXWriteFile < handle
             r = obj.delay_type;
         end
         
-        function append_cir(obj, cir)
+        function append_cir(obj,cir)
             if strcmp(obj.delay_type, 'continuous-delay')
-                append_continuous_delay_cir(obj, cir);
+                append_continuous_delay_cir(obj,cir);
             elseif strcmp(obj.delay_type, 'discrete-delay')
-                append_discrete_delay_cir(obj, cir);
+                append_discrete_delay_cir(obj,cir);
             else
                 error('unknown CDX data type');
             end
@@ -202,7 +233,8 @@ classdef CDXWriteFile < handle
                 end
                 H5G.close(obj.link_group_ids(k));
             end
-            H5F.close (obj.file_id);
+            H5G.close(obj.link_id);
+            H5F.close(obj.file_id);
         end
     end  % methods
 end % class

@@ -1,28 +1,24 @@
 This archive provides the implementation of the Channel Data Exchange (CDX) library.
 
-Compilation
-===========
-
-To compile the library, run
-
-  autoreconf -i
-  ./configure CXXFLAGS=-I/usr/include/hdf5/serial LDFLAGS=-L/usr/lib/x86_64-linux-gnu/hdf5/serial
-
-The Debian packages devscripts and dh-autoreconf are needed to build this package.
-
 These commands generate a Debian package:
 
-
+ mkdir -p ~/packaging/libcdx && \
+ cp -r ~/workspace/snacs/cdx_format/CPP ~/packaging/libcdx/libcdx_1.0 && \
+ cd ~/packaging/libcdx && \
+ tar cfz libcdx_1.0.orig.tar.gz libcdx_1.0 && \
+ cd libcdx_1.0 && \
+ DEB_BUILD_OPTIONS="parallel=16" nice debuild -us -uc
+ 
 Installation on Mac OS X
 ========================
-
+ 
 In snacs/cdx_format/CPP run
-
-  ./configure CXXFLAGS=-I/opt/local/include LDFLAGS=-L/opt/local/lib --prefix=/opt/local
+ 
+  ./configure CXXFLAGS=-I/opt/local/include LDFLAGS=-L/opt/local/lib --prefix=/opt/local 
   make
   sudo make install
 
 In snacs/cdx_format/python run
   sudo /opt/local/bin/python2 setup.py install
-
+  
 In snacs/cdx_format/tools run

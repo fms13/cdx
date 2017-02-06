@@ -6,13 +6,32 @@
 #
 #   CDX Library
 #
+#   As part of
+#
+#   SNACS - The Satellite Navigation Radio Channel Simulator
+#
+#   Class to read discrete-delay CDX files.
+#
+#   Copyright (C) 2012-2013  F. M. Schubert
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
 import h5py
 import os
 
-cir_dtype = np.dtype([('type', np.uint16), ('id', np.uint64), ('delay', np.float64),
-                      ('real', np.float64), ('imag', np.float64)])
+cir_dtype = np.dtype([('delays', np.float64), ('real', np.float64), ('imag', np.float64)])
 
 class ReadDiscreteDelayFile:
     """Read a discrete-delay CDX file"""

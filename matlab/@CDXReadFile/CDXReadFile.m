@@ -7,6 +7,8 @@
 % Author: F. Schubert
 % Date: 08-09-2010
 %
+% Updated: Ioana Gulie
+% Date: 21-07-2016
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 classdef CDXReadFile < handle
@@ -28,6 +30,8 @@ classdef CDXReadFile < handle
         delay_type;
         delay_smpl_freq;
         nof_delay_samples;
+        frame_rate_Hz;
+        links_name;
     end % properties
     
     methods
@@ -37,20 +41,40 @@ classdef CDXReadFile < handle
             obj.filename = filename;
             fprintf('open file %s for reading\n', obj.filename);
             
-            obj.cir_rate = hdf5read(obj.filename, '/parameters/cir_rate');
-            obj.c0 = hdf5read(obj.filename, '/parameters/c0');
-            obj.transmitter_frequency = hdf5read(obj.filename, '/parameters/transmitter_frequency');
+            obj.cir_rate = hdf5read(obj.filename, '/parameters/cir_rate_Hz');
+            obj.c0 = hdf5read(obj.filename, '/parameters/c0_m_s');
+            obj.transmitter_frequency = hdf5read(obj.filename, '/parameters/transmitter_frequency_Hz');
+            
+            %initialize the frame rate
+            obj.frame_rate_Hz=0;
             
             % get number of links
             obj.nof_links = 0;
             % nof groups in file:
-            info_struct = hdf5info(obj.filename); 
-            groups = info_struct .GroupHierarchy.Groups;
-            nof_groups = size(groups, 2);
+            info_struct = h5info(obj.filename); 
+            groups = info_struct.Groups;
+            nof_groups = size(groups, 1);
+            fprintf('nof_groups is  %i \n', nof_groups);
             for k = 1:nof_groups
                 group_name = groups(k).Name;
-                if group_name(1:5) == '/link'
-                    obj.nof_links = obj.nof_links + 1;
+                if strcmp(group_name(1:6), '/links') 
+                    info_links = h5info(obj.filename, group_name);
+                    links = info_links.Groups;
+                    % nof subgroups in the group /links:
+                    nof_links = size(links, 1);
+                    obj.nof_links = obj.nof_links + nof_links;
+                    % get the names of the links
+                    if obj.nof_links >= 1
+                        obj.links_name= {links(1).Name};
+                        if obj.nof_links > 1
+                            for h = 2:nof_links
+                                obj.links_name = [obj.links_name, links(h).Name];
+                            end
+                        end
+                    end
+                end
+                if strcmp(group_name(1:6), '/visua') 
+                    obj.frame_rate_Hz=hdf5read(obj.filename, '/visualization/frame_rate_Hz');
                 end
             end
             assert(obj.nof_links > 0, 'number_of_links must be greater then 0!');
@@ -67,6 +91,7 @@ classdef CDXReadFile < handle
             if strcmp(obj.delay_type, 'continuous-delay')
                 fprintf('data type is %s\n', obj.delay_type);
             elseif strcmp(obj.delay_type, 'discrete-delay')
+                %TODO This loop needs to be updated
                 obj.delay_smpl_freq = hdf5read(obj.filename, '/parameters/delay_smpl_freq');
                 
                 % read number of delay samples. TODO: check that this is
@@ -81,11 +106,13 @@ classdef CDXReadFile < handle
             
             % open all groups:
             nof_cirs_per_link = zeros(obj.nof_links, 1);
+          %  test = H5G.get_info(obj.file_id, '/link')
+           % print test
             for k = 1:obj.nof_links
-                obj.link_group_ids(k) = H5G.open(obj.file_id, sprintf('/link%i', k-1));
+                obj.link_group_ids(k) = H5G.open(obj.file_id, obj.links_name{k}); % TODO fix the name
                 % only for continuous-delay:
                 if strcmp(obj.delay_type, 'continuous-delay')
-                    obj.cir_group_ids(k) = H5G.open(obj.file_id, sprintf('/link%i/cirs', k-1));
+                    obj.cir_group_ids(k) = H5G.open(obj.file_id, [obj.links_name{k}, '/cirs']);
                     nof_cirs_per_link(k) = H5G.get_num_objs(obj.cir_group_ids(k));
                 else
                     % discrete delay:
@@ -113,10 +140,11 @@ classdef CDXReadFile < handle
             
             % define memory type and filetype for continuous delay data
             % type:
-            obj.memtype = H5T.create ('H5T_COMPOUND', 3 * 8);
-            H5T.insert (obj.memtype, 'delays', 0, 'H5T_NATIVE_DOUBLE');
-            H5T.insert (obj.memtype, 'real', 8,'H5T_NATIVE_DOUBLE');
-            H5T.insert (obj.memtype, 'imag', 8 + 8, 'H5T_NATIVE_DOUBLE');
+            obj.memtype = H5T.create ('H5T_COMPOUND', 4 * 8);
+            H5T.insert (obj.memtype, 'type', 0, 'H5T_NATIVE_DOUBLE');
+            H5T.insert (obj.memtype, 'delays', 8, 'H5T_NATIVE_DOUBLE');
+            H5T.insert (obj.memtype, 'real', 8 + 8,'H5T_NATIVE_DOUBLE');
+            H5T.insert (obj.memtype, 'imag', 16 + 8, 'H5T_NATIVE_DOUBLE');
             
             % define memory type and filetype for discrete delay data
             % type:
@@ -135,6 +163,10 @@ classdef CDXReadFile < handle
 
         function r = get_transmitter_frequency(obj)
             r = obj.transmitter_frequency;
+        end
+        
+        function r = get_frame_rate(obj)
+            r = obj.frame_rate_Hz;
         end
 
         function r = get_number_of_links(obj)
@@ -155,6 +187,10 @@ classdef CDXReadFile < handle
         
         function r = get_delay_smpl_freq(obj)
             r = obj.delay_smpl_freq;
+        end
+        
+        function r = get_links_name(obj)
+            r = obj.links_name;
         end
                 
         function cir = get_cir(obj, link_num, cir_num)

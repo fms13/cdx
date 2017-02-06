@@ -7,6 +7,21 @@
  * \brief This file contains the implementation of a tool which converts continuous-
  * delay CDX files to discrete-delay CDX files.
  *
+ * \copyright Copyright (C) 2011-2015 Frank M. Schubert
+ * This project is released under the GNU Public License.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __APPLE__
@@ -59,7 +74,7 @@ int main(int argc, char **argv) {
 	cout
 			<< "\n==== Convert continuous-delay to discrete-delay CDX file ====\n\n";
 
-	cout << "Copyright (C) 2011-2016  Frank M. Schubert\n"
+	cout << "Copyright (C) 2011-2015  Frank M. Schubert\n"
 			<< "This program comes with ABSOLUTELY NO WARRANTY.\n"
 			<< "This is free software, and you are welcome to redistribute it\n"
 			<< "under certain conditions. See the licenses/gpl-3.0.txt file for more information.\n";
@@ -78,9 +93,7 @@ int main(int argc, char **argv) {
 			po::value<double>(), "delay to add after maximum delay")(
 			"enable-filtering,e", po::bool_switch(), "enable filtering")(
 			"subtract-reference-delay,r", po::bool_switch(),
-			"subtract the reference for each CIR")("type,t",
-			po::value<unsigned>(),
-			"only process components with types equal to this number.");
+			"subtract the reference for each CIR");
 
 	// parse command line options:
 	po::variables_map vm;
@@ -105,13 +118,6 @@ int main(int argc, char **argv) {
 	const bool subtract_ref_delay_from_components =
 			vm["subtract-reference-delay"].as<bool>();
 
-	const bool filter_by_types = vm.count("type") == 0 ? false : true;
-	unsigned type_to_process = 0;
-	if (filter_by_types == true) {
-		cout << "info: filtering by types, only components with type equal to " << type_to_process << "will be processed.\n";
-		type_to_process = vm["type"].as<unsigned>();
-	}
-
 	cout << "info: open input file: " << input_file << "...\n";
 
 	CDX::ReadContinuousDelayFile cdx_in(input_file);
@@ -128,15 +134,13 @@ int main(int argc, char **argv) {
 	const unsigned int nof_cirs = cdx_in.get_nof_cirs();
 	cout << "info: number of CIRs in file: " << nof_cirs << "\n";
 
-	const double transmitter_frequency_Hz =
-			cdx_in.get_transmitter_frequency_Hz();
-	cout << "info: transmitter_frequency: " << transmitter_frequency_Hz
-			<< " Hz\n";
+	const double transmitter_frequency_Hz = cdx_in.get_transmitter_frequency_Hz();
+	cout << "info: transmitter_frequency: " << transmitter_frequency_Hz << " Hz\n";
 
 	cout << "info: opening output_file: " << output_file << "...\n";
 	CDX::WriteDiscreteDelayFile cdx_out = CDX::WriteDiscreteDelayFile(
-			output_file, param_c0_m_s, cir_rate_Hz, transmitter_frequency_Hz,
-			link_names, smpl_freq);
+			output_file, param_c0_m_s, cir_rate_Hz, transmitter_frequency_Hz, link_names,
+			smpl_freq);
 
 	for (size_t link = 0; link < link_names.size(); link++) {
 		cout << "process: reading CIRs of link " << link_names.at(link)
@@ -144,7 +148,7 @@ int main(int argc, char **argv) {
 		cout.flush();
 
 		// read in whole input file
-		vector < CDX::cir_t > cirs(nof_cirs);
+		vector<CDX::cir_t> cirs(nof_cirs);
 		vector<double> reference_delays(nof_cirs);
 
 		// find minimum and maximum delay in file:
@@ -206,10 +210,8 @@ int main(int argc, char **argv) {
 		const double interpolation_bandwidth = smpl_freq / 2.0;
 		const double Om = 2.0 * M_PI * (interpolation_bandwidth);
 
-		const arma::cx_rowvec window =
-				fftshift(
-						arma::conv_to < arma::cx_vec
-								> ::from(hamming(nof_coeffs))).st();
+		const arma::cx_rowvec window = fftshift(
+				arma::conv_to<arma::cx_vec>::from(hamming(nof_coeffs))).st();
 
 		if (window.size() != nof_coeffs)
 			throw std::runtime_error("window.size() != nof_coeffs");
@@ -217,13 +219,11 @@ int main(int argc, char **argv) {
 		size_t k, c;
 		size_t n;
 #pragma omp parallel for private (k, c, n)
-		// for all CIRs
-		for (k = 0; k < nof_cirs; k++) {
-			for (c = 0; c < cirs.at(k).components.size(); c++) { // for all components
-				if (filter_by_types == true and type_to_process != cirs.at(k).components.at(c).type)
-					continue;
+		for (k = 0; k < nof_cirs; k++) { // for all CIRs
 
+			for (c = 0; c < cirs.at(k).components.size(); c++) { // for all components
 				for (n = 0; n < nof_coeffs; n++) { // for all coefficients
+
 					const double fac = Om
 							* (static_cast<double>(n) / smpl_freq
 									- (cirs.at(k).components.at(c).delay
@@ -272,8 +272,8 @@ int main(int argc, char **argv) {
 		for (size_t n = 0; n < nof_cirs; n++) { // for all CIRs
 
 			// convert armadillo vec to stdlib vec:
-			vector < complex<double> > std_cir = arma::conv_to
-					< vector<complex<double> > > ::from(interp_cirs.row(n));
+			vector<complex<double> > std_cir = arma::conv_to<
+					vector<complex<double> > >::from(interp_cirs.row(n));
 
 			cdx_out.append_cir_snapshot(link_names.at(link), std_cir,
 					reference_delays.at(n) + delay_before_min);

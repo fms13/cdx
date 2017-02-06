@@ -6,17 +6,33 @@
 #
 #   CDX Library
 #
+#   As part of
+#
+#   SNACS - The Satellite Navigation Radio Channel Simulator
+#
+#   Example to write a simple continuous-delay CDX file.
+#
+#   Copyright (C) 2012-2016  F. M. Schubert
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # The example can be run with:
 #   python ./write-cdx-file.py
 #   cdx-convert-continuous-to-discrete -e -b 0.1e-6 -a 0.1e-6 -s 1000e6 -i example-01.cdx -o example-01.cdd
 #   cdx-display -i example-01.cdx
 #
-# If you would like to run this script with a CDX library version in your home directory, set e.g.
-#
-#   PYTHONPATH=~/workspace/cdx/python
-#
-# before calls to this script.
+# Set e.g. PYTHONPATH=~/workspace/snacs/cdx_format/python before call to python scripts
 
 import matplotlib.pyplot as plt
 import cmath
@@ -102,8 +118,7 @@ for k, time in enumerate(times_s):
 
         # write LOS signal:
         cirs[link_name][0]['type'] = 0 # LOS type as set above
-        cirs[link_name][0]['id'] = 0 # LOS type as set above
-        cirs[link_name][0]['delay'] = 0.0
+        cirs[link_name][0]['delays'] = 0.0
 
         receiver_to_satellite_vec = sat_pos_m - rec_pos_m
         receiver_to_satellite_unit_vec = receiver_to_satellite_vec / np.linalg.norm(receiver_to_satellite_vec)
@@ -126,8 +141,7 @@ for k, time in enumerate(times_s):
 
             idx = l + 1
             cirs[link_name][idx]['type'] = 1
-            cirs[link_name][idx]['id'] = 0
-            cirs[link_name][idx]['delay'] = excess_delay_s
+            cirs[link_name][idx]['delays'] = excess_delay_s
             scatterer_amplitude = 0.5 * cmath.exp(-1j * 2 * cmath.pi / wave_length_m * (distance_receiver_scatterer_m))
             cirs[link_name][idx]['real'] = scatterer_amplitude.real
             cirs[link_name][idx]['imag'] = scatterer_amplitude.imag

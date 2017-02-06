@@ -5,6 +5,28 @@
  * \author	Frank M. Schubert
  */
 
+/*
+ *  This file is part of the program
+ *
+ *  SNACS - The Satellite Navigation Radio Channel Simulator
+ *
+ *  Copyright (C) 2012-2013  Frank M. Schubert
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "ReadContinuousDelayFile.h"
 
 #include <boost/lexical_cast.hpp>
@@ -53,11 +75,10 @@ ReadContinuousDelayFile::ReadContinuousDelayFile(string _file_name) :
 
 	// prepare echo compound type for for function get_cir:
 	cp_echo = new H5::CompType(sizeof(hdf5_impulse_t));
+
 	cp_echo->insertMember("type", HOFFSET(hdf5_impulse_t, type),
 			H5::PredType::NATIVE_INT16);
-	cp_echo->insertMember("id", HOFFSET(hdf5_impulse_t, id),
-			H5::PredType::NATIVE_UINT64);
-	cp_echo->insertMember("delay", HOFFSET(hdf5_impulse_t, delay),
+	cp_echo->insertMember("delays", HOFFSET(hdf5_impulse_t, delays),
 			H5::PredType::NATIVE_DOUBLE);
 	cp_echo->insertMember("real", HOFFSET(hdf5_impulse_t, real),
 			H5::PredType::NATIVE_DOUBLE);
@@ -90,25 +111,19 @@ cir_t ReadContinuousDelayFile::get_cir(std::string link,
 	dataset.read(echoes, *cp_echo);
 
 	result_cir.components.resize(echoes_amount);
-
 	for (int i = 0; i < echoes_amount; i++) {
-		result_cir.components.at(i).type = echoes[i].type;
-		result_cir.components.at(i).id = echoes[i].id;
-		result_cir.components.at(i).delay = echoes[i].delay;
+		result_cir.components.at(i).delay = echoes[i].delays;
 		result_cir.components.at(i).amplitude = complex<double>(echoes[i].real,
 				echoes[i].imag);
 	}
-
 	result_cir.ref_delay = ref_delays[link].at(cir_num);
-
 	return result_cir;
 }
 
 ReadContinuousDelayFile::~ReadContinuousDelayFile() {
-	for (auto link_name : link_names)
-		delete cir_groups[link_name];
-
-	delete cp_echo;
+	for (size_t k = 0; k < link_names.size(); k++) {
+		delete cir_groups[link_names.at(k)];
+	}
 }
 
 } // end of namespace CDX

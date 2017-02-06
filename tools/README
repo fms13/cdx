@@ -9,6 +9,16 @@ automake -a -c
 On Debian Jessie we have to provide the location of the HDF5 library:
 ./configure CXXFLAGS=-I/usr/include/hdf5/serial LDFLAGS=-L/usr/lib/x86_64-linux-gnu/hdf5/serial
 
+A Debian package can be generated from this directory tree with
+
+  mkdir -p ~/packaging/cdx-tools && \
+  cd ~/packaging/cdx-tools && \
+  cp -r ~/workspace/snacs/cdx_format/tools ~/packaging/cdx-tools/cdx-tools_1.0 && \
+  cd ~/packaging/cdx-tools && \
+  tar cfz cdx-tools_1.0.orig.tar.gz cdx-tools_1.0 && \
+  cd cdx-tools_1.0/ && \
+  debuild -us -uc
+  
 Mac OS X
 
 configure:

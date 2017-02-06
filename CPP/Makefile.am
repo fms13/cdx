@@ -25,4 +25,3 @@ otherinclude_HEADERS = src/File.h \
 	src/ReadContinuousDelayFile.h
 
 ACLOCAL_AMFLAGS = -I m4
-AM_CXXFLAGS = -std=c++11 -Wall -O3

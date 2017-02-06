@@ -4,6 +4,28 @@
  * \author	Frank M. Schubert
  */
 
+/*
+ *  This file is part of the program
+ *
+ *  SNACS - The Satellite Navigation Radio Channel Simulator
+ *
+ *  Copyright (C) 2012-2013  Frank M. Schubert
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "WriteFile.h"
 
 #include <iostream>
@@ -89,10 +111,9 @@ void WriteFile::write(string path, double *data, size_t num) {
 void WriteFile::write(string path, const vector<double> &data) {
 	const size_t RANK = 2;
 
-	// dataset dimensions: write vector as row vector:
-	hsize_t dimsf3[RANK];
-	dimsf3[0] = 1;
-	dimsf3[1] = data.size();
+	hsize_t dimsf3[RANK]; // dataset dimensions
+	dimsf3[0] = data.size();
+	dimsf3[1] = 1;
 	H5::DataSpace dspace3(RANK, dimsf3);
 
 	H5::DataSet dset3 = h5file.createDataSet(path.c_str(),
@@ -140,50 +161,11 @@ void WriteFile::write(const H5::CommonFG *h5file, const std::string &path,
 	H5::DataSet dset = h5file->createDataSet(path, str_type, str_dataspace);
 
 	// HDF5 only understands vector of char*
-	vector<const char*> arr_c_str;
+	std::vector<const char*> arr_c_str;
 	for (size_t n = 0; n < nof_lines; n++)
 		arr_c_str.push_back(data.at(n).c_str());
 
 	dset.write(arr_c_str.data(), str_type);
-}
-
-void WriteFile::write(const H5::CommonFG* h5file, const std::string& path,
-		const std::map<uint16_t, std::string>& data) {
-
-	// C struct for the compound data typo:
-	typedef struct component_type_t {
-		uint16_t id;
-		const char *name;
-	} component_type_t;
-
-	// definition for a variable length string:
-	H5::StrType str_type(H5::PredType::C_S1, H5T_VARIABLE);
-
-	// create the HDF5 compound data type:
-	H5::CompType comp_t(sizeof(component_type_t));
-
-	comp_t.insertMember("id", HOFFSET(component_type_t, id),
-			H5::PredType::NATIVE_UINT16);
-	comp_t.insertMember("name", HOFFSET(component_type_t, name),
-			str_type);
-
-	// define dimensions:
-    const int rank = 2;
-    hsize_t dims[rank]; // dataset dimensions
-    dims[0] = data.size();
-    dims[1] = 1;
-
-    H5::DataSpace dataspace(rank, dims);
-
-    H5::DataSet dset = h5file->createDataSet(path,
-    		comp_t, dataspace);
-
-	// HDF5 only understands vector of char*
-	vector<component_type_t> data_as_c_struct;
-	for (auto name : data)
-		data_as_c_struct.push_back({name.first, name.second.c_str()});
-
-	dset.write(data_as_c_struct.data(), comp_t);
 }
 
 void WriteFile::create_reference_delays_dataset(H5::Group* group) {
@@ -238,20 +220,19 @@ void WriteFile::append_reference_delay(H5::Group *group,
 
 	H5::DataSpace space = dataset.getSpace();
 	const hsize_t actual_dims = space.getSimpleExtentNpoints();
-
 	// Extend the dataset
 	hsize_t new_size[RANK];
 	new_size[0] = actual_dims + 1;
 	dataset.extend(new_size);
 
-	// Select a hyperslab:
+	// Select a hyperslab.
 	H5::DataSpace fspace1_refdelay = dataset.getSpace();
 	hsize_t offset_refdelay[RANK] = { actual_dims };
-	hsize_t dims1_refdelay[RANK] = { 1 }; // data1 dimensions
+	hsize_t dims1_refdelay[RANK] = { 1 }; /* data1 dimensions */
 	fspace1_refdelay.selectHyperslab(H5S_SELECT_SET, dims1_refdelay,
 			offset_refdelay);
 
-	// Write the data to the hyperslab:
+	// Write the data to the hyperslab.
 	double ref_delay_data[1] = { reference_delay };
 	dataset.write(ref_delay_data, H5::PredType::NATIVE_DOUBLE, mspace1_refdelay,
 			fspace1_refdelay);
