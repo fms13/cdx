@@ -136,7 +136,7 @@ class ReadContinuousDelayFile:
         for cir_n in np.arange(nof_cirs):
             cir = g['cirs/{0}'.format(cir_start + cir_n)]
 
-            delays = cir['delays']
+            delays = cir['delay']
             if len(delays) > 1: # there must be at least two components to compute the difference:
                 comp_min_delay = min(delays)
                 comp_max_delay = max(delays)
@@ -175,7 +175,7 @@ class ReadContinuousDelayFile:
         for cir_n in np.arange(nof_cirs):
             cir = g['cirs/{0}'.format(cir_start + cir_n)]
             amplitudes = cir['real'] + 1j * cir['imag']
-            channel_power[cir_n] = np.sum(amplitudes)
+            channel_power[cir_n] = np.sum(np.abs(amplitudes))
 
         return times, channel_power
 
