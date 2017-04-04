@@ -3,7 +3,7 @@
 % function get_continuous_delay_cir
 %
 % This function reads a cir with continuous delay data to a CDX file
-% 
+%
 % based on http://www.hdfgroup.org/ftp/HDF5/examples/examples-by-api/matlab/HDF5_M_Examples/h5ex_t_string.m
 %
 % Author: F. Schubert
@@ -16,7 +16,7 @@ dset = H5D.open(obj.cir_group_ids(link_num), sprintf('%i', cir_num-1));
 rdata = H5D.read(dset, obj.memtype, 'H5S_ALL', 'H5S_ALL', 'H5P_DEFAULT');
 H5D.close (dset);
 
-cir.delays = rdata.delays;
+cir.delays = rdata.delay;
 cir.weights = rdata.real + 1i .* rdata.imag;
 cir.type = rdata.type;
 

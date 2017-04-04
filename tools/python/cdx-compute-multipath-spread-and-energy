@@ -91,10 +91,10 @@ for link in cdx_file.get_link_names():
 	times, channel_power = cdx_file.compute_power(link, start_time, length)
 	times, mp_spread = cdx_file.compute_multipath_spread(link, start_time, length)
 
-	ax = fig.add_subplot(2, total_nof_plots, act_plot)
+	ax = fig.add_subplot(total_nof_plots, 2, act_plot)
 	act_plot = act_plot + 1
 
-	ax.set_title('Multipath Delay Spread, Link {}'.format(link))
+	ax.set_title('Multipath Delay Spread and Channel Response Power, Link {}'.format(link))
 
 	ax.plot(times, mp_spread / 1e-9)
 	ax.set_xlim((times[0], times[-1]))
@@ -102,10 +102,10 @@ for link in cdx_file.get_link_names():
 	ax.set_ylabel('Delay Spread [ns]')
 	ax.grid()
 
-	ax = fig.add_subplot(2, total_nof_plots, act_plot)
+	ax = fig.add_subplot(total_nof_plots, 2, act_plot)
 	act_plot = act_plot + 1
 
-	ax.set_title('Channel Response Power, Link {}'.format(link))
+	# ax.set_title('Channel Response Power, Link {}'.format(link))
 
 	ax.plot(times, 20 * log10(abs(channel_power)))
 	ax.set_xlim((times[0], times[-1]))
@@ -125,7 +125,7 @@ if store_figure == True:
 	file_prefix, tail = os.path.splitext(file_name)
 	out_file_name = file_prefix + "_pdp" + extension
 	print "saving to", out_file_name
-	fig.set_size_inches(5.5, 4 * nof_links)
+	fig.set_size_inches(9, 4 * total_nof_plots)
 	fig.savefig(out_file_name, dpi=300)  # , bbox_inches='tight'
 else:
 	plt.show()
