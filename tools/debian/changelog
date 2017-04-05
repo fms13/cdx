@@ -1,3 +1,10 @@
+cdx-tools (1.1-1) UNRELEASED; urgency=medium
+
+  * Fixes for plotting in multipath delay spread figures.
+  * Corrected computation of channel power.
+
+ -- Frank M. Schubert <fmschubert@ieee.org>  Wed, 04 Apr 2017 12:44:00 +0200
+
 cdx-tools (1.0-1) UNRELEASED; urgency=medium
 
   * Initial release. (Closes: #XXXXXX)
