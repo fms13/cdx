@@ -1,5 +1,11 @@
+libcdx (1.1-1) UNRELEASED; urgency=medium
+
+  * Changes to be compatible with new CDX format.
+
+ -- Frank M. Schubert <fmschubert@ieee.org>  Fri, 07 Apr 2017 12:44:00 +0100
+
 libcdx (1.0-1) UNRELEASED; urgency=medium
 
-  * Initial release. (Closes: #XXXXXX)
+  * Initial release.
 
  -- Frank M. Schubert <fmschubert@ieee.org>  Wed, 28 Oct 2015 18:06:22 +0100

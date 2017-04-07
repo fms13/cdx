@@ -38,7 +38,7 @@ import h5py
 import ReadContinuousDelayFile
 import ReadDiscreteDelayFile
 
-component_colors = {0: 'r', 1: 'k', 2: 'b', 3: 'g', 4: 'y'}
+component_colors_t = {0: 'r', 1: 'k', 2: 'b', 3: 'g', 4: 'y'}
 # #
 # \brief Class which provides functionality to generate plots such as channel impulse
 # responses, power over time, or the delay spread.
@@ -90,7 +90,7 @@ class FiguresGenerator:
         self.min_power_dB = -30
         self.max_power_dB = 5
 
-        types, delays, amplitudes, reference = self.cdx_file.get_cir(self.link_names[0], 0)
+        types, ids, delays, amplitudes, reference = self.cdx_file.get_cir(self.link_names[0], 0)
 
         partial_spread = (delays[0] - delays[-1]) / 10
         self.min_delay_s = delays[0] - partial_spread
@@ -131,7 +131,7 @@ class FiguresGenerator:
         print "type_names[0]:", type_names[0]
         print "type_names[1]:", type_names[1]
 
-        types, delays, amplitudes, reference_delay = self.cdx_file.get_cir(link_name, nof_cir)
+        types, ids, delays, amplitudes, reference_delay = self.cdx_file.get_cir(link_name, nof_cir)
 #         print delays, len(delays)
 #         print delays[0]
 #         for idx in np.arange(len(delays)):
@@ -163,8 +163,8 @@ class FiguresGenerator:
 
         # make an own group for each type of components:
 
-        # generate set object from the types list:
-        types_set = set(types)
+        # generate a sorted set object from the types:
+        types_set = sorted(set(types))
 
         # gather the components in list for these type sets:
         delays_dict = defaultdict(np.array)
@@ -180,12 +180,22 @@ class FiguresGenerator:
         if nof_processed_components != len(delays):
             raise Exception("CIR #{}: Total number of components ({}) does not match sum of types of components ({}): not all component types are defined in component_types".format(nof_cir, nof_processed_components, len(delays)))
 
-#         os.sys.exit(0)
+        # get dict: type -> name:
+        types_to_names = self.cdx_file.get_type_names(link_name)
+
+        # dictionary that assigns type ids to color strings:
+        component_colors = {}
+
+        # insert a color for each types:
+        k = 0
+        for type in types_to_names:
+            component_colors[type] = component_colors_t[k]
+            k += 1
 
 #         for component in
         for t in types_set:
             markerline, stemlines, baseline = ax.stem(delays_dict[t] / 1e-6, 10 * np.log10(np.abs(amplitudes_dB_dict[t])),
-                    bottom=self.min_power_dB, label=type_names[t])
+                    bottom=self.min_power_dB, label=types_to_names[t])
             # make the stems appear in the color defined by the t number and component_colors:
             plt.setp(stemlines, 'color', component_colors[t])
             plt.setp(markerline, 'markeredgecolor', component_colors[t])

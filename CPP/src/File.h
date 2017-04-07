@@ -27,14 +27,15 @@ namespace CDX {
  * can then process and display the different multipath component depending on
  * their types, e.g. "diffracted components" "components caused by vegetation", etc.
  */
-typedef std::vector<std::string> component_types_t;
+typedef std::map<uint16_t, std::string> component_types_t;
 
 
 /**
  * \brief Holds a single multipath component as input value for WriteContinuousDelayCDXFile::write_cir.
  */
 struct impulse_t {
-	int16_t type; ///< the multipath component's type as defined in component_types_t
+	uint16_t type; ///< the multipath component's type as defined in component_types_t
+	uint64_t id; ///< unique identifier for each component
 	double delay; ///< the multipath component's delay in s
 	std::complex<double> amplitude; ///< the multipath component's complex amplitude
 };
@@ -45,24 +46,12 @@ struct impulse_t {
 typedef std::vector<impulse_t> CIR;
 
 struct hdf5_impulse_t {
-	int16_t type;
-	double delays;
+	uint16_t type;
+	uint64_t id;
+	double delay;
 	double real;
 	double imag;
 };
-
-/**
- * \brief Struct to read and write an echo from/to a HDF5 file containing continuous-
- * delay CIRs.
- */
-/*
-struct echo_struct_hdf5 {
-	double delays; ///< the multipath component's delay in s
-	double real; ///< the multipath component's amplitude: real part
-	double imag; ///< the multipath component's amplitude: imaginary part
-	int type; ///< the multipath component's type as defined in type_assignments_t
-};
-*/
 
 /**
  * \brief Struct used as return value for function ReadContinuousDelayCDXFile::get_cir.

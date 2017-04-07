@@ -33,7 +33,8 @@ import warnings
 
 warnings.filterwarnings('error')
 
-cir_dtype = np.dtype([('delays', np.float64), ('real', np.float64), ('imag', np.float64)])
+cir_dtype = np.dtype([('type', np.uint16), ('id', np.uint64), ('delay', np.float64),
+                      ('real', np.float64), ('imag', np.float64)])
 
 ##
 # \brief Class that provides functions to read from a continuous-delay CDX file
@@ -86,21 +87,31 @@ class ReadContinuousDelayFile:
         return self.link_names
 
     def get_type_names(self, link_name):
-        type_names = self.f['/links/{}/component_types'.format(link_name)]
+        type_names_dataset = self.f['/links/{}/component_types'.format(link_name)]
 
-        return type_names
+        # we transform the dataset to a dictionary now:
+        # type_name[id] -> name
+        types_to_names = {}
+        for dataset in type_names_dataset:
+            print "dataset['id']:", dataset['id'], ", dataset['name']:", dataset['name']
+            id = int(dataset['id'])
+            name = str(dataset['name'])
+            types_to_names[id] = name
+
+        return types_to_names
 
     def get_cir(self, link_name, n):
         cir_raw = self.f['/links/{}/cirs/{}'.format(link_name, n)]
         types = cir_raw['type']
-        delays = cir_raw['delays']
+        ids = cir_raw['id']
+        delays = cir_raw['delay']
         amplitudes = cir_raw['real'] + 1j * cir_raw['imag']
 #         cir = np.zeros((1, 1), dtype=cir_dtype)
 #         cir[0].delays = delays
 
         reference = self.reference_delays[link_name][n]
 
-        return types, delays, amplitudes, reference
+        return types, ids, delays, amplitudes, reference
 
     def get_cir_start_end_numbers_from_times(self, start_time, length):
         cir_start = int(start_time * self.cir_rate_Hz)
@@ -220,7 +231,7 @@ class ReadContinuousDelayFile:
 
         # for all cirs
         for cir_n in np.arange(len(reference_delays)):
-            types, delays, amplitudes, reference = self.get_cir(link_name, cir_n)
+            types, ids, delays, amplitudes, reference = self.get_cir(link_name, cir_n)
 
             #delays = delays - reference_delays[cir_n]
             try:
