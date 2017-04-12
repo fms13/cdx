@@ -77,6 +77,10 @@ class ChannelLink(QtGui.QWidget):
         self.enable_pdp = enable_pdp
         self.link_name = link_name
 
+        # the plotting start:
+        self.current_value = 0
+        self.current_time = 0
+
         # make a vboxlayout for each link:
         self.vbox = QtGui.QVBoxLayout()
         # top is QComboBox, below is HBoxLayout for all plots:
@@ -109,6 +113,7 @@ class ChannelLink(QtGui.QWidget):
 
             self.cdd_length_s = self.cdx_figures.cdd_file.get_length_s()
 
+        # create all figures and axes:
         # if visualization is enabled, prepare list that holds QPixmap objects:
         if self.cdx_figures.visualization_enabled == True:
             # create QPixmap object if we have images of the scenery, i.e. visualization is enabled:
@@ -154,6 +159,11 @@ class ChannelLink(QtGui.QWidget):
             print 'displaying scenery image ', self.cdx_figures.get_scenery_image_for_time(self.link_name, 0)
             self.scenery_label.setPixmap(QtGui.QPixmap(self.cdx_figures.get_scenery_image_for_time(self.link_name, 0)).scaled(300, 300, QtCore.Qt.KeepAspectRatio))
 
+        # fill in initial data in plkit:
+        self.initialize_link(self.link_name)
+
+    def initialize_link(self, link_name):
+
         # start computation of these plots in parallel:
         pool = multiprocessing.Pool(processes=4)
         pool.apply_async(cdx_figures.make_cir_axes(self.cir_ax, self.link_name, 0))
@@ -195,6 +205,9 @@ class ChannelLink(QtGui.QWidget):
 #          self.hboxes[idx].addWidget(self.mpl_toolbar)
 
     def update(self, value, time):
+        self.current_value = value
+        self.current_time = time
+
         # update CIR plots:
         self.cir_ax.clear()
         self.cdx_figures.make_cir_axes(self.cir_ax, self.link_name, value)
@@ -229,6 +242,17 @@ class ChannelLink(QtGui.QWidget):
 
     def combobox_index_changed(self, idx):
         self.link_name = self.combobox.itemText(idx)
+
+        # reset delay spread plot:
+        self.delay_spread_ax.cla()
+        self.delay_spread_vline = self.delay_spread_ax.axvline(x=0, color='r')
+
+        # reset power plot:
+        self.power_ax.cla()
+        self.power_vline = self.power_ax.axvline(x=self.current_time, color='r')
+
+        self.initialize_link(self.link_name)
+        self.update(self.current_value, self.current_time)
 
 ##
 # \brief Class to display a Window with a number of plots per link in a CDX file. A
