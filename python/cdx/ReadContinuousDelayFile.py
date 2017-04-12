@@ -93,7 +93,7 @@ class ReadContinuousDelayFile:
         # type_name[id] -> name
         types_to_names = {}
         for dataset in type_names_dataset:
-            print "dataset['id']:", dataset['id'], ", dataset['name']:", dataset['name']
+            #print "dataset['id']:", dataset['id'], ", dataset['name']:", dataset['name']
             id = int(dataset['id'])
             name = str(dataset['name'])
             types_to_names[id] = name
@@ -129,7 +129,7 @@ class ReadContinuousDelayFile:
                 raise SystemExit("Error: start_time + length ({}) exceeds file length ({}) (start_time + length > total_nof_cirs / cir_rate_Hz).".format(start_time + length, nof_cirs / cir_rate))
             cir_start, cir_end = self.get_cir_start_end_numbers_from_times(start_time, length)
 
-            print 'processing cirs {} to {}'.format(cir_start, cir_end)
+            #print 'processing cirs {} to {}'.format(cir_start, cir_end)
 
             reference_delays = g['reference_delays'][cir_start:cir_end]
             times = np.arange(cir_start * self.cir_interval, cir_end * self.cir_interval, self.cir_interval)
@@ -168,7 +168,7 @@ class ReadContinuousDelayFile:
                 raise SystemExit("Error: start_time + length ({}) exceeds file length ({}) (start_time + length > total_nof_cirs / cir_rate_Hz).".format(start_time + length, nof_cirs / cir_rate))
             cir_start, cir_end = self.get_cir_start_end_numbers_from_times(start_time, length)
 
-            print 'processing cirs {} to {}'.format(cir_start, cir_end)
+            #print 'processing cirs {} to {}'.format(cir_start, cir_end)
 
             reference_delays = g['reference_delays'][cir_start:cir_end]
             times = np.arange(cir_start * self.cir_interval, cir_end * self.cir_interval, self.cir_interval)

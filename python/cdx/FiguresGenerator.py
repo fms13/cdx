@@ -133,9 +133,6 @@ class FiguresGenerator:
         ax.set_title('Channel Impulse Response, Link {}'.format(link_name))
         type_names = self.cdx_file.get_type_names(link_name)
 
-        print "type_names[0]:", type_names[0]
-        print "type_names[1]:", type_names[1]
-
         types, ids, delays, amplitudes, reference_delay = self.cdx_file.get_cir(link_name, nof_cir)
 #         print delays, len(delays)
 #         print delays[0]
@@ -392,7 +389,7 @@ class FiguresGenerator:
         ax.set_ylabel('Delay Spread [ns]')
         ax.grid()
 
-    def make_pdp_axes(self, ax, link_name, lower_prob=10e-7, upper_prob=10e0):
+    def make_pdp_axes(self, ax, link_name, lower_prob=10e-7, upper_prob=10e0, figure=None):
         print 'computing power delay profile plot for link ', link_name
 
         pdp, del_ax, pwr_ax = self.cdx_file.compute_pdp(link_name, lower_prob, upper_prob)
@@ -411,8 +408,10 @@ class FiguresGenerator:
                         interpolation='bicubic', aspect='auto')
         ax.xaxis.set_ticks_position('bottom')
 
-        return im
-#         cbar = fig.colorbar(im)
+        if figure != None:
+            figure.colorbar(im)
+
+        #return im
 
 def main():
     # if called as standalone script, display one CIR:

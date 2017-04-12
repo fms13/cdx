@@ -94,9 +94,8 @@ act_plot = 1
 for link_name in cdx_file.get_link_names():
     ax = fig.add_subplot(nof_links, 1, act_plot)
 
-    im = cdx_figures.make_pdp_axes(ax, link_name)
+    cdx_figures.make_pdp_axes(ax, link_name, 10e-7, 10e0, fig)
     ax.xaxis.set_ticks_position('bottom')
-    cbar = fig.colorbar(im)
 
     act_plot = act_plot + 1
 

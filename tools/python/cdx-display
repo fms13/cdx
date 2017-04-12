@@ -49,7 +49,7 @@ from matplotlib.backends.backend_qt4agg import (
      FigureCanvasQTAgg as FigureCanvas,
      NavigationToolbar2QT as NavigationToolbar)
 
-from multiprocessing import Process
+import multiprocessing
 
 #from cdx import CDXFiguresGenerator
 
@@ -73,17 +73,29 @@ plt.rcParams.update(params)
 class ChannelLink(QtGui.QWidget):
     def __init__(self, cdx_figures, link_name, enable_pdp, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        # make a hboxlayout for each link:
-        self.hbox = QtGui.QHBoxLayout()
-
-        self.setLayout(self.hbox)
-                # top is QComboBox, below is HBoxLayout for all plots:
-        self.combobox = QtGui.QComboBox()
-
-
         self.cdx_figures = cdx_figures
         self.enable_pdp = enable_pdp
         self.link_name = link_name
+
+        # make a vboxlayout for each link:
+        self.vbox = QtGui.QVBoxLayout()
+        # top is QComboBox, below is HBoxLayout for all plots:
+        self.combobox = QtGui.QComboBox()
+        # insert all link names into combobox:
+        link_names = self.cdx_figures.cdx_file.get_link_names()
+        self.combobox.insertItems(0, link_names)
+        # set current entry to link_name
+        self.combobox.setCurrentIndex(link_names.index(self.link_name))
+
+        self.combobox.currentIndexChanged.connect(self.combobox_index_changed)
+
+        self.vbox.addWidget(self.combobox)
+
+        self.hbox = QtGui.QHBoxLayout()
+        self.vbox.addLayout(self.hbox)
+
+        # the main layout for us:
+        self.setLayout(self.vbox)
 
         # list of canvases that hols all figures:
         self.canvases = []
@@ -137,18 +149,16 @@ class ChannelLink(QtGui.QWidget):
             self.pdp_ax = self.pdp_figure.add_subplot(1, 1, 1)
             self.add_figure_to_canvas(self.pdp_figure)
 
-        # start computation of these plots in parallel:
-        processes = []
-
         # add first scenery image:
         if self.cdx_figures.visualization_enabled == True:
             print 'displaying scenery image ', self.cdx_figures.get_scenery_image_for_time(self.link_name, 0)
             self.scenery_label.setPixmap(QtGui.QPixmap(self.cdx_figures.get_scenery_image_for_time(self.link_name, 0)).scaled(300, 300, QtCore.Qt.KeepAspectRatio))
 
-        # add first CIR plot:
-        processes.append(Process(target=cdx_figures.make_cir_axes(self.cir_ax, self.link_name, 0)))
-        processes[-1].start()
+        # start computation of these plots in parallel:
+        pool = multiprocessing.Pool(processes=4)
+        pool.apply_async(cdx_figures.make_cir_axes(self.cir_ax, self.link_name, 0))
 
+        # add first CIR plot:
         if self.cdx_figures.cdd_enabled == True:
             start_time = 0
             length = self.cdd_span_s
@@ -156,24 +166,21 @@ class ChannelLink(QtGui.QWidget):
             self.dds_figure = self.cdx_figures.make_delay_doppler_spectrum(self.dds_ax, self.link_name, start_time, length)
 
         # add first power plot:
-        processes.append(Process(target=cdx_figures.make_power_axes(self.power_ax, self.link_name)))
-        processes[-1].start()
+        pool.apply_async(cdx_figures.make_power_axes(self.power_ax, self.link_name))
 
         # add delay spread plot:
-        processes.append(Process(target=cdx_figures.make_delay_spread_axes(self.delay_spread_ax, self.link_name)))
-        processes[-1].start()
+        pool.apply_async(cdx_figures.make_delay_spread_axes(self.delay_spread_ax, self.link_name))
 
         if self.enable_pdp == True:
             # compute power-delay profiles:
             #im = cdx_figures.make_pdp_axes(self.pdp_axes[idx], link_name)
-            processes.append(Process(target=cdx_figures.make_pdp_axes(self.pdp_ax, link_name)))
-            processes[-1].start()
+            pool.apply_async(cdx_figures.make_pdp_axes(self.pdp_ax, link_name, 10e-7, 10e0, self.pdp_figure))
             #self.pdp_axes[idx].xaxis.set_ticks_position('bottom')
-            #self.pdp_figures[idx].colorbar(im)
 
         print 'joining processes...'
-        for process in processes:
-            process.join()
+        pool.close()
+        pool.join()
+
         print 'done.'
 
     def add_figure_to_canvas(self, fig):
@@ -219,6 +226,9 @@ class ChannelLink(QtGui.QWidget):
 
         for canvas in self.canvases:
             canvas.draw()
+
+    def combobox_index_changed(self, idx):
+        self.link_name = self.combobox.itemText(idx)
 
 ##
 # \brief Class to display a Window with a number of plots per link in a CDX file. A
@@ -290,7 +300,7 @@ class CDXDisplayWindows(QtGui.QMainWindow):
          key_press_handler(event, self.canvases, self.mpl_toolbar)
 
 
-def main():
+if __name__ == '__main__':
      # parse command line arguments
      parser = argparse.ArgumentParser()
      parser.add_argument("-i", "--input", help="input CDX file", action="store")
@@ -307,6 +317,7 @@ def main():
      else:
          enable_pdp = True
 
+     print 'multiprocessing.CPU_count():', multiprocessing.cpu_count()
      cdx_figures = cdx.FiguresGenerator.FiguresGenerator(args.input)
 
      app = QtGui.QApplication(sys.argv)
@@ -315,9 +326,3 @@ def main():
      form.show()
 
      app.exec_()
-
-if __name__ == "__main__":
-     main()
-
-
-print 'all done.'
