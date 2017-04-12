@@ -34,7 +34,7 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 from matplotlib.colors import LogNorm
 import h5py
-
+import glob
 import ReadContinuousDelayFile
 import ReadDiscreteDelayFile
 
@@ -100,20 +100,25 @@ class FiguresGenerator:
         result_dir_name = file_name[0:-4]
 
         # check if visualization is enabled in cdx file:
+        self.visualization_enabled = False
         if "/visualization" in self.cdx_file.f:
-            self.visualization_enabled = True
             # is the fram_rate_Hz in the cdx file?
             if "frame_rate_Hz" in self.cdx_file.f["/visualization"]:
-				self.frame_rate_Hz = self.cdx_file.f["/visualization/frame_rate_Hz"][0]
-				# check if directories for each link are available:
-				self.vis_link_dirs = {}
-				for link_name in self.link_names:
-					vis_dir = "{}/{}".format(result_dir_name, link_name)
-					if os.path.isdir(vis_dir) == True:
-						print 'using directory {} to read visualization images of link {}'.format(vis_dir, link_name)
-						self.vis_link_dirs[link_name] = vis_dir
-    	else:
-			self.visualization_enabled = False
+                self.frame_rate_Hz = self.cdx_file.f["/visualization/frame_rate_Hz"][0]
+                # check if directories for each link are available:
+                self.vis_link_dirs = {}
+                for link_name in self.link_names:
+                    vis_dir = "{}/{}".format(result_dir_name, link_name)
+                    if os.path.isdir(vis_dir) == True:
+                        # check if PNG files exist in this directory:
+                        if len(glob.glob(vis_dir + "*.png")) != 0:
+                            print 'using directory {} to read visualization images of link {}'.format(vis_dir, link_name)
+                            self.vis_link_dirs[link_name] = vis_dir
+                            self.visualization_enabled = True
+                        else:
+                            print 'no PNG files in {} found: not displaying scenery images for link {}.'.format(vis_dir, link_name)
+
+        print 'FiguresGenerator: self.visualization_enabled:', self.visualization_enabled
 
     def get_scenery_image_for_time(self, link_name, time):
         if self.visualization_enabled == False:
