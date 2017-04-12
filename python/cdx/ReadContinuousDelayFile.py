@@ -158,7 +158,6 @@ class ReadContinuousDelayFile:
         return times, mp_spread
 
     def compute_power(self, link_name, start_time = 0.0, length = 0.0):
-        print link_name
         g = self.f['/links/{}'.format(link_name)];
         total_nof_cirs = len(g['cirs'])
 
