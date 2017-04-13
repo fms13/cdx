@@ -27,6 +27,7 @@ import sys
 from PySide import QtCore, QtGui
 import matplotlib
 import matplotlib.backend_bases
+from wx.lib import pyshell
 #from h5py._hl.base import ValueView
 
 matplotlib.use('Qt4Agg')
@@ -171,17 +172,32 @@ class ChannelLink(QtGui.QWidget):
     def initialize_link(self, link_name):
         # start computation of these plots in parallel:
 
+        # new window with progress bar
+        progress = QtGui.QProgressDialog("Progress","cancel", 0, 5)
+        progress.setCancelButton(None)
+        progress.setMinimumDuration(0)
+        progress.show()
+
+        progress.setLabelText("Link {}, drawing channel response...".format(link_name))
+
         # components in single channel impulse response:
         #thread_cir = multiprocessing.Process(target=cdx_figures.make_cir_axes, args=(self.cir_ax, self.link_name, 0))
         #thread_cir.start()
         self.cdx_figures.make_cir_axes(self.cir_ax, self.link_name, 0)
 
+        progress.setValue(1)
+
         # add first CIR plot:
         if self.cdx_figures.cdd_enabled == True:
+            progress.setLabelText("Link {}, drawing delay Doppler spectrum...".format(link_name))
+            progress.show()
+
             start_time = 0
             length = self.cdd_span_s
             self.cir_discr_figure = self.cdx_figures.make_discr_cir_axes(self.cir_discr_ax, self.link_name, start_time, length)
             self.dds_figure = self.cdx_figures.make_delay_doppler_spectrum(self.dds_ax, self.link_name, start_time, length)
+
+        progress.setValue(2)
 
         # add power plot:
         #pool.apply_async(cdx_figures.make_power_axes, args=(self.power_ax, self.link_name))
@@ -196,19 +212,36 @@ class ChannelLink(QtGui.QWidget):
 
         #cdx_figures.make_power_axes(self.power_ax, self.link_name)
         #call_make_power_axes(cdx_figures, self.power_ax, self.link_name, power_result_queue)
+        progress.setLabelText("Link {}, drawing total power...".format(link_name))
+        progress.show()
+
         self.cdx_figures.make_power_axes(self.power_ax, self.link_name)
+
+        progress.setValue(3)
 
         # add delay spread plot:
         #pool.apply_async(cdx_figures.make_delay_spread_axes, args=(self.delay_spread_ax, self.link_name))
         #thread_spread = multiprocessing.Process(target=cdx_figures.make_delay_spread_axes, args=(self.delay_spread_ax, self.link_name))
+        progress.setLabelText("Link {}, drawing delay spread...".format(link_name))
+        progress.show()
+
         self.cdx_figures.make_delay_spread_axes(self.delay_spread_ax, self.link_name)
+
+        progress.setValue(4)
+
         #thread_spread.start()
         if self.enable_pdp == True:
             # compute power-delay profiles:
             #thread_pdp = multiprocessing.Process(target=cdx_figures.make_pdp_axes, args=(self.pdp_ax, link_name, 10e-7, 10e0, self.pdp_figure))
             #self.pdp_axes[idx].xaxis.set_ticks_position('bottom')
             #thread_pdp.start()
+            progress.setLabelText("Link {}, drawing power delay profile...".format(link_name))
+            progress.setLabelText("Link {}, drawing power delay profile...".format(link_name))
+            progress.update()
+
             self.cdx_figures.make_pdp_axes(self.pdp_ax, link_name, 10e-7, 10e0, self.pdp_figure)
+
+        progress.setValue(5)
 
         #print 'joining processes...'
         #thread_cir.join()
@@ -298,6 +331,8 @@ class ChannelLink(QtGui.QWidget):
 # over time, as well as the power-delay profile is displayed for each link in a CDX
 # file.
 #
+# ChannelLink instances are used, one ChannelLink object displays one link of the CDX file.
+#
 class CDXDisplayWindows(QtGui.QMainWindow):
      def __init__(self, cdx_file_name, enable_pdp, parent=None):
          QtGui.QMainWindow.__init__(self, parent)
@@ -329,8 +364,6 @@ class CDXDisplayWindows(QtGui.QMainWindow):
          self.sld.valueChanged[int].connect(self.on_slider_change)
          self.vbox.addWidget(self.sld)
 
-         #self.vbox.addLayout(self.hboxes[-1])
-
          self.on_draw()
 
          self.max_nof_links_to_show = 2
@@ -338,7 +371,6 @@ class CDXDisplayWindows(QtGui.QMainWindow):
              self.max_nof_links_to_show = len(self.link_names)
 
          self.link_layouts = []
-         print 'showing ', self.max_nof_links_to_show, ' links.'
          for idx in np.arange(self.max_nof_links_to_show):
              self.link_layouts.append(ChannelLink(self.cdx_figures, self.link_names[idx], enable_pdp))
              self.vbox.addWidget(self.link_layouts[-1])
