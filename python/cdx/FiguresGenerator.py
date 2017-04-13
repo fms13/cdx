@@ -111,7 +111,7 @@ class FiguresGenerator:
                     vis_dir = "{}/{}".format(result_dir_name, link_name)
                     if os.path.isdir(vis_dir) == True:
                         # check if PNG files exist in this directory:
-                        if len(glob.glob(vis_dir + "*.png")) != 0:
+                        if len(glob.glob(vis_dir + "/*.png")) != 0:
                             print 'using directory {} to read visualization images of link {}'.format(vis_dir, link_name)
                             self.vis_link_dirs[link_name] = vis_dir
                             self.visualization_enabled = True
