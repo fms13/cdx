@@ -67,11 +67,11 @@ class ReadDiscreteDelayFile:
 
         # check if start_time and length can be processed:
         if length != 0.0:
-            if start_time + length > total_nof_cirs / self.cir_rate_Hz:
-                raise SystemExit("Error: start_time + length ({}) exceeds file length ({}) (start_time + length > total_nof_cirs / cir_rate_Hz).".format(start_time + length, total_nof_cirs / self.cir_rate_Hz))
+            if start_time + length > self.length_s:
+                raise SystemExit("Error: start_time + length ({}) exceeds file length ({}) (start_time + length > self.length_s), difference: {}.".format(start_time + length, self.length_s, start_time + length - self.length_s))
             cir_start, cir_end = self.get_cir_start_end_numbers_from_times(start_time, length)
 
-            print 'processing cirs {} to {}'.format(cir_start, cir_end)
+            #print 'processing cirs {} to {}'.format(cir_start, cir_end)
 
             reference_delays = g['reference_delays'][cir_start:cir_end]
             times = np.arange(cir_start * self.cir_interval, cir_end * self.cir_interval, self.cir_interval)
@@ -85,18 +85,22 @@ class ReadDiscreteDelayFile:
             delays = g['y_axis']
 
         else:
-            reference_delays = g['reference_delays'][...]
+            # length_s is zero, take signal from start until end:
+            cir_start = int(start_time * self.cir_rate_Hz)
+
+            reference_delays = g['reference_delays'][cir_start:]
             nof_cirs = len(reference_delays)
 
-            cirs_real = g['cirs_real'][...]
-            cirs_imag = g['cirs_imag'][...]
-            ref_delays = g['reference_delays'][...]
+            cirs_real = g['cirs_real'][:, cir_start:]
+            cirs_imag = g['cirs_imag'][:, cir_start:]
+            ref_delays = g['reference_delays'][cir_start:]
 
-            times = g['x_axis'][...]
+            times = g['x_axis'][cir_start:]
             delays = g['y_axis']
 
         cirs = cirs_real + 1j * cirs_imag
 
+        #print 'len(times): {}, len(delays): {}, len(g[y_axis][...]): {}'.format(len(times), len(delays), len(g['y_axis']))
         return cirs, times, delays, ref_delays
 
     def compute_power(self, link_name, start_time = 0.0, length = 0.0):

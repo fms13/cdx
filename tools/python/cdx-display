@@ -27,8 +27,6 @@ import sys
 from PySide import QtCore, QtGui
 import matplotlib
 import matplotlib.backend_bases
-from wx.lib import pyshell
-#from h5py._hl.base import ValueView
 
 matplotlib.use('Qt4Agg')
 matplotlib.rcParams['backend.qt4']='PySide'
@@ -112,8 +110,8 @@ class ChannelLink(QtGui.QWidget):
         if  self.cdx_figures.cdd_enabled == True:
             # set span to 1 s or to length of file if it is smaller:
             self.cdd_span_s = self.cdx_figures.cdd_file.get_length_s()
-            #if self.cdd_span_s > 1.0:
-            #    self.cdd_span_s = 1.0
+            if self.cdd_span_s > 1.0:
+                self.cdd_span_s = 1.0
 
             self.cdd_length_s = self.cdx_figures.cdd_file.get_length_s()
 
@@ -286,16 +284,17 @@ class ChannelLink(QtGui.QWidget):
         # update discrete-delay CIR plots:
         if self.cdx_figures.cdd_enabled == True:
             start_time = time - self.cdd_span_s / 2.0
-             # limit start time and length to file length:
+             # limit start time and length_s to file length_s:
             if start_time < 0:
                 start_time = 0
-            length = self.cdd_span_s
-            if start_time + length > self.cdd_length_s:
-                length = self.cdd_length_s - start_time #- 1.0 / self.cir_rate
-            self.cdx_figures.make_discr_cir_axes(self.cir_discr_ax, self.link_name, start_time, length)
+            length_s = self.cdd_span_s
+            if start_time + length_s > self.cdd_length_s:
+                # go until end of file:
+                length_s = 0.0 # self.cdd_length_s - start_time
+            self.cdx_figures.make_discr_cir_axes(self.cir_discr_ax, self.link_name, start_time, length_s)
             self.cir_discr_vline.set_xdata(time)
 
-            self.cdx_figures.make_delay_doppler_spectrum(self.dds_ax, self.link_name, start_time, length)
+            self.cdx_figures.make_delay_doppler_spectrum(self.dds_ax, self.link_name, start_time, length_s)
 
         # update vertical line in power plot:
         self.power_vline.set_xdata(time)
@@ -377,6 +376,7 @@ class CDXDisplayWindows(QtGui.QMainWindow):
 
      def on_slider_change(self, value):
          time = value / self.cir_rate
+         print 'slider change: value: {}, time: {}'.format(value, time)
          self.t_label.setText('CIR number: {}, t = {} s'.format(value, time))
 
          for link_layout in self.link_layouts:

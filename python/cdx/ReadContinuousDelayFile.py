@@ -73,6 +73,7 @@ class ReadContinuousDelayFile:
         self.cir_rate_Hz = parameters_group['cir_rate_Hz'][0]
         self.cir_interval = 1.0 / self.cir_rate_Hz
         self.transmitter_frequency_Hz = parameters_group['transmitter_frequency_Hz'][0]
+        self.length_s = self.nof_cirs / self.cir_rate_Hz
 
     def get_cir_rate(self):
         return self.cir_rate_Hz
@@ -119,14 +120,17 @@ class ReadContinuousDelayFile:
 
         return cir_start, cir_end
 
+    ##
+    # \brief
+    # If length is zero, go until end of the file.
     def compute_multipath_spread(self, link_name, start_time = 0.0, length = 0.0):
         g = self.f['links'][link_name];
         total_nof_cirs = len(g['cirs'])
 
         # check if start_time and length can be processed:
         if length != 0.0:
-            if start_time + length > total_nof_cirs / self.cir_rate_Hz:
-                raise SystemExit("Error: start_time + length ({}) exceeds file length ({}) (start_time + length > total_nof_cirs / cir_rate_Hz).".format(start_time + length, nof_cirs / cir_rate))
+            if start_time + length > self.length_s:
+                raise SystemExit("Error: start_time + length ({}) exceeds file length ({}) (start_time + length > self.length_s), difference: {}.".format(start_time + length, self.length_s, start_time + length - self.length_s))
             cir_start, cir_end = self.get_cir_start_end_numbers_from_times(start_time, length)
 
             #print 'processing cirs {} to {}'.format(cir_start, cir_end)
@@ -137,9 +141,9 @@ class ReadContinuousDelayFile:
         else:
             reference_delays = g['reference_delays'][...]
             nof_cirs = len(reference_delays)
-            cir_start = 0
+            cir_start = int(start_time * self.cir_rate_Hz)
             cir_end = nof_cirs
-            times = np.arange(0, nof_cirs * self.cir_interval, self.cir_interval)
+            times = np.arange(cir_start * self.cir_interval, nof_cirs * self.cir_interval, self.cir_interval)
 
         mp_spread = np.zeros((nof_cirs, 1))
 
@@ -157,14 +161,17 @@ class ReadContinuousDelayFile:
 
         return times, mp_spread
 
+    ##
+    # \brief
+    # If length is zero, go until end of the file.
     def compute_power(self, link_name, start_time = 0.0, length = 0.0):
         g = self.f['links'][link_name]
         total_nof_cirs = len(g['cirs'])
 
         # check if start_time and length can be processed:
         if length != 0.0:
-            if start_time + length > total_nof_cirs / self.cir_rate_Hz:
-                raise SystemExit("Error: start_time + length ({}) exceeds file length ({}) (start_time + length > total_nof_cirs / cir_rate_Hz).".format(start_time + length, nof_cirs / cir_rate))
+            if start_time + length > self.length_s:
+                raise SystemExit("Error: start_time + length ({}) exceeds file length ({}) (start_time + length > self.length_s), difference: {}.".format(start_time + length, self.length_s, start_time + length - self.length_s))
             cir_start, cir_end = self.get_cir_start_end_numbers_from_times(start_time, length)
 
             #print 'processing cirs {} to {}'.format(cir_start, cir_end)
@@ -173,11 +180,13 @@ class ReadContinuousDelayFile:
             times = np.arange(cir_start * self.cir_interval, cir_end * self.cir_interval, self.cir_interval)
             nof_cirs = len(reference_delays)
         else:
-            reference_delays = g['reference_delays'][...]
+            # length_s is zero, take signal from start until end:
+            cir_start = int(start_time * self.cir_rate_Hz)
+
+            reference_delays = g['reference_delays'][cir_start:]
             nof_cirs = len(reference_delays)
-            cir_start = 0
             cir_end = nof_cirs
-            times = np.arange(0, nof_cirs * self.cir_interval, self.cir_interval)
+            times = np.arange(cir_start * self.cir_interval, nof_cirs * self.cir_interval, self.cir_interval)
 
         channel_power = np.zeros((nof_cirs, 1), dtype=complex)
 

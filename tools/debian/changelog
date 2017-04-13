@@ -1,3 +1,11 @@
+cdx-tools (1.2-1) UNRELEASED; urgency=medium
+
+  * Enabled OpenMP for cdx-convert-continuous-to-discrete tool.
+  * cdx-display can now handle more than two links in a CDX file. Two links are always shown, but
+    which ones are selectable.
+
+ -- Frank M. Schubert <fmschubert@ieee.org>  Thu, 13 Apr 2017 15:48:00 +0200
+
 cdx-tools (1.1-1) UNRELEASED; urgency=medium
 
   * Fixes for plotting in multipath delay spread figures.

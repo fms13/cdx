@@ -221,6 +221,9 @@ class FiguresGenerator:
         ax.legend()
         ax.grid()
 
+    ##
+    # \brief
+    # If length is zero, go until end of the file.
     def make_discr_cir_axes(self, ax, link_name, start_time, length):
         cirs, times, delays, ref_delays = self.cdd_file.get_cirs(link_name, start_time, length)
 
@@ -286,6 +289,9 @@ class FiguresGenerator:
 #         else:
         ax.set_ylim((delays[0][0] / 1e-9, delays[-1][0] / 1e-9))
 
+    ##
+    # \brief
+    # If length is zero, go until end of the file.
     def make_delay_doppler_spectrum(self, ax, link_name, start_time=0.0, length=0.0):
         cirs, times, delays, ref_delays = self.cdd_file.get_cirs(link_name, start_time, length)
 
@@ -316,7 +322,7 @@ class FiguresGenerator:
         # compute frequency axis:
         nof_cirs = float(cirs.shape[1])
         deltaf = self.cdd_file.cir_rate_Hz / nof_cirs
-        print "Frequency resolution: ", deltaf, " Hz"
+        #print "Frequency resolution: ", deltaf, " Hz"
         ymin = -nof_cirs / 2.0 * deltaf
         ymax = nof_cirs / 2.0 * deltaf - deltaf
         x_axis = np.arange(ymin, ymax, deltaf)
