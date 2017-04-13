@@ -23,5 +23,5 @@ dist_bin_SCRIPTS = python/cdx-compute-delay-doppler-spectrum \
 	python/cdx-plot-discrete-delay-file
 
 
-AM_CXXFLAGS = -std=c++11 -O3
+AM_CXXFLAGS = -std=c++11 -O3 -fopenmp
 
