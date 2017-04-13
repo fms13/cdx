@@ -1,0 +1,12 @@
+/*!
+
+\page development Development
+
+\section development_python Python
+
+If Python files in e.g. \c ~/workspace/cdx/trunk/python or \c ~/workspace/cdx/trunk/tools/python are changed they need to be called by
+
+    PYTHONPATH=~/workspace/cdx/trunk/python ~/workspace/cdx/trunk/tools/python/cdx-display -i example_01.cdx 
+
+*/
+
