@@ -366,10 +366,9 @@ class FiguresGenerator:
     def make_power_axes(self, ax, link_name):
         print 'computing power plot for link ', link_name
 
-        ax.set_title('Power, Link {}'.format(link_name))
-
         times, channel_power = self.cdx_file.compute_power(link_name)
 
+        ax.set_title('Power, Link {}'.format(link_name))
         ax.plot(times, 20 * np.log10(abs(channel_power)))
         ax.set_xlim((times[0], times[-1]))
         ax.set_xlabel('Time [s]')
@@ -379,10 +378,10 @@ class FiguresGenerator:
     def make_delay_spread_axes(self, ax, link_name):
         print 'computing delay spread plot for link ', link_name
 
-        ax.set_title('Multipath Delay Spread, Link {}'.format(link_name))
 
         times, mp_spread = self.cdx_file.compute_multipath_spread(link_name)
 
+        ax.set_title('Multipath Delay Spread, Link {}'.format(link_name))
         ax.plot(times, mp_spread / 1e-9)
         ax.set_xlim((times[0], times[-1]))
         ax.set_xlabel('Time [s]')

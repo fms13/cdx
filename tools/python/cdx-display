@@ -4,35 +4,22 @@
 # \date April 4, 2012
 # \author Frank Schubert
 #
-#   CDX Library
+# \brief This program displays
 #
-#   As part of
+#  + the channel response
+#  + the Delay-Doppler-Spectrum
+#  + the total power per time
+#  + the delay spread per time
+#  + Power Delay Profile
 #
-#   SNACS - The Satellite Navigation Radio Channel Simulator
+# for individual links of a CDX file. Two links are displayed simultaneously.
 #
-#   Class to read continuous-delay CDX files.
-#
-#   Copyright (C) 2012-2013  F. M. Schubert
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 # Command line parameters:
-# -f <file_name>: input CDX file
+#  + -i <file_name>: input CDX file
+#  + -p: do not compute the Power Delay Profile
+#
 
-# initialization
 import numpy as np
-import h5py
 import argparse
 import os
 import sys
@@ -49,9 +36,13 @@ from matplotlib.backends.backend_qt4agg import (
      FigureCanvasQTAgg as FigureCanvas,
      NavigationToolbar2QT as NavigationToolbar)
 
-import multiprocessing
-
-#from cdx import CDXFiguresGenerator
+# import multiprocessing
+# For h5py multithreading does not work due to the Global Interpreter Lock, but multiprocessing
+# should work: "Yes, multiprocessing can be used for concurrent reads, provided the file is
+# not open for writing anywhere." from https://github.com/h5py/h5py/issues/591.
+#
+# Yet, I could not get multiprocessing to run with h5py from Debian Jessie (python-h5py 2.2.1)
+# I'll try again with Stretch.
 
 import cdx.FiguresGenerator
 
@@ -70,9 +61,21 @@ params = {'legend.fontsize': 7,
         }
 plt.rcParams.update(params)
 
+##
+# \brief Helper function to run cdx_figures.make_power_axes as a separate thread
+# Not active in the moment, see comment above for import multiprocessing
+def call_make_power_axes(cdx_figures, power_ax, link_name, power_result_queue):
+    cdx_figures.make_power_axes(power_ax, link_name)
+    power_result_queue.put(power_ax)
+
+##
+# \brief Class that generates a QWidget into which all plots for a link are
+# inserted.
+#
 class ChannelLink(QtGui.QWidget):
     def __init__(self, cdx_figures, link_name, enable_pdp, parent=None):
         QtGui.QWidget.__init__(self, parent)
+
         self.cdx_figures = cdx_figures
         self.enable_pdp = enable_pdp
         self.link_name = link_name
@@ -126,7 +129,7 @@ class ChannelLink(QtGui.QWidget):
         self.cir_ax = self.cir_figure.add_subplot(1, 1, 1)
         self.add_figure_to_canvas(self.cir_figure)
 
-        if cdx_figures.cdd_enabled == True:
+        if self.cdx_figures.cdd_enabled == True:
             self.cir_discr_figure = plt.figure(dpi=100)
             self.cir_discr_ax = self.cir_discr_figure.add_subplot(1, 1, 1)
             self.cir_discr_vline = self.cir_discr_ax.axvline(x=0, color='r')
@@ -162,11 +165,16 @@ class ChannelLink(QtGui.QWidget):
         # fill in initial data in plkit:
         self.initialize_link(self.link_name)
 
+    ##
+    # \brief Initializes the figures in a link. Called on startup and when a new
+    # link is set in the combobox.
     def initialize_link(self, link_name):
-
         # start computation of these plots in parallel:
-        pool = multiprocessing.Pool(processes=4)
-        pool.apply_async(cdx_figures.make_cir_axes(self.cir_ax, self.link_name, 0))
+
+        # components in single channel impulse response:
+        #thread_cir = multiprocessing.Process(target=cdx_figures.make_cir_axes, args=(self.cir_ax, self.link_name, 0))
+        #thread_cir.start()
+        self.cdx_figures.make_cir_axes(self.cir_ax, self.link_name, 0)
 
         # add first CIR plot:
         if self.cdx_figures.cdd_enabled == True:
@@ -175,35 +183,60 @@ class ChannelLink(QtGui.QWidget):
             self.cir_discr_figure = self.cdx_figures.make_discr_cir_axes(self.cir_discr_ax, self.link_name, start_time, length)
             self.dds_figure = self.cdx_figures.make_delay_doppler_spectrum(self.dds_ax, self.link_name, start_time, length)
 
-        # add first power plot:
-        pool.apply_async(cdx_figures.make_power_axes(self.power_ax, self.link_name))
+        # add power plot:
+        #pool.apply_async(cdx_figures.make_power_axes, args=(self.power_ax, self.link_name))
+        #call_make_power_axes(cdx_figures, self.power_ax, self.link_name)
+        #pool.apply_async(call_make_power_axes, args=(cdx_figures, self.power_ax, self.link_name,))
+        #thread_power = multiprocessing.Process(target=cdx_figures.make_power_axes, args=(self.power_ax, self.link_name))
+
+        #power_result_queue = multiprocessing.Queue()
+        #thread_power = multiprocessing.Process(target=call_make_power_axes, args=(self.power_ax, self.link_name, power_result_queue))
+        #thread_power.start()
+        #call_make_power_axes(self.power_ax, self.link_name, power_result_queue)
+
+        #cdx_figures.make_power_axes(self.power_ax, self.link_name)
+        #call_make_power_axes(cdx_figures, self.power_ax, self.link_name, power_result_queue)
+        self.cdx_figures.make_power_axes(self.power_ax, self.link_name)
 
         # add delay spread plot:
-        pool.apply_async(cdx_figures.make_delay_spread_axes(self.delay_spread_ax, self.link_name))
-
+        #pool.apply_async(cdx_figures.make_delay_spread_axes, args=(self.delay_spread_ax, self.link_name))
+        #thread_spread = multiprocessing.Process(target=cdx_figures.make_delay_spread_axes, args=(self.delay_spread_ax, self.link_name))
+        self.cdx_figures.make_delay_spread_axes(self.delay_spread_ax, self.link_name)
+        #thread_spread.start()
         if self.enable_pdp == True:
             # compute power-delay profiles:
-            #im = cdx_figures.make_pdp_axes(self.pdp_axes[idx], link_name)
-            pool.apply_async(cdx_figures.make_pdp_axes(self.pdp_ax, link_name, 10e-7, 10e0, self.pdp_figure))
+            #thread_pdp = multiprocessing.Process(target=cdx_figures.make_pdp_axes, args=(self.pdp_ax, link_name, 10e-7, 10e0, self.pdp_figure))
             #self.pdp_axes[idx].xaxis.set_ticks_position('bottom')
+            #thread_pdp.start()
+            self.cdx_figures.make_pdp_axes(self.pdp_ax, link_name, 10e-7, 10e0, self.pdp_figure)
 
-        print 'joining processes...'
-        pool.close()
-        pool.join()
+        #print 'joining processes...'
+        #thread_cir.join()
+        #thread_power.join()
+        #self.power_ax = power_result_queue.get()
+        #thread_spread.join()
+        #if self.enable_pdp == True:
+        #    thread_pdp.join()
+        #print 'done.'
 
-        print 'done.'
-
+    ##
+    # \brief Adds a figure to a list of canvases.
     def add_figure_to_canvas(self, fig):
         # add canvas for CIR to Layout:
         self.canvases.append(FigureCanvas(fig))
         #self.canvases[-1].setParent(self.main_frame)
         self.canvases[-1].setFocusPolicy(QtCore.Qt.StrongFocus)
         self.canvases[-1].setFocus()
-#          self.mpl_toolbar = NavigationToolbar(self.canvases, self.main_frame)
-#          self.canvases.mpl_connect('key_press_event', self.on_key_press)
+        # self.mpl_toolbar = NavigationToolbar(self.canvases, self.main_frame)
+        # self.canvases.mpl_connect('key_press_event', self.on_key_press)
         self.hbox.addWidget(self.canvases[-1])
-#          self.hboxes[idx].addWidget(self.mpl_toolbar)
+        # self.hboxes[idx].addWidget(self.mpl_toolbar)
 
+    ##
+    # \brief Updates the content of figures for a new time. This
+    #  + Updates the CIR plot,
+    #  + sets the vertical linkes in the power and delay spread plots that indicate the current time,
+    #  + and read a new Delay Spread Spectrum if a CDD file is present
     def update(self, value, time):
         self.current_value = value
         self.current_time = time
@@ -240,6 +273,9 @@ class ChannelLink(QtGui.QWidget):
         for canvas in self.canvases:
             canvas.draw()
 
+    ##
+    # \brief Slot function when a new link name is selected in the combo box. This deletes the
+    # axes and initializes the link again with the new link name.
     def combobox_index_changed(self, idx):
         self.link_name = self.combobox.itemText(idx)
 
@@ -263,11 +299,12 @@ class ChannelLink(QtGui.QWidget):
 # file.
 #
 class CDXDisplayWindows(QtGui.QMainWindow):
-     def __init__(self, cdx_figures, enable_pdp, parent=None):
+     def __init__(self, cdx_file_name, enable_pdp, parent=None):
          QtGui.QMainWindow.__init__(self, parent)
 
+         self.cdx_figures = cdx.FiguresGenerator.FiguresGenerator(cdx_file_name)
+
          # read CDX file:
-         self.cdx_figures = cdx_figures
          self.link_names = self.cdx_figures.cdx_file.get_link_names()
          self.nof_cirs = self.cdx_figures.cdx_file.get_nof_cirs()
          self.cir_rate = self.cdx_figures.cdx_file.get_cir_rate()
@@ -324,6 +361,8 @@ class CDXDisplayWindows(QtGui.QMainWindow):
          key_press_handler(event, self.canvases, self.mpl_toolbar)
 
 
+##
+# \brief Main function for cdx-display
 if __name__ == '__main__':
      # parse command line arguments
      parser = argparse.ArgumentParser()
@@ -341,11 +380,8 @@ if __name__ == '__main__':
      else:
          enable_pdp = True
 
-     print 'multiprocessing.CPU_count():', multiprocessing.cpu_count()
-     cdx_figures = cdx.FiguresGenerator.FiguresGenerator(args.input)
-
      app = QtGui.QApplication(sys.argv)
-     form = CDXDisplayWindows(cdx_figures, enable_pdp)
+     form = CDXDisplayWindows(args.input, enable_pdp)
      form.setWindowTitle('Channel Data Exchange (CDX): Display File')
      form.show()
 

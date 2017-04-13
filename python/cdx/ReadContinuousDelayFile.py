@@ -63,7 +63,7 @@ class ReadContinuousDelayFile:
         self.reference_delays = {}
         for group_name in self.f['/links']:
             self.link_names.append(group_name)
-            self.reference_delays[group_name] = self.f['/links/{}/reference_delays'.format(group_name)][...]
+            self.reference_delays[group_name] = self.f['links'][group_name]['reference_delays'][...]
 
         self.nof_cirs = len(self.f['/links/{}/cirs'.format(self.link_names[0])])
 
@@ -87,7 +87,7 @@ class ReadContinuousDelayFile:
         return self.link_names
 
     def get_type_names(self, link_name):
-        type_names_dataset = self.f['/links/{}/component_types'.format(link_name)]
+        type_names_dataset = self.f['links'][link_name]['component_types']
 
         # we transform the dataset to a dictionary now:
         # type_name[id] -> name
@@ -101,7 +101,7 @@ class ReadContinuousDelayFile:
         return types_to_names
 
     def get_cir(self, link_name, n):
-        cir_raw = self.f['/links/{}/cirs/{}'.format(link_name, n)]
+        cir_raw = self.f['links'][link_name]['cirs'][str(n)]
         types = cir_raw['type']
         ids = cir_raw['id']
         delays = cir_raw['delay']
@@ -120,7 +120,7 @@ class ReadContinuousDelayFile:
         return cir_start, cir_end
 
     def compute_multipath_spread(self, link_name, start_time = 0.0, length = 0.0):
-        g = self.f['/links/{}'.format(link_name)];
+        g = self.f['links'][link_name];
         total_nof_cirs = len(g['cirs'])
 
         # check if start_time and length can be processed:
@@ -145,7 +145,7 @@ class ReadContinuousDelayFile:
 
         # for all cirs
         for cir_n in np.arange(nof_cirs):
-            cir = g['cirs/{0}'.format(cir_start + cir_n)]
+            cir = g['cirs'][str(cir_start + cir_n)]
 
             delays = cir['delay']
             if len(delays) > 1: # there must be at least two components to compute the difference:
@@ -158,7 +158,7 @@ class ReadContinuousDelayFile:
         return times, mp_spread
 
     def compute_power(self, link_name, start_time = 0.0, length = 0.0):
-        g = self.f['/links/{}'.format(link_name)];
+        g = self.f['links'][link_name]
         total_nof_cirs = len(g['cirs'])
 
         # check if start_time and length can be processed:
@@ -190,14 +190,14 @@ class ReadContinuousDelayFile:
         return times, channel_power
 
     def get_min_max_power(self, link_name):
-        g = self.f['/links/{}'.format(link_name)];
+        g = self.f['links'][link_name];
         cir = g['cirs/0']
         min_power = np.abs(cir['real'] + 1j * cir['imag'])
         max_power = np.abs(cir['real'] + 1j * cir['imag'])
 
         # for all cirs
         for cir_n in np.arange(nof_cirs):
-            cir = g['cirs/{0}'.format(cir_start + cir_n)]
+            cir = g['cirs'][str(cir_start + cir_n)]
             amplitudes = abs(cir['real'] + 1j * cir['imag'])
 
             min_amplitudes = np.min(amplitudes)
@@ -225,7 +225,7 @@ class ReadContinuousDelayFile:
         # pdp will be plotted in dB, initialize with min values:
         pdp = lower_prob * np.ones((len(pwr_ax), len(del_ax)))
 
-        g = self.f['/links/{}'.format(link_name)];
+        g = self.f['links'][link_name];
         reference_delays = g['reference_delays'][...]
 
         # for all cirs
