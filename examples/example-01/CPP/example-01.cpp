@@ -52,31 +52,30 @@ int main() {
 			transmitter_frequency_Hz, link_names, links_to_component_types);
 
 	// write some channel impulse responses:
-	CDX::CIR_number_t CIRnum = 0;
+	CDX::cir_number_t cir_number = 0;
 	for (size_t k = 0; k < 10; k++) {
 		CDX::impulse_t cir_los = { 0, 0, 0.0, complex<double>(1.0, 0.0) };
 		CDX::impulse_t cir_scatterer =
 				{ 256, 1, 0.1, complex<double>(0.5, 0.5) };
 
-		CDX::CIR single_cir;
+		CDX::components_t single_cir;
 
 		single_cir.push_back(cir_los);
 		single_cir.push_back(cir_scatterer);
 
 		// we use the same CIR for both links:
-		map<std::string, CDX::CIR> cirs;
-		cirs["satellite0"] = single_cir;
-		cirs["satellite1"] = single_cir;
+		map<std::string, CDX::components_t> link_names_to_cirs;
+		link_names_to_cirs["satellite0"] = single_cir;
+		link_names_to_cirs["satellite1"] = single_cir;
 
 		// reference delays:
 		map<std::string, double> reference_delays;
 		reference_delays["satellite0"] = 0.0;
 		reference_delays["satellite1"] = 0.0;
 
-		cdx_out.write_cir(cirs, reference_delays, CIRnum);
+		cdx_out.write_cir(link_names_to_cirs, reference_delays, cir_number);
 
-		CIRnum++;
-
+		cir_number++;
 	}
 
 	cout << "all done." << endl;
