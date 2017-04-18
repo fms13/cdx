@@ -108,7 +108,8 @@ int main(int argc, char **argv) {
 	const bool filter_by_types = vm.count("type") == 0 ? false : true;
 	unsigned type_to_process = 0;
 	if (filter_by_types == true) {
-		cout << "info: filtering by types, only components with type equal to " << type_to_process << "will be processed.\n";
+		cout << "info: filtering by types, only components with type equal to "
+				<< type_to_process << "will be processed.\n";
 		type_to_process = vm["type"].as<unsigned>();
 	}
 
@@ -144,7 +145,7 @@ int main(int argc, char **argv) {
 		cout.flush();
 
 		// read in whole input file
-		vector < CDX::cir_t > cirs(nof_cirs);
+		vector<CDX::cir_t> cirs(nof_cirs);
 		vector<double> reference_delays(nof_cirs);
 
 		// find minimum and maximum delay in file:
@@ -206,10 +207,8 @@ int main(int argc, char **argv) {
 		const double interpolation_bandwidth = smpl_freq / 2.0;
 		const double Om = 2.0 * M_PI * (interpolation_bandwidth);
 
-		const arma::cx_rowvec window =
-				fftshift(
-						arma::conv_to < arma::cx_vec
-								> ::from(hamming(nof_coeffs))).st();
+		const arma::cx_rowvec window = fftshift(
+				arma::conv_to<arma::cx_vec>::from(hamming(nof_coeffs))).st();
 
 		if (window.size() != nof_coeffs)
 			throw std::runtime_error("window.size() != nof_coeffs");
@@ -220,7 +219,8 @@ int main(int argc, char **argv) {
 		// for all CIRs
 		for (k = 0; k < nof_cirs; k++) {
 			for (c = 0; c < cirs.at(k).components.size(); c++) { // for all components
-				if (filter_by_types == true and type_to_process != cirs.at(k).components.at(c).type)
+				if (filter_by_types == true
+						and type_to_process != cirs.at(k).components.at(c).type)
 					continue;
 
 				for (n = 0; n < nof_coeffs; n++) { // for all coefficients
@@ -272,8 +272,8 @@ int main(int argc, char **argv) {
 		for (size_t n = 0; n < nof_cirs; n++) { // for all CIRs
 
 			// convert armadillo vec to stdlib vec:
-			vector < complex<double> > std_cir = arma::conv_to
-					< vector<complex<double> > > ::from(interp_cirs.row(n));
+			vector<complex<double> > std_cir = arma::conv_to<
+					vector<complex<double> > >::from(interp_cirs.row(n));
 
 			cdx_out.append_cir_snapshot(link_names.at(link), std_cir,
 					reference_delays.at(n) + delay_before_min);
