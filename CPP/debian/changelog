@@ -1,3 +1,9 @@
+libcdx (1.2-1) UNRELEASED; urgency=medium
+
+  * Renamed typedefs.
+
+ -- Frank M. Schubert <fmschubert@ieee.org>  Tue, 18 Apr 2017 14:45:00 +0100
+
 libcdx (1.1-1) UNRELEASED; urgency=medium
 
   * Changes to be compatible with new CDX format.
