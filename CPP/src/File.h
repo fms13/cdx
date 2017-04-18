@@ -29,6 +29,8 @@ namespace CDX {
  */
 typedef std::map<uint16_t, std::string> component_types_t;
 
+typedef std::map<std::string, component_types_t> links_to_component_types_t;
+
 
 /**
  * \brief Holds a single multipath component as input value for WriteContinuousDelayCDXFile::write_cir.
@@ -43,7 +45,7 @@ struct impulse_t {
 /**
  * \brief Defines a vector of CDX_Impulses representing one channel impulse response (CIR).
  */
-typedef std::vector<impulse_t> CIR;
+typedef std::vector<impulse_t> components_t;
 
 struct hdf5_impulse_t {
 	uint16_t type;
@@ -58,7 +60,7 @@ struct hdf5_impulse_t {
  */
 struct cir_t {
 	double ref_delay; ///< the reference delay in s, i.e. the time the signal travels from the transmitter to the receiver on a straight line
-	std::vector<impulse_t> components; ///< the multipath components
+	components_t components; ///< the multipath components
 };
 
 /**

@@ -168,10 +168,8 @@ void WriteFile::write(const H5::CommonFG* h5file, const std::string& path,
 			str_type);
 
 	// define dimensions:
-    const int rank = 2;
-    hsize_t dims[rank]; // dataset dimensions
-    dims[0] = data.size();
-    dims[1] = 1;
+    const int rank = 1;
+    hsize_t dims[rank] = { data.size() }; // dataset dimensions
 
     H5::DataSpace dataspace(rank, dims);
 

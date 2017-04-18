@@ -15,7 +15,7 @@ namespace CDX {
 WriteContinuousDelayFile::WriteContinuousDelayFile(std::string _file_name,
 		double _c0_m_s, double _cir_rate_Hz, double _transmitter_frequency_Hz,
 		const std::vector<std::string> &_link_names,
-		const std::vector<component_types_t> &_component_types) :
+		links_to_component_types_t &_component_types) :
 		WriteFile(_file_name, _c0_m_s, _cir_rate_Hz, _transmitter_frequency_Hz,
 				_link_names), component_types(_component_types) {
 
@@ -32,14 +32,14 @@ WriteContinuousDelayFile::WriteContinuousDelayFile(std::string _file_name,
 	}
 
 	// creating groups for links and cirs:
-	for (size_t k = 0; k < nof_links; k++) {
+	for (auto link_name : link_names) {
 		H5::Group *new_cir_group = new H5::Group(
-				link_groups[link_names.at(k)]->createGroup("cirs"));
-		group_cirs[link_names.at(k)] = new_cir_group;
+				link_groups[link_name]->createGroup("cirs"));
+		group_cirs[link_name] = new_cir_group;
 
 		// write component types to file for each link:
-		write(link_groups[link_names.at(k)], "component_types",
-				component_types.at(k));
+		write(link_groups[link_name], "component_types",
+				component_types[link_name]);
 	}
 
 	cp_cmplx = new H5::CompType(sizeof(hdf5_impulse_t));
@@ -55,8 +55,8 @@ WriteContinuousDelayFile::WriteContinuousDelayFile(std::string _file_name,
 			H5::PredType::NATIVE_DOUBLE);
 }
 
-void WriteContinuousDelayFile::write_cir(std::map<std::string, CIR> cirs,
-		std::map<std::string, double> reference_delays, CIR_number_t CIRnum) {
+void WriteContinuousDelayFile::write_cir(std::map<std::string, components_t> cirs,
+		std::map<std::string, double> reference_delays, cir_number_t cir_number) {
 
 	if (cirs.size() != nof_links) {
 		stringstream msg;
@@ -86,7 +86,7 @@ void WriteContinuousDelayFile::write_cir(std::map<std::string, CIR> cirs,
 		const vector<CDX::impulse_t> impulses = cir.second;
 
 		stringstream dsName;
-		dsName << CIRnum;
+		dsName << cir_number;
 
 		hdf5_impulse_t wdata[impulses.size()];
 
