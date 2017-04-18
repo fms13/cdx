@@ -12,6 +12,9 @@ import h5py
 cir_dtype = np.dtype([('type', np.uint16), ('id', np.uint64), ('delay', np.float64),
                       ('real', np.float64), ('imag', np.float64)])
 
+vlen_string_dtype = h5py.special_dtype(vlen=bytes)
+component_types_dtype = np.dtype([ ('id', np.uint16), ('name', vlen_string_dtype) ])
+
 class WriteContinuousDelayFile:
     """Write a continuous-delay CDX file"""
     def __init__(self, file_name, parameters):
@@ -46,7 +49,15 @@ class WriteContinuousDelayFile:
 
         for link_name, component_types in zip(parameters['link_names'], parameters['component_types']):
             self.link_groups[link_name] = self.f.create_group("links/{}".format(link_name))
-            self.link_groups[link_name].create_dataset('component_types', data=parameters['component_types'][link_name])
+
+            # component types: convert dictionary to hdf5 compound type:
+            nof_component_types = len(parameters['component_types'][link_name])
+            component_types_h5 = np.empty(nof_component_types, dtype=component_types_dtype)
+            for idx, key in enumerate(parameters['component_types'][link_name]):
+                component_types_h5[idx] = ( key, parameters['component_types'][link_name][key])
+            # create dataset for component types, dtype is component_types_dtype:
+            self.link_groups[link_name].create_dataset('component_types', data=component_types_h5, dtype=component_types_dtype)
+
             self.cirs_groups[link_name] = self.link_groups[link_name].create_group("cirs")
             self.ref_delays[link_name] = np.empty(0, np.float64)
 
@@ -63,8 +74,9 @@ class WriteContinuousDelayFile:
         for k, link_name in enumerate(self.link_names):
             # component type must only contain entries from component_types:
             for idx in range(len(cirs[link_name])):
-                if cirs[link_name][idx]['type'] > len(self.component_types):
-                    raise SystemExit('Error: WriteContinuousDelayFile: append_cir: link_name {}: component type ({}) is larger than number of entries in component_types list ({}).'.format(link_name, cirs[link_name][idx]['type'], len(self.component_types)))
+                print 'type::', type(self.component_types[link_name])
+                if cirs[link_name][idx]['type'] not in self.component_types[link_name].keys():
+                    raise SystemExit('Error: WriteContinuousDelayFile: append_cir: link_name {}: component type ({}) is not contained in component_types list ({}).'.format(link_name, cirs[link_name][idx]['type'], self.component_types[link_name]))
 
             dset_name = '{}'.format(self.current_cir_number)
             dset = self.cirs_groups[link_name].create_dataset(dset_name, data=cirs[link_name], dtype=cir_dtype)
