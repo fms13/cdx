@@ -172,8 +172,15 @@ class FiguresGenerator:
         delays_dict = defaultdict(np.array)
         amplitudes_dB_dict = defaultdict(np.array)
 
+        # get dict: type -> name:
+        types_to_names = self.cdx_file.get_type_names(link_name)
+
         nof_processed_components = 0
         for type in types_set:
+            # check if type from CIR exists at all in . TODO move to cdx python lib, for this move links_to_component_types to a base class
+            if type not in types_to_names.keys():
+                raise Exception("type {} as read from CDX file is not in types_to_names.keys().".format(type))
+
             # types==type is the list of indices where types equals type
             delays_dict[type] = delays[types == type]
             amplitudes_dB_dict[type] = amplitudes[types == type]
@@ -181,9 +188,6 @@ class FiguresGenerator:
 
         if nof_processed_components != len(delays):
             raise Exception("CIR #{}: Total number of components ({}) does not match sum of types of components ({}): not all component types are defined in component_types".format(nof_cir, nof_processed_components, len(delays)))
-
-        # get dict: type -> name:
-        types_to_names = self.cdx_file.get_type_names(link_name)
 
         # dictionary that assigns type ids to color strings:
         component_colors = {}
