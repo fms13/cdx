@@ -68,7 +68,11 @@ parameters['component_types'] = {}
 for k in range(nof_satellites):
     link_name = 'satellite{}'.format(k)
     parameters['link_names'].append(link_name)
-    parameters['component_types'][link_name] = [ 'LOS', 'scatterers' ]
+    parameters['component_types'][link_name] = {}
+    parameters['component_types'][link_name][0] = 'LOS'
+    parameters['component_types'][link_name][256] = 'scatterer'
+    print 'value: ', parameters['component_types'][link_name]
+    print 'type: ', type(parameters['component_types'][link_name])
 
 cdx_file = cdx.WriteContinuousDelayFile.WriteContinuousDelayFile(file_name, parameters)
 
@@ -126,7 +130,7 @@ for k, time in enumerate(times_s):
             excess_delay_s = excess_distance_m / parameters['c0_m_s']
 
             idx = l + 1
-            cirs[link_name][idx]['type'] = 1
+            cirs[link_name][idx]['type'] = 256 # scatterer type as set above
             cirs[link_name][idx]['id'] = 0
             cirs[link_name][idx]['delay'] = excess_delay_s
             scatterer_amplitude = 0.5 * cmath.exp(-1j * 2 * cmath.pi / wave_length_m * (distance_receiver_scatterer_m))
