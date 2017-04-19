@@ -67,12 +67,11 @@ class ReadContinuousDelayFile:
 
         self.nof_cirs = len(self.f['/links/{}/cirs'.format(self.link_names[0])])
 
-
         # read remaining parameters:
-        self.c0 = parameters_group['c0_m_s'][0]
-        self.cir_rate_Hz = parameters_group['cir_rate_Hz'][0]
+        self.c0 = parameters_group['c0_m_s'][...]
+        self.cir_rate_Hz = parameters_group['cir_rate_Hz'][...]
         self.cir_interval = 1.0 / self.cir_rate_Hz
-        self.transmitter_frequency_Hz = parameters_group['transmitter_frequency_Hz'][0]
+        self.transmitter_frequency_Hz = parameters_group['transmitter_frequency_Hz'][...]
         self.length_s = self.nof_cirs / self.cir_rate_Hz
 
     def get_cir_rate(self):
@@ -107,8 +106,6 @@ class ReadContinuousDelayFile:
         ids = cir_raw['id']
         delays = cir_raw['delay']
         amplitudes = cir_raw['real'] + 1j * cir_raw['imag']
-#         cir = np.zeros((1, 1), dtype=cir_dtype)
-#         cir[0].delays = delays
 
         reference = self.reference_delays[link_name][n]
 

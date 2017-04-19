@@ -47,40 +47,35 @@ refl_pos_m = np.array([ [ 100, 10, -10 ],
 
 nof_scatterers = refl_pos_m.shape[0]
 
-# all time instants:
 length_s = 5.0
 nof_times = length_s * cir_rate_Hz
+# all time instants:
 times_s = np.linspace(0.0, length_s, nof_times)
 
 print 'Simulation length: {} s, CIR rate: {} Hz, nof_satellites: {}, number of time instants to compute: {}'.format(length_s, cir_rate_Hz, nof_satellites, nof_times)
 
 # setup CDX output file:
 file_name = 'example-01.cdx'
-parameters = {}
-parameters['transmitter_frequency_Hz'] = np.array([ 1.51e9 ])
 
-parameters['c0_m_s'] = np.array([ 3e8 ])
-parameters['cir_rate_Hz'] = np.array([ cir_rate_Hz ])
-parameters['delay_type'] = 'continuous-delay'
-parameters['link_names'] = []
-parameters['component_types'] = {}
+# define the propagation parameters:
+transmitter_frequency_Hz = 1.51e9
+c0_m_s = 3e8
+cir_rate_Hz = cir_rate_Hz
+link_names = []
+component_types = {}
 
 for k in range(nof_satellites):
     link_name = 'satellite{}'.format(k)
-    parameters['link_names'].append(link_name)
-    parameters['component_types'][link_name] = {}
-    parameters['component_types'][link_name][0] = 'LOS'
-    parameters['component_types'][link_name][256] = 'scatterer'
-    print 'value: ', parameters['component_types'][link_name]
-    print 'type: ', type(parameters['component_types'][link_name])
+    link_names.append(link_name)
+    component_types[link_name] = {}
+    component_types[link_name][0] = 'LOS'
+    component_types[link_name][256] = 'scatterer'
 
-cdx_file = cdx.WriteContinuousDelayFile.WriteContinuousDelayFile(file_name, parameters)
+cdx_file = cdx.WriteContinuousDelayFile.WriteContinuousDelayFile(file_name, c0_m_s,
+                                                                 cir_rate_Hz, transmitter_frequency_Hz,
+                                                                 link_names, component_types)
 
-wave_length_m = parameters['c0_m_s'][0] / parameters['transmitter_frequency_Hz'][0]
-
-phases = {}
-for link_name in parameters['link_names']:
-    phases[link_name] = 0.0
+wave_length_m = c0_m_s / transmitter_frequency_Hz
 
 for k, time in enumerate(times_s):
     # compute current receiver position:
@@ -97,7 +92,7 @@ for k, time in enumerate(times_s):
 #         print 'sat_pos_start_m[n, :]', sat_pos_start_m[n, :], ', sat_pos_m: ', sat_pos_m, ', rec_pos_m: ', rec_pos_m, ', sat_pos_m - rec_pos_m', (sat_pos_m - rec_pos_m), 'np.linalg.norm(sat_pos_m - rec_pos_m)', np.linalg.norm(sat_pos_m - rec_pos_m)
         # ...and the distance from receiver to satellite:
         distance_satellite_receiver_m = np.linalg.norm(sat_pos_m - rec_pos_m)
-        flight_time_satellite_receiver_s = distance_satellite_receiver_m / parameters['c0_m_s']
+        flight_time_satellite_receiver_s = distance_satellite_receiver_m / c0_m_s
 
         # compute the reference delay in s:
         ref_delays[link_name] = flight_time_satellite_receiver_s
@@ -114,9 +109,8 @@ for k, time in enumerate(times_s):
         receiver_to_satellite_unit_vec = receiver_to_satellite_vec / np.linalg.norm(receiver_to_satellite_vec)
         distance_change_receiver_to_satellite_m = np.dot(receiver_velocity_m_s, receiver_to_satellite_unit_vec) * 1.0 / cir_rate_Hz
 
-        phases[link_name] -= distance_change_receiver_to_satellite_m
-
-        los_amplitude = 1.0 * cmath.exp(-1j * 2 * cmath.pi / wave_length_m * phases[link_name])
+        # LOS amplitude does not contain phase shift due to satellite movement:
+        los_amplitude = 1.0
         #print 'receiver_to_satellite_unit_vec: ', receiver_to_satellite_unit_vec
         cirs[link_name][0]['real'] = los_amplitude.real
         cirs[link_name][0]['imag'] = los_amplitude.imag
@@ -127,13 +121,13 @@ for k, time in enumerate(times_s):
             distance_receiver_scatterer_m = np.linalg.norm(receiver_to_scatterer_vec)
 
             excess_distance_m = distance_receiver_scatterer_m - np.dot(receiver_to_satellite_unit_vec, receiver_to_scatterer_vec)
-            excess_delay_s = excess_distance_m / parameters['c0_m_s']
+            excess_delay_s = excess_distance_m / c0_m_s
 
-            idx = l + 1
+            idx = l + 1 # idx = 0 is LOS component
             cirs[link_name][idx]['type'] = 256 # scatterer type as set above
             cirs[link_name][idx]['id'] = 0
             cirs[link_name][idx]['delay'] = excess_delay_s
-            scatterer_amplitude = 0.5 * cmath.exp(-1j * 2 * cmath.pi / wave_length_m * (distance_receiver_scatterer_m))
+            scatterer_amplitude = 0.5 * cmath.exp(-1j * 2.0 * cmath.pi / wave_length_m * (distance_receiver_scatterer_m))
             cirs[link_name][idx]['real'] = scatterer_amplitude.real
             cirs[link_name][idx]['imag'] = scatterer_amplitude.imag
 
