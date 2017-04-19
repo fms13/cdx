@@ -22,14 +22,20 @@ WriteContinuousDelayFile::WriteContinuousDelayFile(std::string _file_name,
 	// write CDX file type to HDF5 file:
 	write("/parameters/delay_type", "continuous-delay");
 
-	// check that their are the same number of link names as component types:
+	// check that there are the same number of link names as component types:
 	if (link_names.size() != component_types.size()) {
 		stringstream msg;
-		msg << "Number of provided component types (" << component_types.size()
+		msg << "WriteContinuousDelayFile: number of provided component types ("
+				<< component_types.size()
 				<< ") does not match number of links in file (" << nof_links
 				<< ").";
 		throw runtime_error(msg.str());
 	}
+
+	// check for empty link_names:
+	if (link_names.size() == 0)
+		throw runtime_error(
+				"WriteContinuousDelayFile: link_names.size() is zero");
 
 	// creating groups for links and cirs:
 	for (auto link_name : link_names) {
@@ -55,8 +61,10 @@ WriteContinuousDelayFile::WriteContinuousDelayFile(std::string _file_name,
 			H5::PredType::NATIVE_DOUBLE);
 }
 
-void WriteContinuousDelayFile::write_cir(std::map<std::string, components_t> cirs,
-		std::map<std::string, double> reference_delays, cir_number_t cir_number) {
+void WriteContinuousDelayFile::write_cir(
+		std::map<std::string, components_t> cirs,
+		std::map<std::string, double> reference_delays,
+		cir_number_t cir_number) {
 
 	if (cirs.size() != nof_links) {
 		stringstream msg;
