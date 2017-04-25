@@ -150,6 +150,12 @@ class ChannelLink(QtGui.QWidget):
         self.delay_spread_vline = self.delay_spread_ax.axvline(x=0, color='r')
         self.add_figure_to_canvas(self.delay_spread_figure)
 
+        # create figure object for number of components figure:
+        self.nof_components_figure = plt.figure(dpi=100)
+        self.nof_components_ax = self.nof_components_figure.add_subplot(1, 1, 1)
+        self.nof_components_vline = self.nof_components_ax.axvline(x=0, color='r')
+        self.add_figure_to_canvas(self.nof_components_figure)
+
         if self.enable_pdp == True:
             # create figure for power delay profile:
             self.pdp_figure = plt.figure(dpi=100)
@@ -171,7 +177,7 @@ class ChannelLink(QtGui.QWidget):
         # start computation of these plots in parallel:
 
         # new window with progress bar
-        progress = QtGui.QProgressDialog("Progress","cancel", 0, 5)
+        progress = QtGui.QProgressDialog("Progress","cancel", 0, 6)
         progress.setCancelButton(None)
         progress.setMinimumDuration(0)
         progress.show()
@@ -227,6 +233,13 @@ class ChannelLink(QtGui.QWidget):
 
         progress.setValue(4)
 
+        progress.setLabelText("Link {}, drawing number of components...".format(link_name))
+        progress.show()
+
+        self.cdx_figures.make_nof_components_axes(self.nof_components_ax, self.link_name)
+
+        progress.setValue(5)
+
         #thread_spread.start()
         if self.enable_pdp == True:
             # compute power-delay profiles:
@@ -234,12 +247,11 @@ class ChannelLink(QtGui.QWidget):
             #self.pdp_axes[idx].xaxis.set_ticks_position('bottom')
             #thread_pdp.start()
             progress.setLabelText("Link {}, drawing power delay profile...".format(link_name))
-            progress.setLabelText("Link {}, drawing power delay profile...".format(link_name))
             progress.update()
 
             self.cdx_figures.make_pdp_axes(self.pdp_ax, link_name, 10e-7, 10e0, self.pdp_figure)
 
-        progress.setValue(5)
+        progress.setValue(6)
 
         #print 'joining processes...'
         #thread_cir.join()
@@ -302,6 +314,9 @@ class ChannelLink(QtGui.QWidget):
         # update vertical line in delay spread plot:
         self.delay_spread_vline.set_xdata(time)
 
+        # update vertical line in number of components plot:
+        self.nof_components_vline.set_xdata(time)
+
         for canvas in self.canvases:
             canvas.draw()
 
@@ -311,13 +326,17 @@ class ChannelLink(QtGui.QWidget):
     def combobox_index_changed(self, idx):
         self.link_name = self.combobox.itemText(idx)
 
+        # reset power plot:
+        self.power_ax.cla()
+        self.power_vline = self.power_ax.axvline(x=0, color='r')
+
         # reset delay spread plot:
         self.delay_spread_ax.cla()
         self.delay_spread_vline = self.delay_spread_ax.axvline(x=0, color='r')
 
-        # reset power plot:
-        self.power_ax.cla()
-        self.power_vline = self.power_ax.axvline(x=self.current_time, color='r')
+        # reset number of components plot:
+        self.nof_components_ax.cla()
+        self.nof_components_vline = self.nof_components_ax.axvline(x=0, color='r')
 
         self.initialize_link(self.link_name)
         self.update(self.current_value, self.current_time)

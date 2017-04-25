@@ -398,6 +398,18 @@ class FiguresGenerator:
         ax.set_ylabel('Delay Spread [ns]')
         ax.grid()
 
+    def make_nof_components_axes(self, ax, link_name):
+        print 'computing number of components for link ', link_name
+
+        times, nof_components = self.cdx_file.compute_nof_components(link_name)
+
+        ax.set_title('Number of Components, Link {}'.format(link_name))
+        ax.plot(times, nof_components)
+        ax.set_xlim((times[0], times[-1]))
+        ax.set_xlabel('Time [s]')
+        ax.set_ylabel('Number')
+        ax.grid()
+
     def make_pdp_axes(self, ax, link_name, lower_prob=10e-7, upper_prob=10e0, figure=None):
         print 'computing power delay profile plot for link ', link_name
 

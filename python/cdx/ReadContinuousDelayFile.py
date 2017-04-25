@@ -158,6 +158,39 @@ class ReadContinuousDelayFile:
 
         return times, mp_spread
 
+   ##
+    # \brief Computes the number of components for all times.
+    #
+    # If length is zero, go until end of the file.
+    def compute_nof_components(self, link_name, start_time = 0.0, length = 0.0):
+        g = self.f['links'][link_name];
+        total_nof_cirs = len(g['cirs'])
+
+        # check if start_time and length can be processed:
+        if length != 0.0:
+            if start_time + length > self.length_s:
+                raise SystemExit("Error: start_time + length ({}) exceeds file length ({}) (start_time + length > self.length_s), difference: {}.".format(start_time + length, self.length_s, start_time + length - self.length_s))
+            cir_start, cir_end = self.get_cir_start_end_numbers_from_times(start_time, length)
+
+            reference_delays = g['reference_delays'][cir_start:cir_end]
+            times = np.arange(cir_start * self.cir_interval, cir_end * self.cir_interval, self.cir_interval)
+            nof_cirs = len(reference_delays)
+        else:
+            reference_delays = g['reference_delays'][...]
+            nof_cirs = len(reference_delays)
+            cir_start = int(start_time * self.cir_rate_Hz)
+            cir_end = nof_cirs
+            times = np.arange(cir_start * self.cir_interval, nof_cirs * self.cir_interval, self.cir_interval)
+
+        nof_components = np.zeros((nof_cirs, 1))
+
+        # for all cirs
+        for cir_n in np.arange(nof_cirs):
+            cir = g['cirs'][str(cir_start + cir_n)]
+            nof_components[cir_n] = len(cir)
+
+        return times, nof_components
+
     ##
     # \brief
     # If length is zero, go until end of the file.
