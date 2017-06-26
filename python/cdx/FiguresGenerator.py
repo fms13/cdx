@@ -321,6 +321,10 @@ class FiguresGenerator:
                 idx_into_cirs = np.floor(np.float(x) / nof_x_points * nof_x)
                 data[:, x] = dds[:, idx_into_cirs]
 
+
+        # replace values close to zero:
+        data[data < 10**-13 ] = 10**-13
+
         data_dB = 20 * np.log10(np.abs(data))
 
         # compute frequency axis:
