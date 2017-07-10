@@ -10,7 +10,13 @@
  *
  * Compilation for Octave:
  *
+ * On macOS with ports:
+ * 
  *   clear hdf5write; mkoctfile hdf5write.cpp -lhdf5 -lhdf5_cpp -std=c++11
+ * 
+ * On Debian 8:
+ * 
+ *   CXXFLAGS='-std=c++11' mkoctfile hdf5write.cpp -lhdf5 -lhdf5_cpp -I/usr/include/hdf5/serial -L/usr/lib/x86_64-linux-gnu/hdf5/serial
  *
  * Test:
  *
