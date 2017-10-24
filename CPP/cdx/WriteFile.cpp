@@ -178,10 +178,20 @@ void WriteFile::write(const H5::CommonFG* h5file, const std::string& path,
 
 	// HDF5 only understands vector of char*
 	vector<component_type_t> data_as_c_struct;
-	for (auto name : data)
-		data_as_c_struct.push_back({name.first, name.second.c_str()});
+	vector<char *> component_names;
+	for (auto name : data) {
+		// dynamically allocate char arrays, otherwise writing does not work if *name in component_type_t points to name.second.c_str():
+		component_names.push_back(new char[name.second.size()]);
+		strcpy(component_names.back(), name.second.c_str());
+		data_as_c_struct.push_back({name.first, component_names.back()});
+	}
 
 	dset.write(data_as_c_struct.data(), comp_t);
+
+	// cleanup:
+	for (auto component_name : component_names) {
+		delete[] component_name;
+	}
 }
 
 void WriteFile::create_reference_delays_dataset(H5::Group* group) {
