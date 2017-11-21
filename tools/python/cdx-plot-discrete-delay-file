@@ -137,7 +137,7 @@ for link_name in link_names:
 
 	# only print nof_x_points cirs:
 	for x in arange(nof_x_points):
-		idx_into_cirs = floor(float(x) / nof_x_points * nof_x)
+		idx_into_cirs = int(floor(float(x) / nof_x_points * nof_x))
 		data[:, x] = cirs[:, idx_into_cirs]
 
 	data_dB = 20*log10(abs(data))
