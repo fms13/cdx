@@ -201,7 +201,7 @@ class FiguresGenerator:
 #         for component in
         for t in types_set:
             markerline, stemlines, baseline = ax.stem(delays_dict[t] / 1e-6, 10 * np.log10(np.abs(amplitudes_dB_dict[t])),
-                    bottom=self.min_power_dB)#, label=types_to_names[t]
+                    bottom=self.min_power_dB, label=types_to_names[t])
             # make the stems appear in the color defined by the t number and component_colors:
             plt.setp(stemlines, 'color', component_colors[t])
             plt.setp(markerline, 'markeredgecolor', component_colors[t])
