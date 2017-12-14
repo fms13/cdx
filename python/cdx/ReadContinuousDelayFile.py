@@ -228,6 +228,48 @@ class ReadContinuousDelayFile:
 
         return times, channel_power
 
+    def compute_los_and_multipath_components_powers(self, link_name, start_time, length):
+        g = self.f['links'][link_name]
+        total_nof_cirs = len(g['cirs'])
+
+        # check if start_time and length can be processed:
+        if length != 0.0:
+            if start_time + length > self.length_s:
+                raise SystemExit("Error: start_time + length ({}) exceeds file length ({}) (start_time + length > self.length_s), difference: {}.".format(start_time + length, self.length_s, start_time + length - self.length_s))
+            cir_start, cir_end = self.get_cir_start_end_numbers_from_times(start_time, length)
+
+            reference_delays = g['reference_delays'][cir_start:cir_end]
+            times = np.arange(cir_start * self.cir_interval, cir_end * self.cir_interval, self.cir_interval)
+            nof_cirs = len(reference_delays)
+        else:
+            # length_s is zero, take signal from start until end:
+            cir_start = int(start_time * self.cir_rate_Hz)
+
+            reference_delays = g['reference_delays'][cir_start:]
+            nof_cirs = len(reference_delays)
+            cir_end = nof_cirs
+            times = np.arange(cir_start * self.cir_interval, nof_cirs * self.cir_interval, self.cir_interval)
+
+        channel_power = np.zeros((nof_cirs, 1), dtype=complex)
+
+        los_power = np.zeros((nof_cirs, 1))
+        mp_power = np.zeros((nof_cirs, 1))
+
+        # for all cirs
+        for cir_n in np.arange(nof_cirs):
+            cir = g['cirs/{0}'.format(cir_start + cir_n)]
+            los_indices = cir['type'] < 256
+            mp_indices = np.invert(los_indices)
+#             print "cir['type']", cir['type']
+#             print "los_indices:", los_indices
+#             print "mp_indices:", mp_indices
+            los_amplitudes = cir['real'][los_indices] + 1j * cir['imag'][los_indices]
+            mp_amplitudes =  cir['real'][mp_indices] + 1j * cir['imag'][mp_indices]
+            los_power[cir_n] = np.sum(np.abs(los_amplitudes))
+            mp_power[cir_n] = np.sum(np.abs(mp_amplitudes))
+
+        return times, los_power, mp_power
+
     def get_min_max_power(self, link_name):
         g = self.f['links'][link_name];
         cir = g['cirs/0']

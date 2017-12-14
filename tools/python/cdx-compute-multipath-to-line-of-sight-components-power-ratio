@@ -1,0 +1,114 @@
+#!/usr/bin/env python
+##
+# \file cdx-compute-multipath-to-line-of-sight-components-power-ratio
+# \date Dec 14, 2017
+# \author Frank Schubert
+#
+# \brief Computes the total power of all multipath components and all line-of-sight
+# components. Computes the ratio of total multipath to total line-of-sight
+# components' powers
+#
+# This script is part of the CDX Library.
+#
+# Command line parameters:
+# -i <file_name>: 	input continuous-delay CDX file
+# -f				File format of the plot file to be stored. Either png or pdf.
+#					If not present, plot is not saved to disk
+# -s				Start time in file when processing should begin in s.
+# -l				Length to be processed in seconds.
+
+# initialization
+from numpy import *
+import matplotlib.pyplot as plt
+import h5py
+import argparse
+import os
+import sys
+
+import cdx.ReadContinuousDelayFile
+
+# set matplotlib font size:
+font = {'size'   : 8}
+plt.rc('font', **font)
+
+# parse command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--input", help="input CDX file", action="store")
+parser.add_argument("-f", "--format", help="output file format", action="store")
+parser.add_argument("-s", "--start", help="start time s", action="store")
+parser.add_argument("-l", "--length", help="length in s", action="store")
+args = parser.parse_args()
+
+store_figure = True
+if args.format == None:
+	store_figure = False # do not store plot if -f is not given
+
+if args.input == None:
+	raise SystemExit("Error: no input file given (command line parameter -i).")
+else:
+	file_name = args.input
+	print "plotting CDX file", file_name, "..."
+
+# check if we are limited to certain time span:
+if args.start == None:
+	# this indicates, that the whole file is to be processes:
+	start_time = 0.0
+	length = 0.0
+else:
+	start_time = float(args.start)
+	length = float(args.length)
+
+# open CDX file for reading:
+cdx_file = cdx.ReadContinuousDelayFile.ReadContinuousDelayFile(file_name)
+
+fig = plt.figure()
+fig.canvas.set_window_title("Multipath and LOS Components' Powers and Their Ratio of CDX file " + file_name)
+plt.subplots_adjust(hspace=.4)
+
+act_plot = 1
+total_nof_plots = cdx_file.get_nof_links()
+for link in cdx_file.get_link_names():
+	times, los_powers, mp_powers = cdx_file.compute_los_and_multipath_components_powers(link, start_time, length)
+
+	ax = fig.add_subplot(2, total_nof_plots, act_plot)
+
+	ax.set_title("Sum of Multipath and LOS Components' Powers, Link {}".format(link))
+
+	ax.plot(times, 10 * log10(los_powers), 'b', label="Sum of LOS Power")
+	ax.plot(times, 10 * log10(mp_powers), 'g', label='Sum of MP Power')
+	ax.set_xlim((times[0], times[-1]))
+	ax.set_xlabel('Time [s]')
+	ax.set_ylabel('Power [dB]')
+	ax.grid()
+	ax.legend()
+
+	ax = fig.add_subplot(2, total_nof_plots, act_plot + 2)
+
+	ax.set_title("Ratio of Multipath Power to LOS Power, Link {}".format(link))
+
+	ax.plot(times, 10*log10(mp_powers / los_powers), 'k')
+	ax.set_xlim((times[0], times[-1]))
+	ax.set_xlabel('Time [s]')
+	ax.set_ylabel('Ratio [dB]')
+	ax.grid()
+
+	act_plot = act_plot + 1
+
+if store_figure == True:
+	# save file:
+	if args.format == "png":
+		extension = ".png"
+	elif args.format == "pdf":
+		extension = ".pdf"
+	else:
+		raise "Unknown file format (parameter -f)"
+
+	file_prefix, tail = os.path.splitext(file_name)
+	out_file_name = file_prefix + "_mp-and-los-powers-and-ratio" + extension
+	print "saving to", out_file_name
+	fig.set_size_inches(12, 4 * total_nof_plots)
+	fig.savefig(out_file_name, dpi=300)  # , bbox_inches='tight'
+else:
+	plt.show()
+
+print "all done."
