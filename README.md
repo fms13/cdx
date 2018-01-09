@@ -15,3 +15,5 @@ CDX allows for the storage of two different types of data:
 
 - continuous-delay data: data consisting of path components with a continuous delay as produced by channel models
 - discrete-delay data: data sampled with a certain sampling frequency, e.g. by a channel sounder
+
+The full documentation can be found here: http://fms13.github.io/cdx/
