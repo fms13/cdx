@@ -1,0 +1,5 @@
+<map id="CDX::WriteFile" name="CDX::WriteFile">
+<area shape="rect" id="node3" href="$classCDX_1_1WriteContinuousDelayFile.html" title="Class for writing continuous&#45;delay CDX files. " alt="" coords="5,155,216,181"/>
+<area shape="rect" id="node4" href="$classCDX_1_1WriteDiscreteDelayFile.html" title="Class for writing discrete&#45;delay data to a CDX file. " alt="" coords="240,155,435,181"/>
+<area shape="rect" id="node2" href="$classCDX_1_1File.html" title="Base class for the processing of Channel Data Exchange (CDX) files. " alt="" coords="184,5,264,32"/>
+</map>

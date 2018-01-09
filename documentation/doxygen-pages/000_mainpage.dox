@@ -19,13 +19,8 @@ The file format of CDX is described in Sec. \ref hdf5_cdx_structure.
 
 \section cdx_satellite_channels Storage of Channel Data for Land-Mobile Satellite Channels
 
-Since satellites can have high velocities relative to ground-based receivers, the satellites signals' are received with high Doppler shifts at the receivers. For example, if a satellites moves with \f$ v = 1000\,\mathrm{m/s} \f$ relative to a receiver on the Earth and if it is transmitting a signal with a carrier frequency of \f$ f_\mathrm{carr} = 1.5\,\mathrm{GHz} \f$, its signal is received with at \f[ f_\mathrm{recv} = f_\mathrm{carr} \cdot \sqrt{\frac{c_0 + v}{c_0 - v}} \approx 1.500005\,\mathrm{GHz} \f] i.e. the Doppler shift is \f[ f_\mathrm{recv} - f_\mathrm{carr} = 5\,\mathrm{kHz}\f]
+Since satellites can have high velocities relative to ground-based receivers, the satellites signals' are received with high Doppler shifts at the receivers. For example, if a satellites moves with \f$ v = 1000\,\mathrm{m/s} \f$ relative to a receiver on the Earth and if it is transmitting a signal with a carrier frequency of \f$ f_\mathrm{carr} = 1.5\,\mathrm{GHz} \f$, its signal is received at \f[ f_\mathrm{recv} = f_\mathrm{carr} \cdot \sqrt{\frac{c_0 + v}{c_0 - v}} \approx 1.500005\,\mathrm{GHz} \f] i.e. the Doppler shift is \f[ f_\mathrm{recv} - f_\mathrm{carr} = 5\,\mathrm{kHz}\f]
 
 In order to fulfill Nyquist criterion this would required that the channel response is sampled at a rate of 10 kHz which is often too high an effort for a channel model to generate. Hence, under the assumption that the direction to the transmitter does not change from one sampling instant to the other, the movement of the satellite and the receiver can be separated, respectively. Then, the channel response only contains the receiver dynamics and thus can be stored at a smaller sampling rate of e.g. 300 Hz.
-
-The following graph illustrates the computation of the range change due to the receiver movement:
-
-\image html satellite-propagation/LOS-distance-change-due-to-receiver-movement_01.png "Delay change due to receiver movement."
-
 
 */
