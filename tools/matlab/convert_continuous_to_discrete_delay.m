@@ -1,7 +1,9 @@
 %> \addtogroup matlab_tools
 %> @{
+%> \addtogroup matlab_tools_convert_continuous_to_discrete_delay convert_continuous_to_discrete_delay
+%> @{
 %>
-%> \file E030_convert_continuous_to_discrete_delay.m
+%> \file convert_continuous_to_discrete_delay.m
 %>
 %> \brief This script converts a continuous-delay CDX file to a discrete delay CDX file through interpolation of the data.
 %>
@@ -102,4 +104,5 @@ delete(wb);
 delete(cdx_in);
 delete(cdx_out);
 
+%> @}
 %> @}

@@ -1,33 +1,18 @@
 #!/usr/bin/env python
-##
+#
+# \addtogroup python_tools
+# @{
+# \addtogroup python_tools_cdx_compute_multipath_spread_and_energy cdx-compute-multipath-spread-and-energy
+# @{
+#
 # \file cdx-compute-multipath-spread-and-energy.py
+#
 # \date Oct 14, 2014
 # \author Frank Schubert
 #
-#	CDX Library
+## Computes the multipath delay spread and the total energy for every time instant.
 #
-#	As part of
-#
-#   SNACS - The Satellite Navigation Radio Channel Simulator
-#
-#   Program to compute the multipath spread and the
-# 	channel responses total energy over time for a
-#   continuous-delay CDX channel file as input.
-#
-#   Copyright (C) 2012-2013  F. M. Schubert
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# This script is part of the CDX Library.
 #
 # Command line parameters:
 # -i <file_name>: 	input continuous-delay CDX file
@@ -131,3 +116,5 @@ else:
 	plt.show()
 
 print "all done."
+## @} #
+## @} #

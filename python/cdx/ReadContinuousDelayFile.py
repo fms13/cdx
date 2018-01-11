@@ -1,35 +1,13 @@
 #!/usr/bin/env python
-#
-# \file ReadContinuousDelayFile.py
-# \date April 4, 2012
-# \author Frank Schubert
-#
-#   CDX Library
-#
-#   As part of
-#
-#   SNACS - The Satellite Navigation Radio Channel Simulator
-#
-#   Class to read continuous-delay CDX files.
-#
-#   Copyright (C) 2012-2013  F. M. Schubert
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 ##
 # \addtogroup python_implementation
 # @{
+#
+# \file ReadContinuousDelayFile.py
+#
+# \date April 4, 2012
+# \author Frank Schubert
+#
 
 import numpy as np
 import h5py
@@ -44,9 +22,7 @@ cir_dtype = np.dtype([('type', np.uint16), ('id', np.uint64), ('delay', np.float
 # \brief Class that provides functions to read from a continuous-delay CDX file
 #
 # Moreover, operations such as computation of power-delay profiles are provided.
-#
 class ReadContinuousDelayFile:
-    """Read a continuous-delay CDX file"""
     def __init__(self, file_name):
         # expects parameters as dict: { 'delay_type', 'c0', 'cir_rate_Hz', 'nof_links', 'enable_compression', 'transmitter_frequency_Hz' }
         print "Open CDX file", file_name
@@ -347,5 +323,4 @@ class ReadContinuousDelayFile:
             # file was not openend
             pass
 
-##
-# @}
+## @} #

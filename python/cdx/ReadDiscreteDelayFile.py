@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+##
+# \addtogroup python_implementation
+# @{
 #
 # \file ReadContinuousDelayFile.py
 # \date April 4, 2012
@@ -6,10 +9,6 @@
 #
 #   CDX Library
 #
-
-##
-# \addtogroup python_implementation
-# @{
 
 import numpy as np
 import h5py
@@ -124,5 +123,4 @@ class ReadDiscreteDelayFile:
             # file was not openend
             pass
 
-##
-# @}
+## @} #

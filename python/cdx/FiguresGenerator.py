@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 ##
+# \addtogroup python_implementation
+# @{
+#
 # \file FiguresGenerator.py
 # \date April 4, 2012
 # \author Frank Schubert
@@ -26,10 +29,6 @@
 #
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-##
-# \addtogroup python_implementation
-# @{
 
 import argparse
 import os
@@ -472,5 +471,4 @@ if __name__ == "__main__":
 
 print 'all done.'
 
-##
-# @}
+## @} #

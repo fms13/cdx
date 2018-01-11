@@ -1,7 +1,9 @@
 %> \addtogroup matlab_tools
 %> @{
+%> \addtogroup matlab_tools_create_new_hdf5_file_continuous_delay create_new_hdf5_file_continuous_delay
+%> @{
 %>
-%> \file E010_create_new_hdf5_file_continuous_delay.m
+%> \file create_new_hdf5_file_continuous_delay.m
 %>
 %> \brief This script creates a new CDX (HDF5 CIR) sample file with continuous delay data.
 %
@@ -73,3 +75,5 @@ fprintf('reference delay:');
 cir.reference_delay
 
 %> @}
+%> @}
+

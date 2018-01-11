@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 ##
+# \addtogroup python_tools
+# @{
+# \addtogroup python_tools_cdx_compute_multipath_to_line_of_sight_components_power_ratio cdx-compute-multipath-to-line-of-sight-components-power-ratio
+# @{
+#
 # \file cdx-compute-multipath-to-line-of-sight-components-power-ratio
+#
 # \date Dec 14, 2017
 # \author Frank Schubert
 #
@@ -112,3 +118,5 @@ else:
 	plt.show()
 
 print "all done."
+## @} #
+## @} #

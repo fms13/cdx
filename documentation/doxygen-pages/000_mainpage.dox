@@ -23,4 +23,12 @@ Since satellites can have high velocities relative to ground-based receivers, th
 
 In order to fulfill Nyquist criterion this would required that the channel response is sampled at a rate of 10 kHz which is often too high an effort for a channel model to generate. Hence, under the assumption that the direction to the transmitter does not change from one sampling instant to the other, the movement of the satellite and the receiver can be separated, respectively. Then, the channel response only contains the receiver dynamics and thus can be stored at a smaller sampling rate of e.g. 300 Hz.
 
+\defgroup cpp_implementation CDX C++ Implementation
+\defgroup python_implementation CDX Python Implementation
+\defgroup matlab_implementation CDX Matlab Implementation
+
+\defgroup cpp_tools CDX Tools written in C++
+\defgroup python_tools CDX Tools written in Python
+\defgroup matlab_tools CDX Tools written in Matlab
+
 */

@@ -1,5 +1,5 @@
 # activate the matlab filter for doxygen:
-EXTENSION_MAPPING = .m=C++
+EXTENSION_MAPPING = .m=C++ no_extension=Python
 FILTER_PATTERNS = *m=matlab-filter-for-doxygen/m2cpp.pl
 
 # Doxyfile 1.8.8
@@ -777,7 +777,7 @@ INPUT_ENCODING         = UTF-8
 # *.md, *.mm, *.dox, *.py, *.f90, *.f, *.for, *.tcl, *.vhd, *.vhdl, *.ucf,
 # *.qsf, *.as and *.js.
 
-FILE_PATTERNS          =
+FILE_PATTERNS          = *.c *.cc *.cxx *.cpp *.c++ *.h *.hh *.hxx *.hpp *.h++ *.m *.py cdx-* *.dox
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.

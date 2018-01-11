@@ -1,14 +1,13 @@
 #!/usr/bin/env python
+##
+# \addtogroup python_implementation
+# @{
 #
 # \file WriteContinuousDelayFile.py
 # \date April 4, 2012
 # \author Frank Schubert
 #
 #   CDX Library
-
-##
-# \addtogroup python_implementation
-# @{
 
 import numpy as np
 import h5py
@@ -94,5 +93,4 @@ class WriteContinuousDelayFile:
         for k, link_name in enumerate(self.link_names):
             self.link_groups[link_name].create_dataset("reference_delays", data=self.ref_delays[link_name])
         self.f.close()
-##
-# @}
+## @} #
