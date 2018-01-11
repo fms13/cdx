@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# #
+##
 # \file FiguresGenerator.py
 # \date April 4, 2012
 # \author Frank Schubert
@@ -26,6 +26,10 @@
 #
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+##
+# \addtogroup python_implementation
+# @{
 
 import argparse
 import os
@@ -138,11 +142,13 @@ class FiguresGenerator:
 #         print delays[0]
 #         for idx in np.arange(len(delays)):
 
-        # adjust y axis for power
+        # set amplitudes that are zero to 1e-9 to be able to compute the logarithm:
+        amplitudes[amplitudes == 0] = 1e-9
+
         try:
             amplitudes_dB = 10 * np.log10(np.abs(amplitudes))
         except RuntimeWarning:
-            print 'amplitudes:', amplitudes
+            raise ValueError('amplitude values are smaller than zero, logarithm cannot be computed for: {}'.format(amplitudes))
 
         min_amplitude_dB = np.min(amplitudes_dB)
         max_amplitude_dB = np.max(amplitudes_dB)
@@ -465,3 +471,6 @@ if __name__ == "__main__":
      main()
 
 print 'all done.'
+
+##
+# @}

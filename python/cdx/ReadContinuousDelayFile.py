@@ -27,6 +27,10 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+##
+# \addtogroup python_implementation
+# @{
+
 import numpy as np
 import h5py
 import warnings
@@ -313,12 +317,13 @@ class ReadContinuousDelayFile:
         for cir_n in np.arange(len(reference_delays)):
             types, ids, delays, amplitudes, reference = self.get_cir(link_name, cir_n)
 
-            #delays = delays - reference_delays[cir_n]
+            # set amplitudes that are zero to 1e-9 to be able to compute the logarithm:
+            amplitudes[amplitudes == 0] = 1e-9
+
             try:
-                powers = 20 * np.log10(np.abs(amplitudes))  # TODO
+                powers_dB = 10 * np.log10(np.abs(amplitudes))
             except RuntimeWarning:
-                print 'amplitudes:', amplitudes, ' abs amplitudes:', np.abs(amplitudes)
-                sys.os.exit(1)
+                raise ValueError('amplitude values are smaller than zero, logarithm cannot be computed for: {}'.format(amplitudes))
 
             # for all components:
             for k, val in enumerate(delays):
@@ -326,10 +331,10 @@ class ReadContinuousDelayFile:
                 del_bin = int(round(delays[k] / del_step))
                 if del_bin < 0:
                     raise SystemError('del_bin < 0. delays[k]: {0}, reference_delays[k]: {1}'.format(delays[k], reference_delays[k]))
-                pwr_bin = int(round(powers[k] / -pwr_step))
+                pwr_bin = int(round(powers_dB[k] / -pwr_step))
                 # only bin this component if it is inside power/delay axes:
                 if del_bin <= (nof_del_bins - 1) and pwr_bin <= (nof_pwr_bins - 1) and pwr_bin >= 0:
-                    # print "powers[k]: ", powers[k], ", pwr_bin" , pwr_bin, ", del_bin: ", del_bin
+                    # print "powers_dB[k]: ", powers_dB[k], ", pwr_bin" , pwr_bin, ", del_bin: ", del_bin
                     pdp[pwr_bin, del_bin] = pdp[pwr_bin, del_bin] + 1
 
         return pdp / sum(sum(pdp)), del_ax, pwr_ax
@@ -341,3 +346,6 @@ class ReadContinuousDelayFile:
         except AttributeError:
             # file was not openend
             pass
+
+##
+# @}

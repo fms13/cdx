@@ -7,6 +7,10 @@
 #   CDX Library
 #
 
+##
+# \addtogroup python_implementation
+# @{
+
 import numpy as np
 import h5py
 import os
@@ -119,3 +123,6 @@ class ReadDiscreteDelayFile:
         except AttributeError:
             # file was not openend
             pass
+
+##
+# @}
