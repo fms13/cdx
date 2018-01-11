@@ -1,12 +1,12 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%> \addtogroup matlab_tools
+%> @{
+%>
+%> \file E010_create_new_hdf5_file_continuous_delay.m
+%>
+%> \brief This script creates a new CDX (HDF5 CIR) sample file with continuous delay data.
 %
-% This script creates a new CDX (HDF5 CIR) sample file
-% with continuous delay data
-%
-% Author: F. Schubert
-% Date: 08-09-2010
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%> \date Sep 08, 2010
+%> \author Frank M. Schubert
 
 % the most interesting parameters are probably:
 % plot_params.length = 1; % length to plot in seconds
@@ -72,5 +72,4 @@ cir.weights
 fprintf('reference delay:');
 cir.reference_delay
 
-
-
+%> @}

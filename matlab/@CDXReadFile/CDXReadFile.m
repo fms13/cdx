@@ -1,16 +1,15 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% Class CDXReadFile
-%
-% Reads CIRs from Commond Channel Data Exchange (CDX) files
-%
-% Author: F. Schubert
-% Date: 08-09-2010
-%
-% Updated: Ioana Gulie
-% Date: 21-07-2016
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%> \addtogroup matlab_implementation
+%> @{
+%>
+%> \file CDXReadFile.m
+%>
+%> \date Sep 08, 2010
+%> \author Frank M. Schubert
+%>
+%> \date Jul 21, 2016
+%> \author Ioana Gulie
 
+%> \brief Class for reading the channel response from Commond Channel Data Exchange (CDX) files.
 classdef CDXReadFile < handle
     % Property data is private to the class
     properties (SetAccess = private, GetAccess = private)
@@ -51,15 +50,15 @@ classdef CDXReadFile < handle
             % get number of links
             obj.nof_links = 0;
             fprintf('hai ca mai e un pic');
-            
+
             % nof groups in file:
             % info_struct = h5info(obj.filename);
            % fprintf('inca un pic');
-           
+
             idx_type = 'H5_INDEX_NAME';
             order = 'H5_ITER_DEC';
             lapl_id = 'H5P_DEFAULT';
-           
+
            % open file for hdf5 low level access
             obj.file_id = H5F.open(obj.filename, 'H5F_ACC_RDONLY', lapl_id);
 
@@ -67,23 +66,23 @@ classdef CDXReadFile < handle
             param_group_id = H5G.open(obj.file_id, '/parameters') ;
             obj.delay_type = read_string(obj, param_group_id, 'delay_type');
             H5G.close(param_group_id);
-           
+
            % find how many groups are in the file
            % if nof_groups = 3: visualization is present
             info_struct = H5G.get_info(obj.file_id);
             nof_groups = info_struct.nlinks;
             fprintf('nof_groups is  %i \n', nof_groups);
-            
+
             if nof_groups == 3
                 obj.frame_rate_Hz=hdf5read(obj.filename, '/visualization/frame_rate_Hz');
             end
-            
+
             % read and store the names of the links
             links_id = H5G.open(obj.file_id, '/links');
             info_links = H5G.get_info(links_id);
             % nof subgroups in the group /links:
             obj.nof_links = info_links.nlinks;
-            H5G.close(links_id); 
+            H5G.close(links_id);
 
             % get the names of each link
             if obj.nof_links >= 1
@@ -214,18 +213,20 @@ classdef CDXReadFile < handle
             end
         end
 
-        % Delete methods are always called before a object
-        % of the class is destroyed
+        %> \brief Desctructor
+        %>
+        %> Delete methods are always called before an object is destroyed.
         function delete(obj)
             H5T.close (obj.memtype);
-            %             H5G.close(obj.group_id);
             % only for continuous-delay:
             if strcmp(obj.delay_type, 'continuous-delay')
                 for k = 1:obj.nof_links
                     H5G.close(obj.cir_group_ids(k));
                 end
             end
-            H5F.close (obj.file_id);
+            H5F.close(obj.file_id);
         end
     end  % methods
 end % class
+
+%> @}

@@ -1,12 +1,12 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% This script converts a continuous-delay CDX file
-% to a discrete delay CDX file through interpolation of the data
-%
-% Author: F. Schubert
-% Date: 08-09-2010
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%> \addtogroup matlab_tools
+%> @{
+%>
+%> \file E030_convert_continuous_to_discrete_delay.m
+%>
+%> \brief This script converts a continuous-delay CDX file to a discrete delay CDX file through interpolation of the data.
+%>
+%> \date Sep 08, 2010
+%> \author Frank M. Schubert
 
 % if waitbars are still open from a previous program interruption, call:
 % set(0,'ShowHiddenHandles','on')
@@ -68,17 +68,17 @@ wb = waitbar(0, 'Converting...', 'CreateCancelBtn',...
 for k = 1:nof_cirs
     if (mod(k, 100) == 0) waitbar(k/nof_cirs, wb, ...
             sprintf('%i CIRs of a total of %i CIRs processed...', k, nof_cirs)); end
-    
+
     % for all links:
     for link = 1:nof_links
         cir = get_cir(cdx_in, link, k);
-        
+
         actual_max_delay = max(cir.delays) + add_delay_offset;
         if (actual_max_delay > interp_max_delay)
            fprintf('WARNING: max. delay in file (%e, including add_delay_offset)\n is greater than interp_max_delay (%e). Not all multipath components are taken into account!\n', ...
                actual_max_delay, interp_max_delay);
         end
-        
+
         % interpolate
         fac = repmat(x, numel(cir.delays), 1) - ...
             repmat(cir.delays + add_delay_offset, 1, interp_nof_delay_samples);
@@ -86,10 +86,10 @@ for k = 1:nof_cirs
         if enable_windowing
             result_cir(link).samples = ifft(window .* fft(result_cir(link).samples'))';
         end
-        result_cir(link).reference_delay = cir.reference_delay + add_delay_offset;        
+        result_cir(link).reference_delay = cir.reference_delay + add_delay_offset;
     end
     append_cir(cdx_out, result_cir);
-    
+
     % Check for Cancel button press
     if getappdata(wb, 'canceling')
         break
@@ -101,3 +101,5 @@ delete(wb);
 %% IMPORTANT: close the files
 delete(cdx_in);
 delete(cdx_out);
+
+%> @}

@@ -1,14 +1,12 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% function plot_discrete_delay_cir_file
-%
-% This function plots a certain length of a CDX file
-%
-% Author: F. Schubert
-% Date: 08-09-2010
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%> \addtogroup matlab_implementation
+%> @{
+%>
+%> \file plot_discrete_delay_cir_file.m
+%>
+%> \date Sep 08, 2010
+%> \author Frank M. Schubert
 
+%> \brief This function plots a certain length of a CDX file
 function [ plot_data, dt, dd, reference_delays, f2 ] = plot_discrete_delay_cir_file(cdx_file, link, plot_params)
 
 cir_rate = get_cir_rate(cdx_file);
@@ -31,7 +29,7 @@ delay_smpl_freq = get_delay_smpl_freq(cdx_file);
 
 % time axis:
 dt = 0:1/cir_rate:(nof_cirs-1) / cir_rate;
-    
+
 % delay axis:
 Ts = 1 / delay_smpl_freq;
 max_delay = nof_delay_samples / delay_smpl_freq;
@@ -136,3 +134,4 @@ delete(wb);
 disp('done.');
 
 end
+%> @}

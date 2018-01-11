@@ -1,17 +1,14 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% Class CDXWriteFile
-%
-% Writes CIRs to Commond Channel Data Exchange (CDX) files
-%
-% Author: F. Schubert
-% Date: 08-09-2010
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%> \addtogroup matlab_implementation
+%> @{
+%>
+%> \file CDXWriteFile.m
+%>
+%> \date Sep 08, 2010
+%> \author Frank M. Schubert
 
-% opens always a new file.
-% TODO: append data to an existing file.
-
+%> \brief Writes CIRs to Commond Channel Data Exchange (CDX) files.
+%> Opens always a new file.
+%> TODO: append data to an existing file.
 classdef CDXWriteFile < handle
     % Property data is private to the class
     properties (SetAccess = private, GetAccess = private)
@@ -238,3 +235,5 @@ classdef CDXWriteFile < handle
         end
     end  % methods
 end % class
+
+%> @}

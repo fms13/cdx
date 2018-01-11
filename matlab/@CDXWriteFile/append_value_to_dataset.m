@@ -1,14 +1,12 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% function append_value_to_dataset
-%
-% This function appends a single value to a HDF5 dataset
-%
-% Author: F. Schubert
-% Date: 08-09-2010
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%> \addtogroup matlab_implementation
+%> @{
+%>
+%> \file append_value_to_dataset.
+%>
+%> \date Sep 08, 2010
+%> \author Frank M. Schubert
 
+%> \brief This function appends a single value to a HDF5 dataset.
 function append_value_to_dataset(obj, group_id, DATASET, value)
 
 dset = H5D.open(group_id, DATASET);
@@ -41,3 +39,5 @@ H5D.close(dset);
 H5S.close(space);
 
 end
+
+%> @}

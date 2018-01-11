@@ -1,3 +1,13 @@
+%> \addtogroup matlab_implementation
+%> @{
+%>
+%> \file test_write_discr.m
+%>
+%> \brief Test for writing a discrete-delay CDX file.
+%>
+%> \date Sep 08, 2010
+%> \author Frank M. Schubert
+
 clc
 clear all
 close all
@@ -30,3 +40,4 @@ cirs = get_discrete_delay_cirs(cdx_file, 1);
 delete(cdx_file);
 
 
+%> @}

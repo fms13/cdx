@@ -1,11 +1,12 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% This script plots an CDX (HDF5 CIR) file.
-%
-% Author: F. Schubert
-% Date: 08-09-2010
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%> \addtogroup matlab_tools
+%> @{
+%>
+%> \file E040_plot_discrete_delay_cir_file.m
+%>
+%> \brief This script plots an CDX (HDF5 CIR) file.
+%>
+%> \date Sep 08, 2010
+%> \author Frank M. Schubert
 
 % the most interesting parameters are probably:
 % plot_params.length = 1; % length to plot in seconds
@@ -48,3 +49,5 @@ if plot_params.length * cir_rate > 2000
 end
 
 plot_discrete_delay_cir_file(cdx_file, link, plot_params);
+
+%> @}

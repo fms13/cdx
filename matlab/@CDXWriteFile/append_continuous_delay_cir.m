@@ -1,14 +1,12 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% function append_discrete_delay_cir
-%
-% This function appends a cir with continuous delay data to a CDX file
-%
-% Author: F. Schubert
-% Date: 08-09-2010
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%> \addtogroup matlab_implementation
+%> @{
+%>
+%> \file append_continuous_delay_cir.m
+%>
+%> \date Sep 08, 2010
+%> \author Frank M. Schubert
 
+%> \brief This function appends a cir with continuous delay data to a CDX file.
 function append_continuous_delay_cir(obj, link_cir)
     assert(size(link_cir, 2) == obj.nof_links, 'Number of links in cir differs from number of links in HDF5 CDX file.');
     assert(numel(link_cir.reference_delay) == 1, 'Only one reference_delay value per CIR allowed.');
@@ -58,3 +56,4 @@ function append_continuous_delay_cir(obj, link_cir)
     end
     obj.nof_cirs = obj.nof_cirs + 1;
 end
+%> @}

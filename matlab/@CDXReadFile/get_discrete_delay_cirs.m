@@ -1,16 +1,13 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% function get_discrete_delay_cir
-%
-% This function reads a cir with discrete delay data to a CDX file
-% 
-% based on http://www.hdfgroup.org/ftp/HDF5/examples/examples-by-api/matlab/HDF5_M_Examples/h5ex_t_string.m
-%
-% Author: F. Schubert
-% Date: 08-09-2010
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%> \addtogroup matlab_implementation
+%> @{
+%>
+%> \file get_discrete_delay_cirs.m
+%>
+%> \date Sep 08, 2010
+%> \author Frank M. Schubert
 
+%> \brief This function reads a cir with discrete delay data to a CDX file
+%> Based on http://www.hdfgroup.org/ftp/HDF5/examples/examples-by-api/matlab/HDF5_M_Examples/h5ex_t_string.m
 function cir = get_discrete_delay_cirs(obj, link_num, cir_s, cir_e)
 
 dset = H5D.open(obj.link_group_ids(link_num), 'cirs_real');
@@ -59,3 +56,5 @@ cir.samples = cir.samples(cir_s:cir_e, :);
 cir.reference_delays = cir.reference_delays(cir_s:cir_e);
 
 end
+
+%> @}
