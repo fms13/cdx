@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['setup_2epy',['setup.py',['../setup_8py.html',1,'']]]
+  ['figuresgenerator_2epy',['FiguresGenerator.py',['../FiguresGenerator_8py.html',1,'']]],
+  ['file_2ecpp',['File.cpp',['../File_8cpp.html',1,'']]],
+  ['file_2eh',['File.h',['../File_8h.html',1,'']]]
 ];

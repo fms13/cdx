@@ -1,14 +1,10 @@
 var searchData=
 [
-  ['get_5fc0_5fm_5fs',['get_c0_m_s',['../classCDX_1_1File.html#a20621fff442c4922bf74e985ca582181',1,'CDX::File']]],
-  ['get_5fcir',['get_cir',['../classCDX_1_1ReadContinuousDelayFile.html#aa8e79755ee414c9d998f3a4cc2b848ae',1,'CDX::ReadContinuousDelayFile']]],
-  ['get_5fcir_5frate_5fhz',['get_cir_rate_Hz',['../classCDX_1_1File.html#aaa1bda2aab773b585dd0721a367dd19b',1,'CDX::File']]],
-  ['get_5fcirs',['get_cirs',['../classCDX_1_1ReadDiscreteDelayFile.html#a916a810fd6836aaa357c6363213be2d4',1,'CDX::ReadDiscreteDelayFile']]],
-  ['get_5fdelay_5fsmpl_5ffreq',['get_delay_smpl_freq',['../classCDX_1_1ReadDiscreteDelayFile.html#ac80408b986a589029501df8f2d942eef',1,'CDX::ReadDiscreteDelayFile']]],
-  ['get_5ffile_5fhandle',['get_file_handle',['../classCDX_1_1File.html#a1cf7c1478023c3e6c163cf7feb75cf80',1,'CDX::File']]],
-  ['get_5flink_5fnames',['get_link_names',['../classCDX_1_1File.html#a958442af537aaf87241153f7056c2201',1,'CDX::File']]],
-  ['get_5fnof_5fcirs',['get_nof_cirs',['../classCDX_1_1ReadContinuousDelayFile.html#a4296d981a749ea02c4020631e14993ce',1,'CDX::ReadContinuousDelayFile']]],
-  ['get_5fnof_5flinks',['get_nof_links',['../classCDX_1_1File.html#a76cbbd8ac31591667090c6c7ca943390',1,'CDX::File']]],
-  ['get_5freference_5fdelays',['get_reference_delays',['../classCDX_1_1ReadFile.html#a6935311a6b86157a85ae98e78192e92d',1,'CDX::ReadFile']]],
-  ['get_5ftransmitter_5ffrequency_5fhz',['get_transmitter_frequency_Hz',['../classCDX_1_1File.html#abcb7ca053171e30533fa14baaf42aef5',1,'CDX::File']]]
+  ['fftshift',['fftshift',['../group__cpp__tools__cdx__convert__continuous__to__discrete.html#ga466a9d8fdea3f7b17da624104bf3c5d2',1,'cdx-convert-continuous-to-discrete.cpp']]],
+  ['figuresgenerator',['FiguresGenerator',['../classcdx_1_1FiguresGenerator_1_1FiguresGenerator.html',1,'cdx::FiguresGenerator']]],
+  ['figuresgenerator_2epy',['FiguresGenerator.py',['../FiguresGenerator_8py.html',1,'']]],
+  ['file',['File',['../classCDX_1_1File.html',1,'CDX::File'],['../classCDX_1_1File.html#ace9d80d5bd1b64622db8983a3b72525f',1,'CDX::File::File(std::string _file_name)'],['../classCDX_1_1File.html#a87ba89b0f4acaa5bfb0d19feda374625',1,'CDX::File::File(std::string _file_name, double _c0_m_s, double _cir_rate_Hz, double _transmitter_frequency_Hz, const std::vector&lt; std::string &gt; &amp;_link_names)']]],
+  ['file_2ecpp',['File.cpp',['../File_8cpp.html',1,'']]],
+  ['file_2eh',['File.h',['../File_8h.html',1,'']]],
+  ['file_5fname',['file_name',['../classCDX_1_1File.html#a05ee5a43bcedb868a0ba64aa8dbfbd75',1,'CDX::File']]]
 ];

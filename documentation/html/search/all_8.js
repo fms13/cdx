@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['make_5fdelay_5fdoppler_5fspectrum',['make_delay_doppler_spectrum',['../classcdx_1_1FiguresGenerator_1_1FiguresGenerator.html#a519aae73f2ed890276552a5025938518',1,'cdx::FiguresGenerator::FiguresGenerator']]],
-  ['make_5fdiscr_5fcir_5faxes',['make_discr_cir_axes',['../classcdx_1_1FiguresGenerator_1_1FiguresGenerator.html#ac4d08c022b88bfa9fc606d53257402d5',1,'cdx::FiguresGenerator::FiguresGenerator']]]
+  ['link_5fgroups',['link_groups',['../classCDX_1_1File.html#a9cc710b70dd3b191c1b1f0f63446ccda',1,'CDX::File']]],
+  ['link_5fnames',['link_names',['../classCDX_1_1File.html#af14b0dbf43ef7bc28e9960dea2fafb38',1,'CDX::File']]],
+  ['links_5fgroup',['links_group',['../classCDX_1_1File.html#a34ab2ced78c36a1fdab87cade7be805a',1,'CDX::File']]]
 ];

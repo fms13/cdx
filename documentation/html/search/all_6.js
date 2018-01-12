@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['id',['id',['../structCDX_1_1impulse__t.html#a77d34417ed83a552f16674788711d3b1',1,'CDX::impulse_t']]],
-  ['impulse_5ft',['impulse_t',['../structCDX_1_1impulse__t.html',1,'CDX']]]
+  ['h5file',['h5file',['../classCDX_1_1File.html#a1694369265de3e8134f9766ca5939c26',1,'CDX::File']]],
+  ['hamming',['hamming',['../group__cpp__tools__cdx__convert__continuous__to__discrete.html#gada194bc2ddf41e0f8f2921f88007ca90',1,'cdx-convert-continuous-to-discrete.cpp']]],
+  ['hdf5_5fimpulse_5ft',['hdf5_impulse_t',['../structCDX_1_1hdf5__impulse__t.html',1,'CDX']]]
 ];

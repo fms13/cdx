@@ -1,9 +1,7 @@
 var searchData=
 [
-  ['writecontinuousdelayfile_2ecpp',['WriteContinuousDelayFile.cpp',['../WriteContinuousDelayFile_8cpp.html',1,'']]],
-  ['writecontinuousdelayfile_2eh',['WriteContinuousDelayFile.h',['../WriteContinuousDelayFile_8h.html',1,'']]],
-  ['writediscretedelayfile_2ecpp',['WriteDiscreteDelayFile.cpp',['../WriteDiscreteDelayFile_8cpp.html',1,'']]],
-  ['writediscretedelayfile_2eh',['WriteDiscreteDelayFile.h',['../WriteDiscreteDelayFile_8h.html',1,'']]],
-  ['writefile_2ecpp',['WriteFile.cpp',['../WriteFile_8cpp.html',1,'']]],
-  ['writefile_2eh',['WriteFile.h',['../WriteFile_8h.html',1,'']]]
+  ['get_5fcontinuous_5fdelay_5fcir_2em',['get_continuous_delay_cir.m',['../get__continuous__delay__cir_8m.html',1,'']]],
+  ['get_5fdiscrete_5fdelay_5fall_5fcirs_2em',['get_discrete_delay_all_cirs.m',['../get__discrete__delay__all__cirs_8m.html',1,'']]],
+  ['get_5fdiscrete_5fdelay_5fcir_2em',['get_discrete_delay_cir.m',['../get__discrete__delay__cir_8m.html',1,'']]],
+  ['get_5fdiscrete_5fdelay_5fcirs_2em',['get_discrete_delay_cirs.m',['../get__discrete__delay__cirs_8m.html',1,'']]]
 ];
