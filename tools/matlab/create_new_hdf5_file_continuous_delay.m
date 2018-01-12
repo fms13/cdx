@@ -1,6 +1,6 @@
-%> \addtogroup matlab_tools
+%> \addtogroup matlab_examples
 %> @{
-%> \addtogroup matlab_tools_create_new_hdf5_file_continuous_delay create_new_hdf5_file_continuous_delay
+%> \addtogroup matlab_example_create_new_hdf5_file_continuous_delay create_new_hdf5_file_continuous_delay
 %> @{
 %>
 %> \file create_new_hdf5_file_continuous_delay.m

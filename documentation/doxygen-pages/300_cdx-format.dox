@@ -1,8 +1,6 @@
 /*!
 
-\page cdx_file_format The Channel Data Exchange (CDX) File Format
-
-\section hdf5_cdx_structure File Structure
+\page cdx_file_format CDX File Format
 
 All data is stored in groups within an HDF5 file. Groups resemble (sub-)directories present in file systems. The format is as follows:
 

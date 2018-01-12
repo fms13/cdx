@@ -6,7 +6,7 @@ At all stages of radio channel sounding, estimation, modeling, and simulation, l
 
 The Channel Data Exchange (CDX) file format is proposed for channel data recording, storage, and processing in a convenient and portable way. It is based on the HDF5 format and allows for the storage of large data sets.
 
-Bindings exist to create and read CDX files for C++, Python, and Matlab.
+Bindings exist to create and read CDX files for C++, Python, Octave, and Matlab.
 
 The usage of HDF5 ensures that the data is readable on various platforms. CDX stores links to multiple satellites.
 
@@ -15,20 +15,50 @@ CDX allows for the storage of two different types of data:
 -# continuous-delay data: data consisting of path components with a continuous delay as produced by channel models
 -# discrete-delay data: data sampled with a certain sampling frequency, e.g. by a channel sounder
 
-The file format of CDX is described in Sec. \ref hdf5_cdx_structure.
+\section cdx_implementations CDX Interface Implementations 
 
-\section cdx_satellite_channels Storage of Channel Data for Land-Mobile Satellite Channels
+The bindings for the different progamming languages can be found here:
 
-Since satellites can have high velocities relative to ground-based receivers, the satellites signals' are received with high Doppler shifts at the receivers. For example, if a satellites moves with \f$ v = 1000\,\mathrm{m/s} \f$ relative to a receiver on the Earth and if it is transmitting a signal with a carrier frequency of \f$ f_\mathrm{carr} = 1.5\,\mathrm{GHz} \f$, its signal is received at \f[ f_\mathrm{recv} = f_\mathrm{carr} \cdot \sqrt{\frac{c_0 + v}{c_0 - v}} \approx 1.500005\,\mathrm{GHz} \f] i.e. the Doppler shift is \f[ f_\mathrm{recv} - f_\mathrm{carr} = 5\,\mathrm{kHz}\f]
+- \ref cpp_implementation
+- \ref python_implementation
+- \ref matlab_implementation
 
-In order to fulfill Nyquist criterion this would required that the channel response is sampled at a rate of 10 kHz which is often too high an effort for a channel model to generate. Hence, under the assumption that the direction to the transmitter does not change from one sampling instant to the other, the movement of the satellite and the receiver can be separated, respectively. Then, the channel response only contains the receiver dynamics and thus can be stored at a smaller sampling rate of e.g. 300 Hz.
+\section cdx_tools Tools for Visualization, Analysis, and Conversion
 
-\defgroup cpp_implementation CDX C++ Implementation
-\defgroup python_implementation CDX Python Implementation
-\defgroup matlab_implementation CDX Matlab Implementation
+Tools to inspect and process CDX files are also implemented in different languages:
+
+Function                                                      | C++                                                         | Python                                                             | Matlab
+---                                                           | ---                                                         | ---                                                                | ---
+Allows the inspection of CDX files with an interactive GUI    | -                                                           | \ref cdx-display                                                   | -                  
+Converts continuous-delay CDX files to discrete-delay files   | \ref cpp_tools_cdx_convert_continuous_to_discrete           | -                                                                  | \ref matlab_tools_convert_continuous_to_discrete_delay
+Plot a discrete-delay CDX file                                | -                                                           | \ref cdx-plot-discrete-delay-file                                  | \ref matlab_tools_plot_discrete_delay_cir_file
+Plot a continuous-delay CDX file                              | -                                                           | -                                                                  | \ref matlab_tools_plot_continuous_delay_cir_file
+Compute the multipath spread and energy for each time step    | -                                                           | \ref cdx-compute-multipath-spread-and-energy                       | -
+Compute the delay Doppler spectrum                            | -                                                           | \ref cdx-compute-delay-doppler-spectrum                            | -
+Compute the power delay profile                               | -                                                           | \ref cdx-compute-power-delay-profile                               | -
+Compute the multipath to line of sight components power ratio | -                                                           | \ref cdx-compute-multipath-to-line-of-sight-components-power-ratio | -
+
+
+\section cdx_examples Examples
+
+Example                                                     | C++                                                         | Python                                | Matlab
+---                                                         | ---                                                         | ---                                   | ---
+Creation of a simple continous-delay CDX file               | -                                                           | \ref python_examples_write_cdx_file   | \ref matlab_example_create_new_hdf5_file_continuous_delay                  
+Create channel response of moving satellite and receiver    | \ref cpp_examples_example_01                                | \ref python_examples_example_01       | -
+
+There is a C++ tool 
+
+The file format of CDX is described in Sec. \ref cdx_file_format. Conventions on how to store channel data for land-mobile satellite channels is provided in Sec. \ref satellite_channels.
+
+\defgroup cpp_implementation C++ Implementation of the CDX Interface 
+\defgroup python_implementation Python Implementation of the CDX Interface
+\defgroup matlab_implementation Matlab Implementation of the CDX Interface
 
 \defgroup cpp_tools CDX Tools written in C++
 \defgroup python_tools CDX Tools written in Python
 \defgroup matlab_tools CDX Tools written in Matlab
+
+\defgroup matlab_examples Matlab Examples
+\defgroup python_examples Python Examples
 
 */

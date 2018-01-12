@@ -1,4 +1,7 @@
 ##
+# \addtogroup python_implementation
+# @{
+#
 # \file setup.py
 #
 # \date Oct 21, 2015
@@ -35,3 +38,6 @@ setup(
         "License :: OSI Approved :: GPLv3 License",
     ],
 )
+
+## @} #
+

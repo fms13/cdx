@@ -5,16 +5,20 @@
 # \addtogroup python_tools_cdx_compute_power_delay_profile cdx-compute-power-delay-profile
 # @{
 #
-# \file cdx-compute-power-delay-profile.py
+# \file cdx-compute-power-delay-profile
 # \date April 4, 2012
 # \author Frank Schubert
 #
-# \bief Computes the power delay profile (PDP). The PDP is plotted for each link in file and saved to PNG graphic.
+# Computes the power delay profile (PDP). The PDP is plotted for each link in file and saved to PNG graphic.
 #
 # This script is part of the CDX Library.
 #
 # Command line parameters:
-# -f <file_name>: input CDX file
+#
+# Parameter      | Function
+# ---            | ----
+# -f <file_name> | input CDX file
+#
 
 # initialization
 from numpy import *

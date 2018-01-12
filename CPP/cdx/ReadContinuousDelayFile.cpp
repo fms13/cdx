@@ -5,6 +5,11 @@
  * \author	Frank M. Schubert
  */
 
+/**
+ * \addtogroup cpp_implementation
+ * @{
+ */
+
 #include "ReadContinuousDelayFile.h"
 
 #include <boost/lexical_cast.hpp>
@@ -112,3 +117,7 @@ ReadContinuousDelayFile::~ReadContinuousDelayFile() {
 }
 
 } // end of namespace CDX
+
+/**
+ * @}
+ */

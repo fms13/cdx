@@ -1,25 +1,28 @@
 #!/usr/bin/env python
-#
+##
 # \addtogroup python_tools
 # @{
 # \addtogroup python_tools_cdx_compute_multipath_spread_and_energy cdx-compute-multipath-spread-and-energy
 # @{
 #
-# \file cdx-compute-multipath-spread-and-energy.py
+# \file cdx-compute-multipath-spread-and-energy
 #
 # \date Oct 14, 2014
 # \author Frank Schubert
 #
-## Computes the multipath delay spread and the total energy for every time instant.
+# Computes the multipath delay spread and the total energy for every time instant.
 #
 # This script is part of the CDX Library.
 #
 # Command line parameters:
-# -i <file_name>: 	input continuous-delay CDX file
-# -f				File format of the plot file to be stored. Either png or pdf.
-#					If not present, plot is not saved to disk
-# -s				Start time in file when processing should begin in s.
-# -l				Length to be processed in seconds.
+#
+# Parameter      | Function
+# ---            | ----
+# -i <file_name> |	input continuous-delay CDX file
+# -f             | File format of the plot file to be stored. Either png or pdf. If not present, plot is not saved to disk
+# -s             | Start time in file when processing should begin in s.
+# -l             | Length to be processed in seconds.
+#
 
 # initialization
 from numpy import *

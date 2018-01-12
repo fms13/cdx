@@ -5,24 +5,24 @@
 # \addtogroup python_tools_cdx_plot_discrete_delay_file cdx-plot-discrete-delay-file
 # @{
 #
-# \file cdx-plot-discrete-delay-file.py
+# \file cdx-plot-discrete-delay-file
 # \date April 4, 2012
 # \author Frank Schubert
 #
-# \brief Plots a discrete-delay CDX file.
+#
+# This program plots a discrete-delay CDX file. The CIR is plotted for each link in file and saved to PNG graphic.
 #
 # Command line parameters:
 #
-# -f <file_name>: 	input discrete-delay CDX file
-# -n 				Number of points to be plotting on horizontal axis (frequency).
-#					This can be set to reduce the plots resolution. Must be greater than 0.
-# -f				File format of the plot file to be stored. Either png or pdf.
-#					If not present, plot is not saved to disk
-# -s				Start time in file when processing should begin in s.
-# -l				Length to be processed in seconds.
-# -t <percentage>	Limit delay axis (vertical axis) to <percentage> * (max_delay - min_delay)
+# Parameter       | Function
+# ---             | ----
+# -f <file_name>  | input discrete-delay CDX file
+# -n 			  | Number of points to be plotting on horizontal axis (frequency). This can be set to reduce the plots resolution. Must be greater than 0.
+# -f			  | File format of the plot file to be stored. Either png or pdf. If not present, plot is not saved to disk.
+# -s			  | Start time in file when processing should begin in s.
+# -l			  | Length to be processed in seconds.
+# -t <percentage> | Limit delay axis (vertical axis) to <percentage> * (max_delay - min_delay)
 #
-# The CIR is plotted for each link in file and saved to PNG graphic.
 
 # initialization
 from numpy import *

@@ -1,13 +1,18 @@
 #!/usr/bin/env python
-# #
-# \file FiguresGenerator.py
+##
+# \addtogroup python_examples
+# @{
+# \addtogroup python_examples_write_cdx_file write-cdx-file
+# @{
+#
+# \file write-cdx-file.py
+#
 # \date January 4, 2016
 # \author Frank Schubert
 #
-#   CDX Library
 #
+# \brief The example can be run with:
 #
-# The example can be run with:
 #   python ./write-cdx-file.py
 #   cdx-convert-continuous-to-discrete -e -b 0.1e-6 -a 0.1e-6 -s 1000e6 -i example-01.cdx -o example-01.cdd
 #   cdx-display -i example-01.cdx
@@ -136,3 +141,7 @@ for k, time in enumerate(times_s):
     cdx_file.append_cir(cirs, ref_delays)
 
 print 'all done.'
+
+## @} #
+## @} #
+

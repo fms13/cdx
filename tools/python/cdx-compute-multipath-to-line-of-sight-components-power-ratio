@@ -10,18 +10,21 @@
 # \date Dec 14, 2017
 # \author Frank Schubert
 #
-# \brief Computes the total power of all multipath components and all line-of-sight
+# Computes the total power of all multipath components and all line-of-sight
 # components. Computes the ratio of total multipath to total line-of-sight
 # components' powers
 #
 # This script is part of the CDX Library.
 #
 # Command line parameters:
-# -i <file_name>: 	input continuous-delay CDX file
-# -f				File format of the plot file to be stored. Either png or pdf.
-#					If not present, plot is not saved to disk
-# -s				Start time in file when processing should begin in s.
-# -l				Length to be processed in seconds.
+#
+# Parameter      | Function
+# ---            | ----
+# -i <file_name> | input continuous-delay CDX file
+# -f			 | File format of the plot file to be stored. Either png or pdf. If not present, plot is not saved to disk.
+# -s			 | Start time in file when processing should begin in s.
+# -l			 | Length to be processed in seconds.
+#
 
 # initialization
 from numpy import *

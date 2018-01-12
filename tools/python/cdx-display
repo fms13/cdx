@@ -5,11 +5,11 @@
 # \addtogroup python_tools_cdx_display cdx-display
 # @{
 #
-# \file cdx-display.py
+# \file cdx-display
 # \date April 4, 2012
 # \author Frank Schubert
 #
-# \brief This program interactively displays
+# This program interactively displays
 #
 #  + the channel response
 #  + the Delay-Doppler-Spectrum
@@ -20,9 +20,11 @@
 # for individual links of a CDX file. Two links are displayed simultaneously.
 #
 # Command line parameters:
-#  + -i <file_name>: input CDX file
-#  + -p: do not compute the Power Delay Profile
 #
+# Parameter      | Function
+# ---            | ----
+# -i <file_name> | input CDX file
+# -p             | do not compute the power delay profile
 
 import numpy as np
 import argparse

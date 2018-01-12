@@ -7,28 +7,6 @@
 # \date April 4, 2012
 # \author Frank Schubert
 #
-#   CDX Library
-#
-#   As part of
-#
-#   SNACS - The Satellite Navigation Radio Channel Simulator
-#
-#   Class to read continuous-delay CDX files.
-#
-#   Copyright (C) 2012-2013  F. M. Schubert
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
 import os
@@ -42,7 +20,8 @@ import ReadContinuousDelayFile
 import ReadDiscreteDelayFile
 
 component_colors_t = {0: 'r', 1: 'k', 2: 'b', 3: 'g', 4: 'y'}
-# #
+
+##
 # \brief Class which provides functionality to generate plots such as channel impulse
 # responses, power over time, or the delay spread.
 #

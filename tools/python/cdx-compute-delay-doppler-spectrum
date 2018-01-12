@@ -5,23 +5,23 @@
 # \addtogroup python_tools_cdx_compute_delay_doppler_spectrum cdx-compute-delay-doppler-spectrum
 # @{
 #
-# \file cdx-compute-delay-doppler-spectrum.py
+# \file cdx-compute-delay-doppler-spectrum
+#
 # \date Apr 16, 2012
 # \author Frank Schubert
 #
-# \brief Computes the delay-Doppler spectrum
-#
-# This script is part of the CDX Library.
+# Computes the delay-Doppler spectrum
 #
 # Command line parameters:
-# -f <file_name>: 	input discrete-delay CDX file
-# -n 				Number of points to be plotting on horizontal axis (frequency).
-#					This can be set to reduce the plots resolution. Must be greater than 0.
-# -f				File format of the plot file to be stored. Either png or pdf.
-#					If not present, plot is not saved to disk
-# -s				Start time in file when processing should begin in s.
-# -l				Length to be processed in seconds.
-# -t <percentage>	Limit delay axis (vertical axis) to <percentage> * (max_delay - min_delay)
+#
+# Parameter      | Function
+# ---            | ----
+# -f file_name   | Input discrete-delay CDX file
+# -n 			 | Number of points to be plotting on horizontal axis (frequency). This can be set to reduce the plots resolution. Must be greater than 0.
+# -f			 | File format of the plot file to be stored. Either png or pdf. If not present, plot is not saved to disk.
+# -s			 | Start time in file when processing should begin in s.
+# -l			 | Length to be processed in seconds.
+# -t percentage  | Limit delay axis (vertical axis) to <percentage> * (max_delay - min_delay)
 #
 
 # initialization
@@ -136,3 +136,5 @@ else:
 
 ## @} #
 ## @} #
+
+
