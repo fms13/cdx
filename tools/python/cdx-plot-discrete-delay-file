@@ -22,6 +22,7 @@
 # -s			  | Start time in file when processing should begin in s.
 # -l			  | Length to be processed in seconds.
 # -t <percentage> | Limit delay axis (vertical axis) to <percentage> * (max_delay - min_delay)
+# -m <link list>  | List of link names that will be considered. If empyt, all links will be plotted.
 #
 
 # initialization
@@ -61,14 +62,15 @@ parser.add_argument("-s", "--start", help="start time s", action="store")
 parser.add_argument("-l", "--length", help="length in s", action="store")
 parser.add_argument("-b", "--margin_before_min_ref_delay", help="margin before minimal reference delay, sets the minimum of the delay axis", action="store")
 parser.add_argument("-a", "--margin_after_max_ref_delay", help="margin after maximum reference delay, sets the maximum of the delay axis", action="store")
-
+# nargs='*' takes zero or more arguments:
+parser.add_argument("-m", "--link-names", nargs='*', help='list of link names that will be considered. If empty, all links will be plotted.')
 args = parser.parse_args()
 
 store_figure = True
 figure_dpi = 300
 if args.format == None:
     figure_dpi=90
-    store_figure = False # do not plot if -f is not given
+    store_figure = False # do not store if -f is not given
 
 if args.input == None:
 	raise SystemExit("Error: no input file given (command line parameter -i is missing).")
@@ -93,15 +95,43 @@ else:
 	length = float(args.length)
 
 cdx_file = cdx.ReadDiscreteDelayFile.ReadDiscreteDelayFile(args.input)
+link_names = cdx_file.get_link_names()
 
-fig = plt.figure(figsize=(figure_width_cm / 2.54, cdx_file.get_nof_links() * figure_height_cm / 2.54), dpi=figure_dpi)
+# check how many links will be plotted:
+nof_links_to_plot = 0
+
+# was a list with link names that should be considered, provided?
+if len(args.link_names) > 0:
+    for link_name in link_names:
+    # is the current link_name in this list?
+        if link_name not in args.link_names:
+            # no, do not plot it:
+            print 'link_name: {} not in list {}, not plotting.'.format(link_name, args.link_names)
+            continue
+        else:
+            print 'link_name: {} will be plotted'.format(link_name)
+            nof_links_to_plot += 1
+else:
+    # no link list was provided, plot all links:
+    nof_links_to_plot = cdx_file.get_nof_links()
+
+if nof_links_to_plot == 0:
+    raise RuntimeError('no link will be plotted, check cdx file content and the list that you provided via -m.')
+else:
+    print 'will plot {} link(s).'.format(nof_links_to_plot)
+
+fig = plt.figure(figsize=(figure_width_cm / 2.54, nof_links_to_plot * figure_height_cm / 2.54), dpi=figure_dpi)
 # fig.suptitle('CDX file ' + file_name)
 
 act_plot = 1
-link_names = cdx_file.get_link_names()
-nof_links = cdx_file.get_nof_links()
 
 for link_name in link_names:
+    # was a list with link names that should be considered, provided?
+    if len(args.link_names) > 0:
+        # is the current link_name in this list?
+        if link_name not in args.link_names:
+            # no, do not plot it:
+            continue
 
 	cirs, times, delays, ref_delays = cdx_file.get_cirs(link_name, start_time, length)
 
@@ -131,7 +161,7 @@ for link_name in link_names:
 
 	data_dB = 20*log10(abs(data))
 
-	ax = fig.add_subplot(nof_links, 1, act_plot)
+	ax = fig.add_subplot(nof_links_to_plot, 1, act_plot)
 	act_plot = act_plot + 1
 
 	ax.set_title('Link {}'.format(link_name))
@@ -178,7 +208,7 @@ if store_figure == True:
 		out_file_name = args.output
 
 	print "saving to", out_file_name
-	fig.savefig(out_file_name, bbox_inches='tight', dpi=300)#
+	fig.savefig(out_file_name, bbox_inches='tight', dpi=figure_dpi)#
 else:
 	plt.show()
 ## @} #
