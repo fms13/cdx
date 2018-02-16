@@ -1,4 +1,4 @@
-AC_INIT([libcdx], [1.0])
+AC_INIT([libcdx], [1.3])
 AM_INIT_AUTOMAKE([1.9 -Wall -Werror])
 
 AC_CONFIG_MACRO_DIR([m4])

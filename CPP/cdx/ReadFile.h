@@ -19,10 +19,10 @@ public:
 	virtual ~ReadFile();
 
 protected:
+	double get_reference_delay(std::string link, size_t number);
+
 	/** return reference delays for a specific link */
 	std::vector<double> get_reference_delays(std::string link);
-
-	std::map<std::string, std::vector<double> > ref_delays;
 };
 
 } // end of namespace CDX

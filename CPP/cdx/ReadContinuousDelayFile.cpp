@@ -13,6 +13,7 @@
 #include "ReadContinuousDelayFile.h"
 
 #include <boost/lexical_cast.hpp>
+#include <iostream>
 
 using namespace std;
 
@@ -36,6 +37,7 @@ ReadContinuousDelayFile::ReadContinuousDelayFile(string _file_name) :
 		cir_groups[link_names.at(k)] = new H5::Group(
 				link_groups[link_names.at(k)]->openGroup("cirs"));
 	}
+
 	// read number of cirs
 	// for link 0:
 	nof_cirs = cir_groups[link_names.at(0)]->getNumObjs();
@@ -51,10 +53,6 @@ ReadContinuousDelayFile::ReadContinuousDelayFile(string _file_name) :
 			throw logic_error(err_msg.str());
 		}
 	}
-
-	// read reference_range
-	for (size_t k = 0; k < link_names.size(); k++)
-		ref_delays[link_names.at(k)] = get_reference_delays(link_names.at(k));
 
 	// prepare echo compound type for for function get_cir:
 	cp_echo = new H5::CompType(sizeof(hdf5_impulse_t));
@@ -104,7 +102,7 @@ cir_t ReadContinuousDelayFile::get_cir(std::string link,
 				echoes[i].imag);
 	}
 
-	result_cir.ref_delay = ref_delays[link].at(cir_num);
+	result_cir.ref_delay = get_reference_delay(link, cir_num);
 
 	return result_cir;
 }
