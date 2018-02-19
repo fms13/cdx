@@ -32,7 +32,7 @@ bin_cdx_test_write_read_continuous_delay_cdx_file_SOURCES = tests/cdx-test-write
 
 # link test binaries with created libcdx:
 # https://www.gnu.org/software/automake/manual/html_node/Linking.html
-LDADD = .libs/libcdx.a
+bin_cdx_test_write_read_continuous_delay_cdx_file_LDADD = libcdx.la
 
 ACLOCAL_AMFLAGS = -I m4
 AM_CXXFLAGS = -std=c++11 -Wall -O3

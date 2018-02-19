@@ -9,7 +9,7 @@
 Run these commands in cdx/trunk/CPP to delete intermediately created files before committing to the repository:
 
     make maintainer-clean
-    rm -rf *~ ar-lib aclocal.m4 compile config.guess config.sub configure depcomp install-sh ltmain.sh m4 Makefile.in missing bin/
+    rm -rf ar-lib aclocal.m4 compile config.guess config.sub configure depcomp install-sh ltmain.sh m4 Makefile.in missing bin/
 
 \section development_python Python
 
