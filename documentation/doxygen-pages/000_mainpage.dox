@@ -32,7 +32,7 @@ Function                                                      | C++             
 Allows the inspection of CDX files with an interactive GUI    | -                                                           | \ref cdx-display                                                   | -                  
 Converts continuous-delay CDX files to discrete-delay files   | \ref cpp_tools_cdx_convert_continuous_to_discrete           | -                                                                  | \ref matlab_tools_convert_continuous_to_discrete_delay
 Plot a discrete-delay CDX file                                | -                                                           | \ref cdx-plot-discrete-delay-file                                  | \ref matlab_tools_plot_discrete_delay_cir_file
-Plot a continuous-delay CDX file                              | -                                                           | -                                                                  | \ref matlab_tools_plot_continuous_delay_cir_file
+Plot a continuous-delay CDX file                              | -                                                           | \ref cdx-plot-cir-continuous-delay-file                            | \ref matlab_tools_plot_continuous_delay_cir_file
 Compute the multipath spread and energy for each time step    | -                                                           | \ref cdx-compute-multipath-spread-and-energy                       | -
 Compute the delay Doppler spectrum                            | -                                                           | \ref cdx-compute-delay-doppler-spectrum                            | -
 Compute the power delay profile                               | -                                                           | \ref cdx-compute-power-delay-profile                               | -
@@ -45,8 +45,6 @@ Example                                                     | C++               
 ---                                                         | ---                                                         | ---                                   | ---
 Creation of a simple continous-delay CDX file               | -                                                           | \ref python_examples_write_cdx_file   | \ref matlab_example_create_new_hdf5_file_continuous_delay                  
 Create channel response of moving satellite and receiver    | \ref cpp_examples_example_01                                | \ref python_examples_example_01       | -
-
-There is a C++ tool 
 
 The file format of CDX is described in Sec. \ref cdx_file_format. Conventions on how to store channel data for land-mobile satellite channels is provided in Sec. \ref satellite_channels.
 

@@ -21,7 +21,8 @@ dist_bin_SCRIPTS = python/cdx-compute-delay-doppler-spectrum \
 	python/cdx-compute-power-delay-profile \
 	python/cdx-display \
 	python/cdx-plot-discrete-delay-file \
-	python/cdx-compute-multipath-to-line-of-sight-components-power-ratio
+	python/cdx-compute-multipath-to-line-of-sight-components-power-ratio \
+	python/cdx-plot-cir-continuous-delay-file
 
 AM_CXXFLAGS = -std=c++11 -O3 -fopenmp
 

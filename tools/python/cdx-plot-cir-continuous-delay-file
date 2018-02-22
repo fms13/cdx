@@ -1,0 +1,146 @@
+#!/usr/bin/env python
+##
+# \addtogroup python_tools
+# @{
+# \addtogroup python_tools_cdx_plot_cir_continuous_delay_file cdx-plot-cir-continuous-delay-file
+# @{
+#
+# \file cdx-plot-cir-continuous-delay-file
+# \date Feb 22, 2018
+# \author Frank Schubert
+#
+#
+# This program plots one CIR of a continuous-delay CDX file. The CIR is plotted for each link
+# in the file and can be saved to a PDF or PNG graphic.
+#
+# Command line parameters:
+#
+# Parameter       | Function
+# ---             | ----
+# -i <file_name>  | input discrete-delay CDX file
+# -f			  | File format of the plot file to be stored. Either png or pdf. If not present, plot is not saved to disk.
+# -o              | Name of the output file, defaults to e.g. <cdx-file-basename>_cir<number>.png
+# -n              | Number of the CIR to plot
+# -m <link list>  | List of link names that will be considered. If empyt, all links will be plotted.
+# -w              | Figure width in cm
+# -d              | Figure height in cm
+
+# initialization
+from numpy import *
+import matplotlib.pyplot as plt
+import h5py
+import argparse
+import os
+
+import cdx.ReadContinuousDelayFile
+import cdx.FiguresGenerator
+
+# set matplotlib font size:
+# global matplotlib settings (see http://matplotlib.org/users/customizing.html)
+# set global matplotlib parameters:
+params = {'legend.fontsize': 8,
+          'font.size'   : 8,
+          'font.family': 'sans-serif',
+          'xtick.labelsize': 8,
+          'ytick.labelsize': 8,
+          'axes.labelsize': 8,
+          'lines.linewidth': .5,
+          'axes.linewidth': 0.5
+#           'legend.linewidth': 0.5
+        }
+plt.rcParams.update(params)
+
+# parse command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--input", help="input CDX file", action="store")
+parser.add_argument("-o", "--output", help="output graphics file", action="store")
+parser.add_argument("-f", "--format", help="output file format", action="store")
+parser.add_argument("-n", "--number", help="CIR number to plot", type=int, required=True)
+parser.add_argument("-w", "--figure-width", help="figure width in cm", type=float, default=12)
+parser.add_argument("-d", "--figure-height", help="figure height in cm", type=float, default=8)
+# nargs='*' takes zero or more arguments:
+parser.add_argument("-m", "--link-names", nargs='*', help='list of link names that will be considered. If empty, all links will be plotted.')
+
+args = parser.parse_args()
+
+store_figure = True
+figure_dpi = 300
+if args.format == None:
+    figure_dpi = 90
+    store_figure = False # do not store if -f is not given
+
+if args.input == None:
+	raise SystemExit("Error: no input file given (command line parameter -i is missing).")
+else:
+	file_name = args.input
+	print "plotting CDX file", file_name, "..."
+
+cdx_file = cdx.ReadContinuousDelayFile.ReadContinuousDelayFile(args.input)
+link_names = cdx_file.get_link_names()
+
+# check how many links will be plotted:
+nof_links_to_plot = 0
+
+# was a list with link names that should be considered, provided?
+if args.link_names != None:
+    if len(args.link_names) > 0:
+        for link_name in link_names:
+        # is the current link_name in this list?
+            if link_name not in args.link_names:
+                # no, do not plot it:
+                print 'link_name: {} not in list {}, not plotting.'.format(link_name, args.link_names)
+                continue
+            else:
+                print 'link_name: {} will be plotted'.format(link_name)
+                nof_links_to_plot += 1
+else:
+    # no link list was provided, plot all links:
+    nof_links_to_plot = cdx_file.get_nof_links()
+
+if nof_links_to_plot == 0:
+    raise RuntimeError('no link will be plotted, check cdx file content and the list that you provided via -m.')
+else:
+    print 'will plot {} link(s).'.format(nof_links_to_plot)
+
+fig = plt.figure(figsize=(args.figure_width / 2.54, nof_links_to_plot * args.figure_height / 2.54), dpi=figure_dpi)
+# fig.suptitle('CDX file ' + file_name)
+
+act_plot = 1
+
+cdx_figures = cdx.FiguresGenerator.FiguresGenerator(args.input)
+
+for link_name in link_names:
+    # was a list with link names that should be considered, provided?
+    if args.link_names != None and len(args.link_names) > 0:
+        # is the current link_name in this list?
+        if link_name not in args.link_names:
+            # no, do not plot it:
+            continue
+
+    ax = fig.add_subplot(nof_links_to_plot, 1, act_plot)
+    cdx_figures.make_cir_axes(ax, link_name, args.number)
+
+    act_plot = act_plot + 1
+
+    ax.set_title('Link {}'.format(link_name))
+
+
+fig.tight_layout()
+
+if store_figure == True:
+	# save file:
+	head, file_prefix = os.path.split(file_name)
+	file_prefix, extension = os.path.splitext(file_prefix)
+
+	if args.output == None:
+        # file name: example_01_cir10.png:
+		out_file_name = "{}_cir{}.{}".format(file_prefix, args.number, args.format)
+	else:
+		out_file_name = args.output
+
+	print "saving to", out_file_name
+	fig.savefig(out_file_name, bbox_inches='tight', dpi=figure_dpi)#
+else:
+	plt.show()
+## @} #
+## @} #
