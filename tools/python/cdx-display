@@ -90,6 +90,9 @@ class ChannelLink(QtGui.QWidget):
         self.current_value = 0
         self.current_time = 0
 
+        # flag if "magnitude" power is computed or "coherent sum"
+        self.power_ax_type = "magnitude"
+
         # make a vboxlayout for each link:
         self.vbox = QtGui.QVBoxLayout()
         # top is QComboBox, below is HBoxLayout for all plots:
@@ -226,7 +229,10 @@ class ChannelLink(QtGui.QWidget):
         progress.setLabelText("Link {}, drawing total power...".format(link_name))
         progress.show()
 
-        self.cdx_figures.make_power_axes(self.power_ax, self.link_name)
+        if self.power_ax_type == "magnitude":
+            self.cdx_figures.make_power_axes_magnitude(self.power_ax, self.link_name)
+        else:
+            self.cdx_figures.make_power_axes_coherent_sum(self.power_ax, self.link_name)
 
         progress.setValue(3)
 
@@ -348,6 +354,20 @@ class ChannelLink(QtGui.QWidget):
         self.initialize_link(self.link_name)
         self.update(self.current_value, self.current_time)
 
+    def set_power_ax_type(self, new_value):
+        self.power_ax_type = new_value
+
+        self.power_ax.cla()
+
+        if self.power_ax_type == "magnitude":
+            self.cdx_figures.make_power_axes_magnitude(self.power_ax, self.link_name)
+        else:
+            self.cdx_figures.make_power_axes_coherent_sum(self.power_ax, self.link_name)
+
+        self.power_vline = self.power_ax.axvline(x=self.current_time, color='r')
+
+        self.update(self.current_value, self.current_time)
+
 ##
 # \brief Class to display a Window with a number of plots per link in a CDX file. A
 # slider can be used to set the time for which the plots are supposed to be displayed.
@@ -376,9 +396,11 @@ class CDXDisplayWindows(QtGui.QMainWindow):
          self.main_frame.setLayout(self.vbox)
          self.setCentralWidget(self.main_frame)
 
+         # make a hbox for the time selection:
+         self.t_h_box = QtGui.QHBoxLayout()
          # label for the slider:
-         self.t_label = QtGui.QLabel('t = ')
-         self.vbox.addWidget(self.t_label)
+         self.t_label = QtGui.QLabel('CIR number: 0, t: 0.0 s, select:')
+         self.t_h_box.addWidget(self.t_label)
 
          # the slider for the CIR number and time:
          self.sld = QtGui.QSlider(QtCore.Qt.Horizontal, self)
@@ -387,7 +409,26 @@ class CDXDisplayWindows(QtGui.QMainWindow):
          self.sld.setFocusPolicy(QtCore.Qt.NoFocus)
          self.sld.setGeometry(30, 40, 100, 30)
          self.sld.valueChanged[int].connect(self.on_slider_change)
-         self.vbox.addWidget(self.sld)
+         self.t_h_box.addWidget(self.sld)
+
+         # add the time box to the vbox:
+         self.vbox.addLayout(self.t_h_box)
+
+         # radio button for power plot switch:
+         self.hbox_power = QtGui.QHBoxLayout()
+         self.button_power_label = QtGui.QLabel('Total Power Computation: ')
+         self.button_power_magnitude = QtGui.QRadioButton("Magnitude", self)
+         self.button_power_magnitude.setChecked(True)
+         self.button_power_coherent = QtGui.QRadioButton("Coherent Sum", self)
+
+         self.hbox_power.addWidget(self.button_power_label)
+         self.hbox_power.addWidget(self.button_power_magnitude)
+         self.hbox_power.addWidget(self.button_power_coherent)
+         self.hbox_power.addStretch()
+
+         # add the power radio buttons hbox to the vbox:
+         self.vbox.addLayout(self.hbox_power)
+         self.button_power_magnitude.toggled.connect(self.on_power_button_change)
 
          self.on_draw()
 
@@ -402,8 +443,7 @@ class CDXDisplayWindows(QtGui.QMainWindow):
 
      def on_slider_change(self, value):
          time = value / self.cir_rate
-         print 'slider change: value: {}, time: {}'.format(value, time)
-         self.t_label.setText('CIR number: {}, t = {} s'.format(value, time))
+         self.t_label.setText('CIR number: {}, t: {} s, select: '.format(value, time[0]))
 
          for link_layout in self.link_layouts:
              link_layout.update(value, time)
@@ -418,6 +458,13 @@ class CDXDisplayWindows(QtGui.QMainWindow):
          # http://matplotlib.org/users/navigation_toolbar.html#navigation-keyboard-shortcuts
          key_press_handler(event, self.canvases, self.mpl_toolbar)
 
+     def on_power_button_change(self):
+         if self.button_power_magnitude.isChecked() == True:
+             for link in self.link_layouts:
+                 link.set_power_ax_type("magnitude")
+         else:
+             for link in self.link_layouts:
+                  link.set_power_ax_type("coherent sum")
 
 ##
 # \brief Main function for cdx-display

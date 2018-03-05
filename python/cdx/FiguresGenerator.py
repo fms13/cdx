@@ -361,10 +361,22 @@ class FiguresGenerator:
         ax.set_ylim((delays[0][0] / 1e-9, delays[-1][0] / 1e-9))
         return im
 
-    def make_power_axes(self, ax, link_name):
+    def make_power_axes_magnitude(self, ax, link_name):
         print 'computing power plot for link ', link_name
 
-        times, channel_power = self.cdx_file.compute_power(link_name)
+        times, channel_power = self.cdx_file.compute_power_magnitude(link_name)
+
+        ax.set_title('Power, Link {}'.format(link_name))
+        ax.plot(times, 20 * np.log10(abs(channel_power)))
+        ax.set_xlim((times[0], times[-1]))
+        ax.set_xlabel('Time [s]')
+        ax.set_ylabel('Power [dB]')
+        ax.grid()
+
+    def make_power_axes_coherent_sum(self, ax, link_name):
+        print 'computing power plot for link ', link_name
+
+        times, channel_power = self.cdx_file.compute_power_coherent_sum(link_name)
 
         ax.set_title('Power, Link {}'.format(link_name))
         ax.plot(times, 20 * np.log10(abs(channel_power)))

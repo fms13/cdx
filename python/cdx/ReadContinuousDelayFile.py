@@ -172,9 +172,9 @@ class ReadContinuousDelayFile:
         return times, nof_components
 
     ##
-    # \brief
+    # \brief Computes the power of all components for all times, sum of absolute values of all components for each time.
     # If length is zero, go until end of the file.
-    def compute_power(self, link_name, start_time = 0.0, length = 0.0):
+    def compute_power_magnitude(self, link_name, start_time = 0.0, length = 0.0):
         g = self.f['links'][link_name]
         total_nof_cirs = len(g['cirs'])
 
@@ -205,6 +205,43 @@ class ReadContinuousDelayFile:
             cir = g['cirs/{0}'.format(cir_start + cir_n)]
             amplitudes = cir['real'] + 1j * cir['imag']
             channel_power[cir_n] = np.sum(np.abs(amplitudes))
+
+        return times, channel_power
+
+    ##
+    # \brief Computes the power of all components for all times, coherent sum of all components for each time.
+    # If length is zero, go until end of the file.
+    def compute_power_coherent_sum(self, link_name, start_time = 0.0, length = 0.0):
+        g = self.f['links'][link_name]
+        total_nof_cirs = len(g['cirs'])
+
+        # check if start_time and length can be processed:
+        if length != 0.0:
+            if start_time + length > self.length_s:
+                raise SystemExit("Error: start_time + length ({}) exceeds file length ({}) (start_time + length > self.length_s), difference: {}.".format(start_time + length, self.length_s, start_time + length - self.length_s))
+            cir_start, cir_end = self.get_cir_start_end_numbers_from_times(start_time, length)
+
+            #print 'processing cirs {} to {}'.format(cir_start, cir_end)
+
+            reference_delays = g['reference_delays'][cir_start:cir_end]
+            times = np.arange(cir_start * self.cir_interval, cir_end * self.cir_interval, self.cir_interval)
+            nof_cirs = len(reference_delays)
+        else:
+            # length_s is zero, take signal from start until end:
+            cir_start = int(start_time * self.cir_rate_Hz)
+
+            reference_delays = g['reference_delays'][cir_start:]
+            nof_cirs = len(reference_delays)
+            cir_end = nof_cirs
+            times = np.arange(cir_start * self.cir_interval, nof_cirs * self.cir_interval, self.cir_interval)
+
+        channel_power = np.zeros((nof_cirs, 1), dtype=complex)
+
+        # for all cirs
+        for cir_n in np.arange(nof_cirs):
+            cir = g['cirs/{0}'.format(cir_start + cir_n)]
+            amplitudes = cir['real'] + 1j * cir['imag']
+            channel_power[cir_n] = np.sum(amplitudes)
 
         return times, channel_power
 
