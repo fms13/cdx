@@ -76,7 +76,7 @@ act_plot = 1
 total_nof_plots = cdx_file.get_nof_links()
 for link in cdx_file.get_link_names():
 
-	times, channel_power = cdx_file.compute_power(link, start_time, length)
+	times, channel_power = cdx_file.compute_power_magnitude(link, start_time, length)
 	times, mp_spread = cdx_file.compute_multipath_spread(link, start_time, length)
 
 	ax = fig.add_subplot(total_nof_plots, 2, act_plot)
