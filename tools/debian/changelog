@@ -1,3 +1,10 @@
+cdx-tools (1.4-1) UNRELEASED; urgency=medium
+
+  * Switch in cdx-display to select whether the power plot displays sum of the components' magnitudes
+    or the coherent sum of all components.
+
+ -- Frank M. Schubert <fmschubert@ieee.org>  Thu, 04 Mar 2018 20:45:00 +0100
+
 cdx-tools (1.3-1) UNRELEASED; urgency=medium
 
   * Fix for changed typedefs
