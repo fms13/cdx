@@ -367,7 +367,8 @@ class FiguresGenerator:
         times, channel_power = self.cdx_file.compute_power_magnitude(link_name)
 
         ax.set_title('Power, Link {}'.format(link_name))
-        ax.plot(times, 20 * np.log10(abs(channel_power)))
+        # plot in dB scale: power is computed as sum(abs()**2), hence 10 * log10() applies here:
+        ax.plot(times, 10 * np.log10(abs(channel_power)))
         ax.set_xlim((times[0], times[-1]))
         ax.set_xlabel('Time [s]')
         ax.set_ylabel('Power [dB]')
@@ -379,6 +380,7 @@ class FiguresGenerator:
         times, channel_power = self.cdx_file.compute_power_coherent_sum(link_name)
 
         ax.set_title('Power, Link {}'.format(link_name))
+        # no squaring in compute_power_coherent_sum, hence to obtain dB scale, compute 10*log10(abs()**2) = 20*log10(abs())
         ax.plot(times, 20 * np.log10(abs(channel_power)))
         ax.set_xlim((times[0], times[-1]))
         ax.set_xlabel('Time [s]')

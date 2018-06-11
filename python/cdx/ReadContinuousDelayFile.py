@@ -204,7 +204,7 @@ class ReadContinuousDelayFile:
         for cir_n in np.arange(nof_cirs):
             cir = g['cirs/{0}'.format(cir_start + cir_n)]
             amplitudes = cir['real'] + 1j * cir['imag']
-            channel_power[cir_n] = np.sum(np.abs(amplitudes))
+            channel_power[cir_n] = np.sum(np.abs(amplitudes)**2)
 
         return times, channel_power
 
