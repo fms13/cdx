@@ -1,33 +1,24 @@
 #!/usr/bin/env python
 ##
-# \file cdx-compute-power-delay-profile.py
+# \addtogroup python_tools
+# @{
+# \addtogroup python_tools_cdx_compute_power_delay_profile cdx-compute-power-delay-profile
+# @{
+#
+# \file cdx-compute-power-delay-profile
 # \date April 4, 2012
 # \author Frank Schubert
-
-#   SNACS - The Satellite Navigation Radio Channel Simulator
 #
-#   Program to compute a power delay profile (PDP) with a
-#     continuous-delay CDX channel file as input.
+# Computes the power delay profile (PDP). The PDP is plotted for each link in file and saved to PNG graphic.
 #
-#   Copyright (C) 2012-2013  F. M. Schubert
+# This script is part of the CDX Library.
 #
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 # Command line parameters:
-# -f <file_name>: input CDX file
 #
-# PDP is plotted for each link in file and saved to PNG graphic.
+# Parameter      | Function
+# ---            | ----
+# -f <file_name> | input CDX file
+#
 
 # initialization
 from numpy import *
@@ -121,3 +112,5 @@ else:
     plt.show()
 
 print "all done."
+## @} #
+## @} #

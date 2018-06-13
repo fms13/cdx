@@ -1,31 +1,13 @@
 #!/usr/bin/env python
+##
+# \addtogroup python_implementation
+# @{
 #
 # \file ReadContinuousDelayFile.py
+#
 # \date April 4, 2012
 # \author Frank Schubert
 #
-#   CDX Library
-#
-#   As part of
-#
-#   SNACS - The Satellite Navigation Radio Channel Simulator
-#
-#   Class to read continuous-delay CDX files.
-#
-#   Copyright (C) 2012-2013  F. M. Schubert
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
 import h5py
@@ -40,9 +22,7 @@ cir_dtype = np.dtype([('type', np.uint16), ('id', np.uint64), ('delay', np.float
 # \brief Class that provides functions to read from a continuous-delay CDX file
 #
 # Moreover, operations such as computation of power-delay profiles are provided.
-#
 class ReadContinuousDelayFile:
-    """Read a continuous-delay CDX file"""
     def __init__(self, file_name):
         # expects parameters as dict: { 'delay_type', 'c0', 'cir_rate_Hz', 'nof_links', 'enable_compression', 'transmitter_frequency_Hz' }
         print "Open CDX file", file_name
@@ -192,9 +172,9 @@ class ReadContinuousDelayFile:
         return times, nof_components
 
     ##
-    # \brief
+    # \brief Computes the power of all components for all times, sum of absolute values of all components for each time.
     # If length is zero, go until end of the file.
-    def compute_power(self, link_name, start_time = 0.0, length = 0.0):
+    def compute_power_magnitude(self, link_name, start_time = 0.0, length = 0.0):
         g = self.f['links'][link_name]
         total_nof_cirs = len(g['cirs'])
 
@@ -224,7 +204,44 @@ class ReadContinuousDelayFile:
         for cir_n in np.arange(nof_cirs):
             cir = g['cirs/{0}'.format(cir_start + cir_n)]
             amplitudes = cir['real'] + 1j * cir['imag']
-            channel_power[cir_n] = np.sum(np.abs(amplitudes))
+            channel_power[cir_n] = np.sum(np.abs(amplitudes)**2)
+
+        return times, channel_power
+
+    ##
+    # \brief Computes the power of all components for all times, coherent sum of all components for each time.
+    # If length is zero, go until end of the file.
+    def compute_power_coherent_sum(self, link_name, start_time = 0.0, length = 0.0):
+        g = self.f['links'][link_name]
+        total_nof_cirs = len(g['cirs'])
+
+        # check if start_time and length can be processed:
+        if length != 0.0:
+            if start_time + length > self.length_s:
+                raise SystemExit("Error: start_time + length ({}) exceeds file length ({}) (start_time + length > self.length_s), difference: {}.".format(start_time + length, self.length_s, start_time + length - self.length_s))
+            cir_start, cir_end = self.get_cir_start_end_numbers_from_times(start_time, length)
+
+            #print 'processing cirs {} to {}'.format(cir_start, cir_end)
+
+            reference_delays = g['reference_delays'][cir_start:cir_end]
+            times = np.arange(cir_start * self.cir_interval, cir_end * self.cir_interval, self.cir_interval)
+            nof_cirs = len(reference_delays)
+        else:
+            # length_s is zero, take signal from start until end:
+            cir_start = int(start_time * self.cir_rate_Hz)
+
+            reference_delays = g['reference_delays'][cir_start:]
+            nof_cirs = len(reference_delays)
+            cir_end = nof_cirs
+            times = np.arange(cir_start * self.cir_interval, nof_cirs * self.cir_interval, self.cir_interval)
+
+        channel_power = np.zeros((nof_cirs, 1), dtype=complex)
+
+        # for all cirs
+        for cir_n in np.arange(nof_cirs):
+            cir = g['cirs/{0}'.format(cir_start + cir_n)]
+            amplitudes = cir['real'] + 1j * cir['imag']
+            channel_power[cir_n] = np.sum(amplitudes)
 
         return times, channel_power
 
@@ -313,12 +330,13 @@ class ReadContinuousDelayFile:
         for cir_n in np.arange(len(reference_delays)):
             types, ids, delays, amplitudes, reference = self.get_cir(link_name, cir_n)
 
-            #delays = delays - reference_delays[cir_n]
+            # set amplitudes that are zero to 1e-9 to be able to compute the logarithm:
+            amplitudes[amplitudes == 0] = 1e-9
+
             try:
-                powers = 20 * np.log10(np.abs(amplitudes))  # TODO
+                powers_dB = 10 * np.log10(np.abs(amplitudes))
             except RuntimeWarning:
-                print 'amplitudes:', amplitudes, ' abs amplitudes:', np.abs(amplitudes)
-                sys.os.exit(1)
+                raise ValueError('amplitude values are smaller than zero, logarithm cannot be computed for: {}'.format(amplitudes))
 
             # for all components:
             for k, val in enumerate(delays):
@@ -326,10 +344,10 @@ class ReadContinuousDelayFile:
                 del_bin = int(round(delays[k] / del_step))
                 if del_bin < 0:
                     raise SystemError('del_bin < 0. delays[k]: {0}, reference_delays[k]: {1}'.format(delays[k], reference_delays[k]))
-                pwr_bin = int(round(powers[k] / -pwr_step))
+                pwr_bin = int(round(powers_dB[k] / -pwr_step))
                 # only bin this component if it is inside power/delay axes:
                 if del_bin <= (nof_del_bins - 1) and pwr_bin <= (nof_pwr_bins - 1) and pwr_bin >= 0:
-                    # print "powers[k]: ", powers[k], ", pwr_bin" , pwr_bin, ", del_bin: ", del_bin
+                    # print "powers_dB[k]: ", powers_dB[k], ", pwr_bin" , pwr_bin, ", del_bin: ", del_bin
                     pdp[pwr_bin, del_bin] = pdp[pwr_bin, del_bin] + 1
 
         return pdp / sum(sum(pdp)), del_ax, pwr_ax
@@ -341,3 +359,5 @@ class ReadContinuousDelayFile:
         except AttributeError:
             # file was not openend
             pass
+
+## @} #

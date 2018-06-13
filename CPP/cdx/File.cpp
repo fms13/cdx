@@ -11,6 +11,11 @@
 
 using namespace std;
 
+/**
+ * \addtogroup cpp_implementation
+ * @{
+ */
+
 namespace CDX {
 
 File::File(std::string _file_name) :
@@ -86,3 +91,7 @@ std::string File::read_string_h5(H5::H5File file, std::string path) {
 }
 
 } // end of namespace CDX
+
+/**
+ * @}
+ */

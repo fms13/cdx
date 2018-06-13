@@ -1,0 +1,26 @@
+/*!
+
+\page Distribution
+
+\section distribution_cpp CPP Library
+
+\subsection distribution_cpp_linux Linux
+
+\subsection distribution_cpp_win Windows
+
+\section distribution_python Python
+
+Install python-wheel and python-setuptools
+
+Generation of wheel package: Run in cdx/python:
+
+  python setup.py sdist bdist_wheel
+
+This creates python_cdx-1.0-py2-none-any.whl in dist/.
+
+To clean temporary files, run:
+
+  python setup.py clean
+
+*/
+

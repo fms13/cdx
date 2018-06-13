@@ -22,10 +22,15 @@ AM_INIT_AUTOMAKE([1.9 tar-pax -Wall -Werror])
 # use the C++ compiler for the following checks (optional)
 AC_LANG([C++])
 
-AC_ARG_VAR(BOOST_LIB_SUFFIX, suffix of the Boost libraries. Empty on Linux systems and -mt on OS X)
+# to make M_PI available:
+AC_DEFINE(_USE_MATH_DEFINES)
+
+# check for Boost:
+AC_CONFIG_MACRO_DIR([m4])
+AX_BOOST_BASE([1.48], , [AC_MSG_ERROR([Boost not found])])
+AX_BOOST_PROGRAM_OPTIONS
 
 # Check for libraries
-AC_CHECK_LIB([boost_program_options$BOOST_LIB_SUFFIX], [main], , [AC_MSG_ERROR([cannot find boost_program_options library])])
 AC_CHECK_LIB([armadillo], [main], , [AC_MSG_ERROR([cannot find armadillo library])])
 AC_CHECK_LIB([hdf5], [main], , [AC_MSG_ERROR([cannot find hdf5 library])])
 AC_CHECK_LIB([hdf5_cpp], [main], , [AC_MSG_ERROR([cannot find hdf5_cpp library])])

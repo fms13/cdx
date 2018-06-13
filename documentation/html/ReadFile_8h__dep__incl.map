@@ -1,0 +1,6 @@
+<map id="ReadFile.h" name="ReadFile.h">
+<area shape="rect" id="node2" href="$ReadContinuousDelayFile_8h.html" title="ReadContinuousDelayFile.h" alt="" coords="5,80,191,107"/>
+<area shape="rect" id="node4" href="$ReadDiscreteDelayFile_8h.html" title="Implementation of reading channel impulse responses from a HDF5 CDX file. " alt="" coords="215,80,383,107"/>
+<area shape="rect" id="node5" href="$ReadFile_8cpp.html" title="ReadFile.cpp" alt="" coords="407,80,506,107"/>
+<area shape="rect" id="node3" href="$cdx-convert-continuous-to-discrete_8cpp.html" title="This file contains the implementation of a tool which converts continuous&#45; delay CDX files to discret..." alt="" coords="19,155,177,196"/>
+</map>

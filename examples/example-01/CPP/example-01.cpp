@@ -1,8 +1,13 @@
 /**
+ * \addtogroup cpp_examples
+ * @{
+ * \addtogroup cpp_examples_example_01 example_01
+ * @{
+ *
  * \file example-01.cpp
  *
- * \author Frank Schubert
  * \date Apr 18, 2017
+ * \author Frank Schubert
  *
  * \brief Example 01 using C++
  *
@@ -82,3 +87,6 @@ int main() {
 
 	return 0;
 }
+/** @} */
+/** @} */
+

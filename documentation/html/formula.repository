@@ -1,0 +1,4 @@
+\form#0:$ v = 1000\,\mathrm{m/s} $
+\form#1:$ f_\mathrm{carr} = 1.5\,\mathrm{GHz} $
+\form#2:\[ f_\mathrm{recv} = f_\mathrm{carr} \cdot \sqrt{\frac{c_0 + v}{c_0 - v}} \approx 1.500005\,\mathrm{GHz} \]
+\form#3:\[ f_\mathrm{recv} - f_\mathrm{carr} = 5\,\mathrm{kHz}\]

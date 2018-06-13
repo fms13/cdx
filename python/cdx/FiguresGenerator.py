@@ -1,31 +1,12 @@
 #!/usr/bin/env python
-# #
+##
+# \addtogroup python_implementation
+# @{
+#
 # \file FiguresGenerator.py
 # \date April 4, 2012
 # \author Frank Schubert
 #
-#   CDX Library
-#
-#   As part of
-#
-#   SNACS - The Satellite Navigation Radio Channel Simulator
-#
-#   Class to read continuous-delay CDX files.
-#
-#   Copyright (C) 2012-2013  F. M. Schubert
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
 import os
@@ -39,7 +20,8 @@ import ReadContinuousDelayFile
 import ReadDiscreteDelayFile
 
 component_colors_t = {0: 'r', 1: 'k', 2: 'b', 3: 'g', 4: 'y'}
-# #
+
+##
 # \brief Class which provides functionality to generate plots such as channel impulse
 # responses, power over time, or the delay spread.
 #
@@ -138,11 +120,13 @@ class FiguresGenerator:
 #         print delays[0]
 #         for idx in np.arange(len(delays)):
 
-        # adjust y axis for power
+        # set amplitudes that are zero to 1e-9 to be able to compute the logarithm:
+        amplitudes[amplitudes == 0] = 1e-9
+
         try:
             amplitudes_dB = 10 * np.log10(np.abs(amplitudes))
         except RuntimeWarning:
-            print 'amplitudes:', amplitudes
+            raise ValueError('amplitude values are smaller than zero, logarithm cannot be computed for: {}'.format(amplitudes))
 
         min_amplitude_dB = np.min(amplitudes_dB)
         max_amplitude_dB = np.max(amplitudes_dB)
@@ -377,12 +361,26 @@ class FiguresGenerator:
         ax.set_ylim((delays[0][0] / 1e-9, delays[-1][0] / 1e-9))
         return im
 
-    def make_power_axes(self, ax, link_name):
+    def make_power_axes_magnitude(self, ax, link_name):
         print 'computing power plot for link ', link_name
 
-        times, channel_power = self.cdx_file.compute_power(link_name)
+        times, channel_power = self.cdx_file.compute_power_magnitude(link_name)
 
         ax.set_title('Power, Link {}'.format(link_name))
+        # plot in dB scale: power is computed as sum(abs()**2), hence 10 * log10() applies here:
+        ax.plot(times, 10 * np.log10(abs(channel_power)))
+        ax.set_xlim((times[0], times[-1]))
+        ax.set_xlabel('Time [s]')
+        ax.set_ylabel('Power [dB]')
+        ax.grid()
+
+    def make_power_axes_coherent_sum(self, ax, link_name):
+        print 'computing power plot for link ', link_name
+
+        times, channel_power = self.cdx_file.compute_power_coherent_sum(link_name)
+
+        ax.set_title('Power, Link {}'.format(link_name))
+        # no squaring in compute_power_coherent_sum, hence to obtain dB scale, compute 10*log10(abs()**2) = 20*log10(abs())
         ax.plot(times, 20 * np.log10(abs(channel_power)))
         ax.set_xlim((times[0], times[-1]))
         ax.set_xlabel('Time [s]')
@@ -465,3 +463,5 @@ if __name__ == "__main__":
      main()
 
 print 'all done.'
+
+## @} #

@@ -1,16 +1,14 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% function read string
-%
-% This function reads a string from a HDF5 dataset
-% 
-% based on http://www.hdfgroup.org/ftp/HDF5/examples/examples-by-api/matlab/HDF5_M_Examples/h5ex_t_string.m
-%
-% Author: F. Schubert
-% Date: 08-09-2010
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%> \addtogroup matlab_implementation
+%> @{
+%>
+%> \file read_string.m
+%>
+%> \date Sep 08, 2010
+%> \author Frank M. Schubert
 
+%> \brief This function reads a string from a HDF5 dataset
+%>
+%> based on http://www.hdfgroup.org/ftp/HDF5/examples/examples-by-api/matlab/HDF5_M_Examples/h5ex_t_string.m
 function value = read_string(obj, group_id, DATASET)
 
 dset = H5D.open(group_id, DATASET);
@@ -40,3 +38,5 @@ H5T.close (filetype);
 H5T.close (memtype);
 
 end
+
+%> @}

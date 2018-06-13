@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+##
+# \addtogroup python_implementation
+# @{
 #
 # \file ReadContinuousDelayFile.py
 # \date April 4, 2012
@@ -107,7 +110,7 @@ class ReadDiscreteDelayFile:
 
         cirs, times, delays, ref_delays = self.get_cirs(link_name, start_time, length)
 
-        channel_power = np.abs(np.sum(cirs, axis=0))**2
+        channel_power = np.sum(np.abs(cirs)**2, axis=0)
 
         return times, channel_power
 
@@ -119,3 +122,5 @@ class ReadDiscreteDelayFile:
         except AttributeError:
             # file was not openend
             pass
+
+## @} #

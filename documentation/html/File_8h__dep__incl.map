@@ -1,0 +1,15 @@
+<map id="File.h" name="File.h">
+<area shape="rect" id="node2" href="$File_8cpp.html" title="File.cpp" alt="" coords="243,80,311,107"/>
+<area shape="rect" id="node3" href="$ReadFile_8h.html" title="ReadFile.h" alt="" coords="335,80,421,107"/>
+<area shape="rect" id="node8" href="$WriteFile_8h.html" title="WriteFile.h" alt="" coords="671,80,757,107"/>
+<area shape="rect" id="node4" href="$ReadContinuousDelayFile_8h.html" title="ReadContinuousDelayFile.h" alt="" coords="5,155,191,181"/>
+<area shape="rect" id="node6" href="$ReadDiscreteDelayFile_8h.html" title="Implementation of reading channel impulse responses from a HDF5 CDX file. " alt="" coords="215,155,383,181"/>
+<area shape="rect" id="node7" href="$ReadFile_8cpp.html" title="ReadFile.cpp" alt="" coords="407,155,506,181"/>
+<area shape="rect" id="node5" href="$cdx-convert-continuous-to-discrete_8cpp.html" title="This file contains the implementation of a tool which converts continuous&#45; delay CDX files to discret..." alt="" coords="173,229,330,271"/>
+<area shape="rect" id="node9" href="$WriteContinuousDelayFile_8h.html" title="WriteContinuousDelayFile.h" alt="" coords="723,155,908,181"/>
+<area shape="rect" id="node12" href="$WriteDiscreteDelayFile_8h.html" title="WriteDiscreteDelayFile.h" alt="" coords="530,155,698,181"/>
+<area shape="rect" id="node14" href="$WriteFile_8cpp.html" title="WriteFile.cpp" alt="" coords="933,155,1031,181"/>
+<area shape="rect" id="node10" href="$WriteContinuousDelayFile_8cpp.html" title="WriteContinuousDelayFile.cpp" alt="" coords="716,237,915,263"/>
+<area shape="rect" id="node11" href="$example-01_8cpp.html" title="Example 01 using C++. " alt="" coords="939,237,1054,263"/>
+<area shape="rect" id="node13" href="$WriteDiscreteDelayFile_8cpp.html" title="WriteDiscreteDelayFile.cpp" alt="" coords="509,237,692,263"/>
+</map>

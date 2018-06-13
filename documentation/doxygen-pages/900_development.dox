@@ -1,12 +1,72 @@
 /*!
 
-\page development Development
+\page development Compilation
 
+\section development_cpp CPP Library and Tools
+
+\subsection development_cpp_linux Linux
+
+\subsection development_cpp_cleaning Cleaning Intermediate Files
+
+Run these commands in cdx/trunk/CPP to delete intermediately created files before committing to the repository:
+
+    make maintainer-clean
+    rm -rf *~ ar-lib aclocal.m4 compile config.guess config.sub configure depcomp install-sh ltmain.sh m4 Makefile.in missing bin/
+
+\subsection development_cpp_win Windows
+
+First, we compile and install the cdx C++ library using MSYS2 on Windows.
+
+Install MSYS2, then open an MSYS2 shell upgrade MSYS2:
+
+  pacman -Syu
+
+Restart MSYS2 shell, again, run
+
+  pacman -Su
+
+Then, install the compiler and linker toolchain and libraries:
+
+In MSYS2-Shell:
+
+  pacman -S autoconf
+  pacman -S automake
+
+  # check if this needs to be mingw64:
+#  pacman -S msys/gcc
+#  pacman -S msys/make
+
+  pacman -S mingw64/mingw-w64-x86_64-hdf5
+  pacman -S mingw64/mingw-w64-x86_64-boost
+  pacman -S mingw64/mingw-w64-x86_64-armadillo
+
+Open MSYS2 shell and go to cdx/CPP. Run
+
+  autoreconf -i
+  ./configure --prefix=/usr/local
+  make -j4
+
+Secondly, we compile the cdx-convert-continuous-to-discrete-src tool. 
+
+The Armadillo packag in MSYS2 has a bug currently (https://github.com/Alexpux/MINGW-packages/issues/1670) and points to C:/building/msys64 which does not exist. If you have not installed MSYS2 into c:/building/msys2, run
+
+  cd c:/
+  mkdir building
+  cd building/
+  ln -s ../msys64
+
+to work around this issue.
+
+Go to /cdx/tools and run
+
+  autoreconf -i
+  ./configure --prefix=/usr/local --with-boost-program-options=boost_program_options-mt
+  make -j4
+  
 \section development_python Python
 
 If Python files in e.g. \c ~/workspace/cdx/trunk/python or \c ~/workspace/cdx/trunk/tools/python are changed they need to be called by
 
-    PYTHONPATH=~/workspace/cdx/trunk/python ~/workspace/cdx/trunk/tools/python/cdx-display -i example_01.cdx 
+    PYTHONPATH=~/workspace/cdx/trunk/python ~/workspace/cdx/trunk/tools/python/cdx-display -i example_01.cdx
 
 */
-

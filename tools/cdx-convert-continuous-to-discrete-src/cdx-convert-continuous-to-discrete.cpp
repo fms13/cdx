@@ -1,4 +1,9 @@
 /**
+ * \addtogroup cpp_tools
+ * @{
+ * \addtogroup cpp_tools_cdx_convert_continuous_to_discrete cdx-convert-continuous-to-discrete
+ * @{
+ *
  * \file cdx-convert-continuous-to-discrete.cpp
  *
  * \date Nov 24, 2011
@@ -283,3 +288,6 @@ int main(int argc, char **argv) {
 	cout << "all done. exit.\n";
 	return 0;
 }
+
+/** @} */
+/** @} */

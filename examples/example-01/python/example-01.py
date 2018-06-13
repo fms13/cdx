@@ -1,5 +1,10 @@
 #!/usr/bin/env python
-# #
+##
+# \addtogroup python_examples
+# @{
+# \addtogroup python_examples_example_01 example_01
+# @{
+#
 # \file example-01.py
 # \date April 13, 2017
 # \author Frank Schubert
@@ -135,3 +140,6 @@ for k, time in enumerate(times_s):
     cdx_file.append_cir(cirs, ref_delays)
 
 print 'all done.'
+
+## @} #
+## @} #

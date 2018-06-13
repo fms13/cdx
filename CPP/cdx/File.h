@@ -5,6 +5,11 @@
  * \author Frank Schubert
  */
 
+/**
+ * \addtogroup cpp_implementation
+ * @{
+ */
+
 #ifndef CDX_FILE_H_
 #define CDX_FILE_H_
 
@@ -204,3 +209,7 @@ protected:
 } // end of namespace CDX
 
 #endif /* CDX_FILE_H_ */
+
+/**
+ * @}
+ */

@@ -1,16 +1,13 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% function write string
-%
-% This function appends a single value to a HDF5 dataset
-% 
-% based on http://www.hdfgroup.org/ftp/HDF5/examples/examples-by-api/matlab/HDF5_M_Examples/h5ex_t_string.m
-% 
-% Author: F. Schubert
-% Date: 08-09-2010
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%> \addtogroup matlab_implementation
+%> @{
+%>
+%> \file write_string.m
+%>
+%> \date Sep 08, 2010
+%> \author Frank M. Schubert
 
+%> \brief This function appends a single value to a HDF5 dataset
+%> Based on http://www.hdfgroup.org/ftp/HDF5/examples/examples-by-api/matlab/HDF5_M_Examples/h5ex_t_string.m
 function write_string(obj, group_id, DATASET, value)
 
 SDIM = length(value);
@@ -38,3 +35,4 @@ H5T.close (filetype);
 H5T.close (memtype);
 
 end
+%> @}

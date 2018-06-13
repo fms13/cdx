@@ -1,4 +1,7 @@
 ##
+# \addtogroup python_implementation
+# @{
+#
 # \file setup.py
 #
 # \date Oct 21, 2015
@@ -19,12 +22,12 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "python-cdx",
+    name = "cdx",
     version = "1.0",
     author = "Frank M. Schubert",
     author_email = "fmschubert@ieee.org",
     description = ("Python version of the Channel Data Exchange (CDX) library."),
-    license = "GPLv3",
+    license = "BSD2",
     keywords = "channel model, channel impulse response, storage",
     url = "http://snacs.sourceforge.net/cdx_format.html",
     packages=['cdx'],
@@ -32,6 +35,10 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Topic :: Utilities",
-        "License :: OSI Approved :: GPLv3 License",
+        "License :: OSI Approved :: BSD2 License",
     ],
+    scripts = [ 'scripts/cdx-display']
 )
+
+## @} #
+

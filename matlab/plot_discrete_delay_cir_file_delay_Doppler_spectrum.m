@@ -1,14 +1,12 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% function plot_discrete_delay_cir_file
-%
-% This function plots a certain length of a CDX file
-%
-% Author: F. Schubert
-% Date: 08-09-2010
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%> \addtogroup matlab_implementation
+%> @{
+%>
+%> \file plot_discrete_delay_cir_file_delay_Doppler_spectrum.m
+%>
+%> \date Sep 08, 2010
+%> \author Frank M. Schubert
 
+%> \brief This function plots a certain length of a CDX file.
 function [ plot_data, f_vec, dd, reference_delays ] = plot_discrete_delay_cir_file_delay_Doppler_spectrum(cdx_file, link, plot_params)
 
 cir_rate = get_cir_rate(cdx_file);
@@ -149,3 +147,4 @@ disp('done.');
 
 
 end
+%> @}

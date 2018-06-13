@@ -1,1 +1,8 @@
-__all__ = ["CDXFiguresGenerator", "ReadContinuousDelayCDXFile", "WriteContinuousDelayCDXFile", "ReadDiscreteDelayCDXFile"]
+##
+# \addtogroup python_implementation
+# @{
+
+name = "cdx"
+
+##
+# @}
