@@ -121,7 +121,7 @@ void WriteFile::write(string path, const vector<vector<double> > &data) {
 	dset3.write(wdata, H5::PredType::NATIVE_DOUBLE);
 }
 
-void WriteFile::write(const H5::CommonFG *h5file, const std::string &path,
+void WriteFile::write(const H5::H5Location *h5file, const std::string &path,
 		const std::vector<std::string> &data) {
 
 	// based on
@@ -147,7 +147,7 @@ void WriteFile::write(const H5::CommonFG *h5file, const std::string &path,
 	dset.write(arr_c_str.data(), str_type);
 }
 
-void WriteFile::write(const H5::CommonFG* h5file, const std::string& path,
+void WriteFile::write(const H5::H5Location* h5file, const std::string& path,
 		const std::map<uint16_t, std::string>& data) {
 
 	// C struct for the compound data typo:

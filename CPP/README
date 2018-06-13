@@ -12,7 +12,20 @@ These commands generate a Debian package:
 Installation on Mac OS X
 ========================
  
-In snacs/cdx_format/CPP run
+Homebrew:
+
+  brew install libtool
+  
+In cdx/CPP and in cdx/tools run:
+
+  autoreconf -i
+  ./configure CXXFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib --prefix=/usr/local
+  nice make -j3
+  sudo make install
+
+Macports:
+ 
+In cdx/CPP and in cdx/tools run:
  
   ./configure CXXFLAGS=-I/opt/local/include LDFLAGS=-L/opt/local/lib --prefix=/opt/local 
   make
