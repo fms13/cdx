@@ -92,6 +92,11 @@ int main(int argc, char **argv) {
 	po::store(po::parse_command_line(argc, argv, desc), vm);
 	po::notify(vm);
 
+	if (vm.count("help")) {
+		cout << desc << endl;
+		exit(0);
+	}
+		
 	if (vm.count("input-file") != 1)
 		throw std::runtime_error("no input file name given.");
 

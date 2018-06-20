@@ -47,13 +47,13 @@ public:
 	/**
 	 * \brief Writes vector of strings to path.
 	 */
-	void write(const H5::H5Location *h5file, const std::string &path,
+	void write(const H5::CommonFG *h5file, const std::string &path,
 			const std::vector<std::string> &data);
 
 	/**
 	 * \brief Writes a std::map<uint16_t, std::string> to path.
 	 */
-	void write(const H5::H5Location *h5file, const std::string &path,
+	void write(const H5::CommonFG *h5file, const std::string &path,
 			const std::map<uint16_t, std::string> &data);
 
 	/**
