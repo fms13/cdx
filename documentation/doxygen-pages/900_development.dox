@@ -43,8 +43,11 @@ In MSYS2-Shell:
 Open MSYS2 shell and go to cdx/CPP. Run
 
   autoreconf -i
-  ./configure --prefix=/usr/local
+  ./configure
   make -j4
+  make install
+
+Adding --prefix=/usr/local to the configure call prohibits the linker from finding libcdx in the next step.
 
 Secondly, we compile the cdx-convert-continuous-to-discrete-src tool. 
 
