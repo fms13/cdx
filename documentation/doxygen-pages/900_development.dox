@@ -2,6 +2,20 @@
 
 \page development Compilation
 
+The tools Autoconf and Automake are used to be able to compile CDX on different platforms. For libconfig, the configuration files are
+
+  cdx/CPP/configure.ac
+  cdx/CPP/Makefile.am
+
+The CDX tools make use of the Boost libraries. Scripts for Autoconf are available to detect the Boost libraries' locations on different platforms on
+  
+  https://www.gnu.org/software/autoconf-archive/The-Macros.html#The-Macros
+
+These Boost M4 scripts for Autoconf were downloaded and stored in
+
+  cdx/tools/m4
+
+  
 \section development_cpp CPP Library and Tools
 
 \subsection development_cpp_linux Linux
@@ -17,11 +31,13 @@ Run these commands in cdx/trunk/CPP to delete intermediately created files befor
 
 First, we compile and install the cdx C++ library using MSYS2 on Windows.
 
-Install MSYS2, then open an MSYS2 shell upgrade MSYS2:
+Install MSYS2: Get the x86_64 installer from http://www.msys2.org/ and run it. Some MSYS2 packages have a bug and reference to the MSYS2 files in C:\building\msys64 instead of C:\msys64. Please install MSYS2 to C:\building\msys64 to work around this issue.
+
+Open an MSYS2 shell from Window's Start Menu and upgrade MSYS2:
 
   pacman -Syu
 
-Restart MSYS2 shell, again, run
+Restart the MSYS2 shell and, again, run
 
   pacman -Su
 
@@ -29,22 +45,21 @@ Then, install the compiler and linker toolchain and libraries:
 
 In MSYS2-Shell:
 
-  pacman -S autoconf
-  pacman -S automake
+  pacman -S --needed base-devel mingw-w64-x86_64-toolchain \
+                    git \
+                    autoconf automake autoconf-archive \
+                    mingw64/mingw-w64-x86_64-hdf5 mingw64/mingw-w64-x86_64-boost mingw64/mingw-w64-x86_64-armadillo
 
-  # check if this needs to be mingw64:
-#  pacman -S msys/gcc
-#  pacman -S msys/make
-
-  pacman -S mingw64/mingw-w64-x86_64-hdf5
-  pacman -S mingw64/mingw-w64-x86_64-boost
-  pacman -S mingw64/mingw-w64-x86_64-armadillo
+TODO check if this is also needed:
+#  pacman -S pkg-config
+#  pacman -S libtool
 
 Open MSYS2 shell and go to cdx/CPP. Run
 
   autoreconf -i
   ./configure --prefix=/usr/local
   make -j4
+  make install
 
 Secondly, we compile the cdx-convert-continuous-to-discrete-src tool. 
 
@@ -62,6 +77,7 @@ Go to /cdx/tools and run
   autoreconf -i
   ./configure --prefix=/usr/local --with-boost-program-options=boost_program_options-mt
   make -j4
+  make install
   
 \section development_python Python
 

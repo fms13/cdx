@@ -6,6 +6,11 @@
 
 \subsection distribution_cpp_linux Linux
 
+The Debian package for the CDX tools has to be dependent on autoconf-archive so that the Boost M4 scripts run to let Autoconf detect the Boost libraries.
+
+TODO probably not needed: Run aclocal -I m4 --install
+
+
 \subsection distribution_cpp_win Windows
 
 \section distribution_python Python
