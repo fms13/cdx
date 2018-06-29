@@ -8,21 +8,71 @@ The tools Autoconf and Automake are used to be able to compile CDX on different 
   cdx/CPP/Makefile.am
 
 The CDX tools make use of the Boost libraries. Scripts for Autoconf are available to detect the Boost libraries' locations on different platforms on
-  
+
   https://www.gnu.org/software/autoconf-archive/The-Macros.html#The-Macros
 
 These Boost M4 scripts for Autoconf were downloaded and stored in
 
   cdx/tools/m4
 
-  
+
 \section development_cpp CPP Library and Tools
 
 \subsection development_cpp_linux Linux
 
+On Debian 9 the include and library paths to the HDF5 library have to be specified in the call to \c configure.
+
+Go to
+
+  cdx/CPP/
+
+and run these commands to compile the CDX library:
+
+  autoreconf -i
+  ./configure CXXFLAGS=-I/usr/include/hdf5/serial LDFLAGS=-L/usr/lib/x86_64-linux-gnu/hdf5/serial
+  make -j4
+
+If the library is supposed to be installed below e.g. \c /usr/local/ add
+
+  --prefix=/usr/local
+
+to the configure call above.
+
+The resulting libraries for dynamic and static linking are, respectively,
+
+  cdx/CPP/.libs/libcdx.so
+  cdx/CPP/.libs/libcdx.a
+
+A call of
+
+  make install
+
+installs the libraries.
+
+Next, the compilation of the CDX Tools is described. In order to be able to compile the CDX Tools,
+
+ + the CDX library has to be installed,
+ + its Debian package has to be installed, or
+ + during compilation, the path \c cdx/CPP/.libs/libcdx.so is provided to the configure call.
+
+To compile the CDX Tools, go to
+
+  cdx/tools/
+
+and run
+
+   autoreconf -i
+  ./configure CXXFLAGS=-I/usr/include/hdf5/serial LDFLAGS=-L/usr/lib/x86_64-linux-gnu/hdf5/serial
+  make -j4
+
+The resulting binary is
+
+  cdx-convert-continuous-to-discrete
+
+
 \subsection development_cpp_cleaning Cleaning Intermediate Files
 
-Run these commands in cdx/trunk/CPP to delete intermediately created files before committing to the repository:
+Run these commands in cdx/trunk/CPP/ and cdx/tools/ to delete intermediately created files before committing to the repository:
 
     make maintainer-clean
     rm -rf *~ ar-lib aclocal.m4 compile config.guess config.sub configure depcomp install-sh ltmain.sh m4 Makefile.in missing bin/
@@ -64,7 +114,7 @@ Open MSYS2 shell and go to cdx/CPP. Run
 
 Adding --prefix=/usr/local to the configure call prohibits the linker from finding libcdx in the next step.
 
-Secondly, we compile the cdx-convert-continuous-to-discrete-src tool. 
+Secondly, we compile the cdx-convert-continuous-to-discrete-src tool.
 
 The Armadillo packag in MSYS2 has a bug currently (https://github.com/Alexpux/MINGW-packages/issues/1670) and points to C:/building/msys64 which does not exist. If you have not installed MSYS2 into c:/building/msys2, run
 
@@ -81,7 +131,7 @@ Go to /cdx/tools and run
   ./configure --prefix=/usr/local --with-boost-program-options=boost_program_options-mt
   make -j4
   make install
-  
+
 \section development_python Python
 
 If Python files in e.g. \c ~/workspace/cdx/trunk/python or \c ~/workspace/cdx/trunk/tools/python are changed they need to be called by

@@ -2,7 +2,7 @@
 
 \page Distribution
 
-\section distribution_cpp CPP Library
+\section distribution_cpp C++ Bindings
 
 \subsection distribution_cpp_linux Linux
 
@@ -13,19 +13,47 @@ TODO probably not needed: Run aclocal -I m4 --install
 
 \subsection distribution_cpp_win Windows
 
-\section distribution_python Python
+The C++ version of the CDX library is not packaged for Windows currently. Only the binary for the CDX Tools are provided, see
 
-Install python-wheel and python-setuptools
+\section distribution_python Python Bindings
 
-Generation of wheel package: Run in cdx/python:
+This section explains how to create a wheel file to be installed on a Python distribution.
+
+First, open a shell and install python-wheel and python-setuptools and make sure they are the up-to-date:
+
+  python -m pipe install --user --upgrade setuptools wheel
+
+On Debian, the packages python-setuptools and python-wheel can be installed with
+
+  apt-get install python-setuptools python-wheel
+
+To generata the CDX wheel package go to
+
+  cdx/python/
+
+and run
 
   python setup.py sdist bdist_wheel
 
-This creates python_cdx-1.0-py2-none-any.whl in dist/.
+This creates
 
-To clean temporary files, run:
+  python_cdx-1.0-py2-none-any.whl
+
+in
+
+  dist/
+
+To clean the temporary files, run
 
   python setup.py clean
+  rm -r build/ cdx.egg-info/ dist/
+
+\section distribution_tools CDX Tools
+
+\subsection distribution_tools_linux Linux
+
+\subsection distribution_tools_win Windows
+
 
 */
 
