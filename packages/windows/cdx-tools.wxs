@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='windows-1252'?>  
+<!-- 
+ \author Frank M. Schubert
+ \date Jan 31, 2018
+ 
+ \brief File for the Windows Installer XML (WiX) to create an installer package for the CDX binary tools.
+-->
+
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>  
+ <Product Name='CDX Tools 0.1' Id='2149BE28-D826-4800-9D43-B8B9C0A01741'  
+  UpgradeCode='5FFFAC03-BFC9-40FC-9087-234667E9EA2B'  
+  Language='1033' Version='0.1.0' Manufacturer='SF'>  
+  
+  <Package Id='*' InstallerVersion='200' Compressed='yes' InstallScope="perUser" />  
+ 
+  <Media Id='1' Cabinet='CDXTools.cab' EmbedCab='yes' />  
+  
+  <Directory Id='TARGETDIR' Name='SourceDir'>  
+   <Directory Id='ProgramFilesFolder'>  
+    <Directory Id='INSTALLDIR' Name='cdx-tools'>
+     <Component Id='cdxConvertContinuousToDiscreteExecutable'>  
+      <File Id='cdxConvertContinuousToDiscrete' Name='cdx-convert-continuous-to-discrete.exe' Source='../../tools/cdx-convert-continuous-to-discrete.exe' Vital='yes' />  
+      <Environment Id="PATH" Name="PATH" Value="[INSTALLDIR]" Permanent="no" Part="last" Action="set" System="no" />
+      <RemoveFolder Id="INSTALLDIR" On="uninstall" />  
+     </Component>  
+
+     <Component>  
+      <File Id='libboost_program_options' Name='libboost_program_options-mt.dll' Source='C:\msys64\mingw64\bin\libboost_program_options-mt.dll' Vital='yes' />  
+     </Component>
+     <Component>  
+      <File Id='libgcc_s_seh' Name='libgcc_s_seh-1.dll' Source='C:\msys64\mingw64\bin\libgcc_s_seh-1.dll' Vital='yes' />  
+     </Component>
+     <Component>  
+      <File Id='libstdcplusplus' Name='libstdc++-6.dll' Source='C:\msys64\mingw64\bin\libstdc++-6.dll' Vital='yes' />  
+     </Component>
+     <Component>  
+      <File Id='libwinpthread' Name='libwinpthread-1.dll' Source='C:\msys64\mingw64\bin\libwinpthread-1.dll' Vital='yes' />  
+     </Component>
+     <Component>  
+      <File Id='zlib1' Name='zlib1.dll' Source='C:\msys64\mingw64\bin\zlib1.dll' Vital='yes' />  
+     </Component>
+     <Component>  
+      <File Id='libhdf5_cpp' Name='libhdf5_cpp-0.dll' Source='C:\msys64\mingw64\bin\libhdf5_cpp-0.dll' Vital='yes' />  
+     </Component>
+     <Component>  
+      <File Id='libhdf5' Name='libhdf5-0.dll' Source='C:\msys64\mingw64\bin\libhdf5-0.dll' Vital='yes' />  
+     </Component>
+     <Component>  
+      <File Id='libgomp' Name='libgomp-1.dll' Source='C:\msys64\mingw64\bin\libgomp-1.dll' Vital='yes' />  
+     </Component>
+
+	 </Directory>  
+   </Directory>  
+  </Directory>  
+  
+  <Feature Id='Complete' Title='CDX Tools 0.1' Description='The complete package.'
+      Display='expand' Level="1" >  
+      <ComponentRef Id='cdxConvertContinuousToDiscreteExecutable' />  
+
+      <ComponentRef Id='libboost_program_options' />  
+      <ComponentRef Id='libgcc_s_seh' />  
+      <ComponentRef Id='libstdcplusplus' />  
+      <ComponentRef Id='libwinpthread' />  
+      <ComponentRef Id='zlib1' />  
+      <ComponentRef Id='libhdf5_cpp' />  
+      <ComponentRef Id='libhdf5' />  
+      <ComponentRef Id='libgomp' />  
+  </Feature>  
+  
+  <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+  <WixVariable Id="WixUILicenseRtf" Value="../../LICENSE" />
+  
+  <UIRef Id="WixUI_InstallDir" />
+  <UIRef Id="WixUI_ErrorProgressText" />
+ </Product>  
+</Wix>
