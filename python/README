@@ -13,9 +13,3 @@ Updating the Debian Package
 To create a new changelog entry, run in snacs/cdx_format/python/debian
 
   export PY_CDX_VERSION=1.1; python/debian$ dch --check-dirname-level 0 -v $PY_CDX_VERSION-1
-
-Installation on Mac OS X
-========================
-
-In snacs/cdx_format/python run
-  sudo /opt/local/bin/python2 setup.py install

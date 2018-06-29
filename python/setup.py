@@ -29,7 +29,7 @@ setup(
     description = ("Python version of the Channel Data Exchange (CDX) library."),
     license = "BSD2",
     keywords = "channel model, channel impulse response, storage",
-    url = "http://snacs.sourceforge.net/cdx_format.html",
+    url = "https://github.com/fms13/cdx",
     packages=['cdx'],
     long_description=read('README'),
     classifiers=[
@@ -37,7 +37,14 @@ setup(
         "Topic :: Utilities",
         "License :: OSI Approved :: BSD2 License",
     ],
-    scripts = [ 'scripts/cdx-display']
+    scripts = [ 'cdx/scripts/cdx-display', \
+                'cdx/scripts/cdx-compute-delay-doppler-spectrum', \
+                'cdx/scripts/cdx-compute-multipath-spread-and-energy', \
+                'cdx/scripts/cdx-compute-multipath-to-line-of-sight-components-power-ratio', \
+                'cdx/scripts/cdx-compute-power-delay-profile', \
+                'cdx/scripts/cdx-plot-cir-continuous-delay-file', \
+                'cdx/scripts/cdx-plot-discrete-delay-file' \
+            ]
 )
 
 ## @} #
