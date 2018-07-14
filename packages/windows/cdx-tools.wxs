@@ -25,28 +25,28 @@
      </Component>  
 
      <Component>  
-      <File Id='libboost_program_options' Name='libboost_program_options-mt.dll' Source='C:\msys64\mingw64\bin\libboost_program_options-mt.dll' Vital='yes' />  
+      <File Id='libboost_program_options' Name='libboost_program_options-mt.dll' Source='c:\building\msys64\mingw64\bin\libboost_program_options-mt.dll' Vital='yes' />  
      </Component>
      <Component>  
-      <File Id='libgcc_s_seh' Name='libgcc_s_seh-1.dll' Source='C:\msys64\mingw64\bin\libgcc_s_seh-1.dll' Vital='yes' />  
+      <File Id='libgcc_s_seh' Name='libgcc_s_seh-1.dll' Source='c:\building\msys64\mingw64\bin\libgcc_s_seh-1.dll' Vital='yes' />  
      </Component>
      <Component>  
-      <File Id='libstdcplusplus' Name='libstdc++-6.dll' Source='C:\msys64\mingw64\bin\libstdc++-6.dll' Vital='yes' />  
+      <File Id='libstdcplusplus' Name='libstdc++-6.dll' Source='c:\building\msys64\mingw64\bin\libstdc++-6.dll' Vital='yes' />  
      </Component>
      <Component>  
-      <File Id='libwinpthread' Name='libwinpthread-1.dll' Source='C:\msys64\mingw64\bin\libwinpthread-1.dll' Vital='yes' />  
+      <File Id='libwinpthread' Name='libwinpthread-1.dll' Source='c:\building\msys64\mingw64\bin\libwinpthread-1.dll' Vital='yes' />  
      </Component>
      <Component>  
-      <File Id='zlib1' Name='zlib1.dll' Source='C:\msys64\mingw64\bin\zlib1.dll' Vital='yes' />  
+      <File Id='zlib1' Name='zlib1.dll' Source='c:\building\msys64\mingw64\bin\zlib1.dll' Vital='yes' />  
      </Component>
      <Component>  
-      <File Id='libhdf5_cpp' Name='libhdf5_cpp-0.dll' Source='C:\msys64\mingw64\bin\libhdf5_cpp-0.dll' Vital='yes' />  
+      <File Id='libhdf5_cpp' Name='libhdf5_cpp-0.dll' Source='c:\building\msys64\mingw64\bin\libhdf5_cpp-0.dll' Vital='yes' />  
      </Component>
      <Component>  
-      <File Id='libhdf5' Name='libhdf5-0.dll' Source='C:\msys64\mingw64\bin\libhdf5-0.dll' Vital='yes' />  
+      <File Id='libhdf5' Name='libhdf5-0.dll' Source='c:\building\msys64\mingw64\bin\libhdf5-0.dll' Vital='yes' />  
      </Component>
      <Component>  
-      <File Id='libgomp' Name='libgomp-1.dll' Source='C:\msys64\mingw64\bin\libgomp-1.dll' Vital='yes' />  
+      <File Id='libgomp' Name='libgomp-1.dll' Source='c:\building\msys64\mingw64\bin\libgomp-1.dll' Vital='yes' />  
      </Component>
 
 	 </Directory>  
