@@ -8,12 +8,9 @@
 
 The Debian package for the CDX tools has to be dependent on autoconf-archive so that the Boost M4 scripts run to let Autoconf detect the Boost libraries.
 
-TODO probably not needed: Run aclocal -I m4 --install
-
-
 \subsection distribution_cpp_win Windows
 
-The C++ version of the CDX library is not packaged for Windows currently. Only the binary for the CDX Tools are provided, see
+The C++ version of the CDX library is not packaged for Windows currently. Only the binary for the CDX Tools are provided, see Sec. \ref distribution_tools_win Windows.
 
 \section distribution_python Python Bindings
 
@@ -53,6 +50,36 @@ To clean the temporary files, run
 \subsection distribution_tools_linux Linux
 
 \subsection distribution_tools_win Windows
+
+The Windows Installer XML (WiX) toolset is used to create the installer. The following section describes its configuration and how to invoke the necessary tools. The WiX toolset can be downloaded from http://wixtoolset.org.
+
+The below calls assume the software to be installed in c:/software/wix/.
+
+The WiX configuration file to create the model MSI file is
+
+  cdx/packages/windows/cdx-tools.wxs
+  
+This configuration expects
+
+ + MSYS2 to be installed in c:/building/msys2/ and
+ + the CDX tools be compiled in cdx/tools/.
+
+Refer to Sec. \ref development_cpp_win for both points.
+ 
+To create the MSI package go to 
+
+  cdx/packages/windows/
+
+open a Windows command line (cmd.exe) and run
+
+  c:\software\wix\candle.exe -ext WixUIExtension -ext WixUtilExtension cdx-tools.wxs
+  c:\software\wix\light.exe  -ext WixUIExtension -ext WixUtilExtension cdx-tools.wixobj
+
+or simply
+
+  create-cdx-tools-msi.bat
+
+The resulting file is cdx-tools.msi.
 
 
 */

@@ -61,7 +61,7 @@ To compile the CDX Tools, go to
 
 and run
 
-   autoreconf -i
+  autoreconf -i
   ./configure CXXFLAGS=-I/usr/include/hdf5/serial LDFLAGS=-L/usr/lib/x86_64-linux-gnu/hdf5/serial
   make -j4
 
