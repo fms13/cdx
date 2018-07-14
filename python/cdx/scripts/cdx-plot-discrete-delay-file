@@ -101,7 +101,7 @@ link_names = cdx_file.get_link_names()
 nof_links_to_plot = 0
 
 # was a list with link names that should be considered, provided?
-if len(args.link_names) > 0:
+if args.link_names != None:
     for link_name in link_names:
     # is the current link_name in this list?
         if link_name not in args.link_names:
@@ -127,12 +127,14 @@ act_plot = 1
 
 for link_name in link_names:
     # was a list with link names that should be considered, provided?
-    if len(args.link_names) > 0:
-        # is the current link_name in this list?
-        if link_name not in args.link_names:
-            # no, do not plot it:
-            continue
+	if args.link_names != None:
+		# is the current link_name in this list?
+		if link_name not in args.link_names:
+			# no, do not plot it:
+			print 'link_name: {} not in list {}, not plotting.'.format(link_name, args.link_names)
+			continue
 
+	print 'creating plot for link_name: {}'.format(link_name)
 	cirs, times, delays, ref_delays = cdx_file.get_cirs(link_name, start_time, length)
 
 	x_axis = times

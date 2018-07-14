@@ -1,3 +1,9 @@
+python-cdx (1.5-1) UNRELEASED; urgency=medium
+
+  * Fix for links to plot in cdx-plot-discrete-delay-file
+
+ -- Frank Schubert <fmschubert@ieee.org>  Sat, 07 Jul 2018 19:55:00 +0200
+
 python-cdx (1.4-1) UNRELEASED; urgency=medium
 
   * Added structure for component types
