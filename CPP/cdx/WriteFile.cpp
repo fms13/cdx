@@ -121,7 +121,7 @@ void WriteFile::write(string path, const vector<vector<double> > &data) {
 	dset3.write(wdata, H5::PredType::NATIVE_DOUBLE);
 }
 
-#if H5_VERS_MAJOR >= 1 and H5_VERS_MINOR >= 10
+#if H5_VERS_MAJOR >= 1 and H5_VERS_MINOR >= 10 and H5_VERS_RELEASE >= 1
 void WriteFile::write(const H5::H5Location *h5file, const std::string &path,
 		const std::vector<std::string> &data) {
 #else
@@ -152,7 +152,7 @@ void WriteFile::write(const H5::CommonFG *h5file, const std::string &path,
 	dset.write(arr_c_str.data(), str_type);
 }
 
-#if H5_VERS_MAJOR >= 1 and H5_VERS_MINOR >= 10
+#if H5_VERS_MAJOR >= 1 and H5_VERS_MINOR >= 10 and H5_VERS_RELEASE >= 1
 void WriteFile::write(const H5::H5Location* h5file, const std::string& path,
 		const std::map<uint16_t, std::string>& data) {
 #else

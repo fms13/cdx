@@ -47,7 +47,7 @@ public:
 	/**
 	 * \brief Writes vector of strings to path.
 	 */
-#if H5_VERS_MAJOR >= 1 and H5_VERS_MINOR >= 10
+#if H5_VERS_MAJOR >= 1 and H5_VERS_MINOR >= 10 and H5_VERS_RELEASE >= 1
 	void write(const H5::H5Location *h5file, const std::string &path,
 			const std::vector<std::string> &data);
 #else
@@ -58,7 +58,7 @@ public:
 	/**
 	 * \brief Writes a std::map<uint16_t, std::string> to path.
 	 */
-#if H5_VERS_MAJOR >= 1 and H5_VERS_MINOR >= 10
+#if H5_VERS_MAJOR >= 1 and H5_VERS_MINOR >= 10 and H5_VERS_RELEASE >= 1
 	void write(const H5::H5Location *h5file, const std::string &path,
 			const std::map<uint16_t, std::string> &data);
 #else
