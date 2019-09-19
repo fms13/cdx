@@ -25,6 +25,7 @@ function append_continuous_delay_cir(obj, link_cir)
     % writing cir
     for i = 1:obj.nof_links
         cir.type = link_cir(i).type;
+        cir.id = uint64(link_cir(i).id);
         cir.delays = link_cir(i).delays;
         cir.real = real(link_cir(i).weights);
         cir.imag = imag(link_cir(i).weights);

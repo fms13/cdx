@@ -37,7 +37,7 @@ classdef CDXWriteFile < handle
     methods
         % Construct an object and
         % save the file ID
-        function obj = CDXWriteFile(filename, parameters)
+        function obj = CDXWriteFile(filename, parameters, component_types)
 
             if parameters.enable_compression
                 % check if compression is available
@@ -116,6 +116,10 @@ classdef CDXWriteFile < handle
             fprintf('parameters.nof_links %i \n', parameters.nof_links);
             obj.link_id = H5G.create(obj.file_id, '/links', 16) ;
             obj.links_name = parameters.links_name;
+            
+            % check that the right number of component_types was provided:
+            assert(numel(component_types) == obj.nof_links, 'number of elements in component_types must be equal to number of links');
+            
             % create groups for the links:
             for i = 0:parameters.nof_links-1
                 % create group for link
@@ -147,10 +151,48 @@ classdef CDXWriteFile < handle
                     wdata = [];
                     H5D.write(dset,'H5T_NATIVE_DOUBLE','H5S_ALL','H5S_ALL','H5P_DEFAULT', wdata);
 
-                    wdata1 = {'Geometrical LOS'; 'Diffracted LOS'; 'Multipath Component'};
+                    % write component types to the link group:
+                    % define data types:
+                    uint64_type = H5T.copy('H5T_NATIVE_UINT64');
+                    sz(1) = H5T.get_size(uint64_type);
 
-                    % Add the component_types
-                    hdf5write(obj.filename, ['/links/', obj.links_name{i+1}, '/component_types'], wdata1, 'WriteMode', 'append');
+                    vstr_type = H5T.copy('H5T_C_S1');
+                    H5T.set_size(vstr_type, 'H5T_VARIABLE');
+                    H5T.set_strpad(vstr_type, 'H5T_STR_NULLTERM');
+
+                    sz(2) = H5T.get_size(vstr_type);
+                    
+                    offset(1)=0;
+                    offset(2)=cumsum(sz(1:1));
+
+                    % define memory type for component type
+                    ct_memtype = H5T.create('H5T_COMPOUND', sum(sz));
+                    H5T.insert(ct_memtype, 'id', offset(1), uint64_type);
+                    H5T.insert(ct_memtype, 'name', offset(2), vstr_type);
+                    
+                    % define file type:
+                    ct_filetype = H5T.create('H5T_COMPOUND', sum(sz));
+                    H5T.insert(ct_filetype, 'id', offset(1), uint64_type);
+                    H5T.insert(ct_filetype, 'name', offset(2), vstr_type);
+
+                    % get number of entries
+                    dims = size(component_types(i+1).id, 1);
+                    
+                    % create memory space
+                    ct_space = H5S.create_simple(1, fliplr(dims), []);
+                                        
+                    ct_dcpl = H5P.create('H5P_DATASET_CREATE');
+                    chunk_dims = [ 1 ];
+                    h5_chunk_dims = fliplr(chunk_dims);
+                    H5P.set_chunk(ct_dcpl, h5_chunk_dims);
+
+                    % write the component_types
+                    dset = H5D.create(obj.link_group_ids(i+1), 'component_types', ct_filetype, ct_space, 'H5P_DEFAULT');
+                    
+                    H5D.write(dset, ct_memtype, 'H5S_ALL', 'H5S_ALL', 'H5P_DEFAULT', component_types(i+1));
+                    
+                    H5D.close(dset);
+                    H5S.close(ct_space);
                 end
             end
 
@@ -166,17 +208,21 @@ classdef CDXWriteFile < handle
 
             % define memory type and filetype for continuous delay data
             % type:
-            obj.memtype = H5T.create('H5T_COMPOUND',  4 * 8);
-            H5T.insert(obj.memtype, 'type', 0, 'H5T_NATIVE_DOUBLE');
-            H5T.insert(obj.memtype, 'delay', 8, 'H5T_NATIVE_DOUBLE');
-            H5T.insert(obj.memtype, 'real', 8 + 8,'H5T_NATIVE_DOUBLE');
-            H5T.insert(obj.memtype, 'imag', 16 + 8, 'H5T_NATIVE_DOUBLE');
+	     obj.memtype = H5T.create('H5T_COMPOUND', 5 * 8);
+             H5T.insert(obj.memtype, 'type', 0, 'H5T_NATIVE_DOUBLE');
+             H5T.insert(obj.memtype, 'id', 8, 'H5T_NATIVE_UINT64');
+             H5T.insert(obj.memtype, 'delay', 8+8, 'H5T_NATIVE_DOUBLE');
+             H5T.insert(obj.memtype, 'real', 16 + 8,'H5T_NATIVE_DOUBLE');
+             H5T.insert(obj.memtype, 'imag', 24 + 8, 'H5T_NATIVE_DOUBLE');
 
-            obj.filetype = H5T.create('H5T_COMPOUND', 8 + 8 + 8 + 8);
-            H5T.insert(obj.filetype, 'type', 0, 'H5T_NATIVE_DOUBLE');
-            H5T.insert(obj.filetype, 'delay', 8, 'H5T_IEEE_F64BE');
-            H5T.insert(obj.filetype, 'real', 8 + 8,'H5T_IEEE_F64BE');
-            H5T.insert(obj.filetype, 'imag', 16 + 8,'H5T_IEEE_F64BE');
+             obj.filetype = H5T.create('H5T_COMPOUND', 8 + 8 + 8 + 8 + 8);
+             H5T.insert(obj.filetype, 'type', 0, 'H5T_NATIVE_DOUBLE');
+             H5T.insert(obj.filetype, 'id', 8, 'H5T_NATIVE_UINT64');
+             H5T.insert(obj.filetype, 'delay',8 + 8, 'H5T_IEEE_F64BE');
+             H5T.insert(obj.filetype, 'real', 16 + 8,'H5T_IEEE_F64BE');
+             H5T.insert(obj.filetype, 'imag', 24+ 8,'H5T_IEEE_F64BE');
+
+
 
             % define memory type and filetype for discrete delay data
             % type:
